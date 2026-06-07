@@ -7,15 +7,15 @@ description: Use when starting feature work that needs isolation from current wo
 
 ## Overview
 
-Ensure work happens in an isolated workspace. Prefer your platform's native worktree tools. Fall back to manual git worktrees only when no native tool is available.
+Keep work in isolated workspace. Prefer platform native worktree tools. Use manual git worktrees only when no native tool exists.
 
-**Core principle:** Detect existing isolation first. Then use native tools. Then fall back to git. Never fight the harness.
+**Core principle:** Detect existing isolation first. Then use native tools. Then fall back to git. Never fight harness.
 
 **Announce at start:** "I'm using the using-git-worktrees skill to set up an isolated workspace."
 
 ## Step 0: Detect Existing Isolation
 
-**Before creating anything, check if you are already in an isolated workspace.**
+**Before creating anything, check if already in isolated workspace.**
 
 ```bash
 GIT_DIR=$(cd "$(git rev-parse --git-dir)" 2>/dev/null && pwd -P)
@@ -23,48 +23,48 @@ GIT_COMMON=$(cd "$(git rev-parse --git-common-dir)" 2>/dev/null && pwd -P)
 BRANCH=$(git branch --show-current)
 ```
 
-**Submodule guard:** `GIT_DIR != GIT_COMMON` is also true inside git submodules. Before concluding "already in a worktree," verify you are not in a submodule:
+**Submodule guard:** `GIT_DIR != GIT_COMMON` also true inside git submodules. Before concluding "already in a worktree," verify not submodule:
 
 ```bash
 # If this returns a path, you're in a submodule, not a worktree — treat as normal repo
 git rev-parse --show-superproject-working-tree 2>/dev/null
 ```
 
-**If `GIT_DIR != GIT_COMMON` (and not a submodule):** You are already in a linked worktree. Skip to Step 3 (Project Setup). Do NOT create another worktree.
+**If `GIT_DIR != GIT_COMMON` (and not a submodule):** Already in linked worktree. Skip to Step 3 (Project Setup). Do NOT create another worktree.
 
-Report with branch state:
-- On a branch: "Already in isolated workspace at `<path>` on branch `<name>`."
+Report branch state:
+- On branch: "Already in isolated workspace at `<path>` on branch `<name>`."
 - Detached HEAD: "Already in isolated workspace at `<path>` (detached HEAD, externally managed). Branch creation needed at finish time."
 
-**If `GIT_DIR == GIT_COMMON` (or in a submodule):** You are in a normal repo checkout.
+**If `GIT_DIR == GIT_COMMON` (or in a submodule):** Normal repo checkout.
 
-Has the user already indicated their worktree preference in your instructions? If not, ask for consent before creating a worktree:
+If user has not already indicated worktree preference in instructions, ask consent before creating worktree:
 
 > "Would you like me to set up an isolated worktree? It protects your current branch from changes."
 
-Honor any existing declared preference without asking. If the user declines consent, work in place and skip to Step 3.
+Honor declared preference without asking. If user declines, work in place; skip to Step 3.
 
 ## Step 1: Create Isolated Workspace
 
-**You have two mechanisms. Try them in this order.**
+**Two mechanisms. Try in order.**
 
 ### 1a. Native Worktree Tools (preferred)
 
-The user has asked for an isolated workspace (Step 0 consent). Do you already have a way to create a worktree? It might be a tool with a name like `EnterWorktree`, `WorktreeCreate`, a `/worktree` command, or a `--worktree` flag. If you do, use it and skip to Step 3.
+User asked for isolated workspace (Step 0 consent). If existing way to create worktree exists—tool named like `EnterWorktree`, `WorktreeCreate`, `/worktree` command, or `--worktree` flag—use it; skip to Step 3.
 
-Native tools handle directory placement, branch creation, and cleanup automatically. Using `git worktree add` when you have a native tool creates phantom state your harness can't see or manage.
+Native tools handle directory placement, branch creation, cleanup. Using `git worktree add` when native tool exists creates phantom state harness cannot see/manage.
 
-Only proceed to Step 1b if you have no native worktree tool available.
+Proceed to Step 1b only if no native worktree tool available.
 
 ### 1b. Git Worktree Fallback
 
-**Only use this if Step 1a does not apply** — you have no native worktree tool available. Create a worktree manually using git.
+**Only use this if Step 1a does not apply** — no native worktree tool available. Create worktree manually using git.
 
 #### Directory Selection
 
-Follow this priority order. Explicit user preference always beats observed filesystem state.
+Priority order. Explicit user preference beats observed filesystem state.
 
-1. **Check your instructions for a declared worktree directory preference.** If the user has already specified one, use it without asking.
+1. **Check your instructions for a declared worktree directory preference.** If user already specified one, use it without asking.
 
 2. **Check for an existing project-local worktree directory:**
    ```bash
@@ -80,17 +80,17 @@ Follow this priority order. Explicit user preference always beats observed files
    ```
    If found, use it (backward compatibility with legacy global path).
 
-4. **If there is no other guidance available**, default to `.worktrees/` at the project root.
+4. **If there is no other guidance available**, default to `.worktrees/` at project root.
 
 #### Safety Verification (project-local directories only)
 
-**MUST verify directory is ignored before creating worktree:**
+**MUST verify directory ignored before creating worktree:**
 
 ```bash
 git check-ignore -q .worktrees 2>/dev/null || git check-ignore -q worktrees 2>/dev/null
 ```
 
-**If NOT ignored:** Add to .gitignore, commit the change, then proceed.
+**If NOT ignored:** Add to .gitignore, commit change, proceed.
 
 **Why critical:** Prevents accidentally committing worktree contents to repository.
 
@@ -109,11 +109,11 @@ git worktree add "$path" -b "$BRANCH_NAME"
 cd "$path"
 ```
 
-**Sandbox fallback:** If `git worktree add` fails with a permission error (sandbox denial), tell the user the sandbox blocked worktree creation and you're working in the current directory instead. Then run setup and baseline tests in place.
+**Sandbox fallback:** If `git worktree add` fails with permission error (sandbox denial), tell user sandbox blocked worktree creation and you're working in current directory instead. Then run setup and baseline tests in place.
 
 ## Step 3: Project Setup
 
-Auto-detect and run appropriate setup:
+Auto-detect and run setup:
 
 ```bash
 # Node.js
@@ -132,7 +132,7 @@ if [ -f go.mod ]; then go mod download; fi
 
 ## Step 4: Verify Clean Baseline
 
-Run tests to ensure workspace starts clean:
+Run tests to ensure clean baseline:
 
 ```bash
 # Use project-appropriate command
@@ -173,12 +173,12 @@ Ready to implement <feature-name>
 
 ### Fighting the harness
 
-- **Problem:** Using `git worktree add` when the platform already provides isolation
+- **Problem:** Using `git worktree add` when platform already provides isolation
 - **Fix:** Step 0 detects existing isolation. Step 1a defers to native tools.
 
 ### Skipping detection
 
-- **Problem:** Creating a nested worktree inside an existing one
+- **Problem:** Creating nested worktree inside existing one
 - **Fix:** Always run Step 0 before creating anything
 
 ### Skipping ignore verification
@@ -193,14 +193,14 @@ Ready to implement <feature-name>
 
 ### Proceeding with failing tests
 
-- **Problem:** Can't distinguish new bugs from pre-existing issues
+- **Problem:** Cannot distinguish new bugs from pre-existing issues
 - **Fix:** Report failures, get explicit permission to proceed
 
 ## Red Flags
 
 **Never:**
-- Create a worktree when Step 0 detects existing isolation
-- Use `git worktree add` when you have a native worktree tool (e.g., `EnterWorktree`). This is the #1 mistake — if you have it, use it.
+- Create worktree when Step 0 detects existing isolation
+- Use `git worktree add` when you have native worktree tool (e.g., `EnterWorktree`). This is #1 mistake — if you have it, use it.
 - Skip Step 1a by jumping straight to Step 1b's git commands
 - Create worktree without verifying it's ignored (project-local)
 - Skip baseline test verification
@@ -210,6 +210,6 @@ Ready to implement <feature-name>
 - Run Step 0 detection first
 - Prefer native tools over git fallback
 - Follow directory priority: existing > global legacy > instruction file > default
-- Verify directory is ignored for project-local
+- Verify directory ignored for project-local
 - Auto-detect and run project setup
 - Verify clean test baseline

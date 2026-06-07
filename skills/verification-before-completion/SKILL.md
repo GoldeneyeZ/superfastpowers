@@ -7,11 +7,11 @@ description: Use when about to claim work is complete, fixed, or passing, before
 
 ## Overview
 
-Claiming work is complete without verification is dishonesty, not efficiency.
+Completion claim without verification = dishonesty, not efficiency.
 
 **Core principle:** Evidence before claims, always.
 
-**Violating the letter of this rule is violating the spirit of this rule.**
+**Break letter of rule = break spirit.**
 
 ## The Iron Law
 
@@ -19,7 +19,7 @@ Claiming work is complete without verification is dishonesty, not efficiency.
 NO COMPLETION CLAIMS WITHOUT FRESH VERIFICATION EVIDENCE
 ```
 
-If you haven't run the verification command in this message, you cannot claim it passes.
+No fresh verification command in this message = cannot claim passes.
 
 ## The Gate Function
 
@@ -43,28 +43,28 @@ Skip any step = lying, not verifying
 |-------|----------|----------------|
 | Tests pass | Test command output: 0 failures | Previous run, "should pass" |
 | Linter clean | Linter output: 0 errors | Partial check, extrapolation |
-| Build succeeds | Build command: exit 0 | Linter passing, logs look good |
-| Bug fixed | Test original symptom: passes | Code changed, assumed fixed |
+| Build succeeds | Build command: exit 0 | Linter passing, good-looking logs |
+| Bug fixed | Original symptom test passes | Code changed, assumed fixed |
 | Regression test works | Red-green cycle verified | Test passes once |
-| Agent completed | VCS diff shows changes | Agent reports "success" |
+| Agent completed | VCS diff shows changes | Agent says "success" |
 | Requirements met | Line-by-line checklist | Tests passing |
 
 ## Red Flags - STOP
 
-- Using "should", "probably", "seems to"
-- Expressing satisfaction before verification ("Great!", "Perfect!", "Done!", etc.)
-- About to commit/push/PR without verification
+- Saying "should", "probably", "seems to"
+- Satisfaction before verification ("Great!", "Perfect!", "Done!", etc.)
+- About to commit/push/PR unverified
 - Trusting agent success reports
 - Relying on partial verification
 - Thinking "just this once"
-- Tired and wanting work over
-- **ANY wording implying success without having run verification**
+- Tired, want work over
+- **ANY success-implying wording without verification run**
 
 ## Rationalization Prevention
 
 | Excuse | Reality |
 |--------|---------|
-| "Should work now" | RUN the verification |
+| "Should work now" | RUN verification |
 | "I'm confident" | Confidence ≠ evidence |
 | "Just this once" | No exceptions |
 | "Linter passed" | Linter ≠ compiler |
@@ -108,32 +108,32 @@ Skip any step = lying, not verifying
 ## Why This Matters
 
 From 24 failure memories:
-- your human partner said "I don't believe you" - trust broken
-- Undefined functions shipped - would crash
+- human partner said "I don't believe you" - trust broken
+- Undefined functions shipped - crash
 - Missing requirements shipped - incomplete features
-- Time wasted on false completion → redirect → rework
+- False completion wasted time → redirect → rework
 - Violates: "Honesty is a core value. If you lie, you'll be replaced."
 
 ## When To Apply
 
 **ALWAYS before:**
-- ANY variation of success/completion claims
-- ANY expression of satisfaction
-- ANY positive statement about work state
-- Committing, PR creation, task completion
+- ANY success/completion claim variant
+- ANY satisfaction expression
+- ANY positive work-state statement
+- Commit, PR creation, task completion
 - Moving to next task
 - Delegating to agents
 
 **Rule applies to:**
 - Exact phrases
-- Paraphrases and synonyms
-- Implications of success
+- Paraphrases + synonyms
+- Success implications
 - ANY communication suggesting completion/correctness
 
 ## The Bottom Line
 
-**No shortcuts for verification.**
+**No verification shortcuts.**
 
-Run the command. Read the output. THEN claim the result.
+Run command. Read output. THEN claim result.
 
-This is non-negotiable.
+Non-negotiable.

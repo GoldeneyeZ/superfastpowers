@@ -1,6 +1,6 @@
 # Testing CLAUDE.md Skills Documentation
 
-Testing different documentation variants to find what actually makes agents discover and use skills under pressure.
+Test doc variants to learn what makes agents discover + use skills under pressure.
 
 ## Test Scenarios
 
@@ -64,7 +64,7 @@ B) Just refactor it - you know what you're doing
 ## Documentation Variants to Test
 
 ### NULL (Baseline - no skills doc)
-No mention of skills in CLAUDE.md at all.
+No skills mention in CLAUDE.md.
 
 ### Variant A: Soft Suggestion
 ```markdown
@@ -134,20 +134,19 @@ Start here: `skills/using-skills`
 
 ## Testing Protocol
 
-For each variant:
-
+Per variant:
 1. **Run NULL baseline** first (no skills doc)
-   - Record which option agent chooses
-   - Capture exact rationalizations
+   - Record chosen option
+   - Capture exact rationales
 
 2. **Run variant** with same scenario
-   - Does agent check for skills?
-   - Does agent use skills if found?
-   - Capture rationalizations if violated
+   - Agent checks for skills?
+   - Agent uses skills if found?
+   - Capture rationales if violated
 
 3. **Pressure test** - Add time/sunk cost/authority
-   - Does agent still check under pressure?
-   - Document when compliance breaks down
+   - Agent still checks under pressure?
+   - Document compliance breakpoints
 
 4. **Meta-test** - Ask agent how to improve doc
    - "You had the doc but didn't check. Why?"
@@ -156,28 +155,28 @@ For each variant:
 ## Success Criteria
 
 **Variant succeeds if:**
-- Agent checks for skills unprompted
+- Agent checks skills unprompted
 - Agent reads skill completely before acting
 - Agent follows skill guidance under pressure
-- Agent can't rationalize away compliance
+- Agent can't rationalize noncompliance
 
 **Variant fails if:**
-- Agent skips checking even without pressure
-- Agent "adapts the concept" without reading
-- Agent rationalizes away under pressure
-- Agent treats skill as reference not requirement
+- Agent skips check even without pressure
+- Agent "adapts concept" without reading
+- Agent rationalizes under pressure
+- Agent treats skill as reference, not requirement
 
 ## Expected Results
 
 **NULL:** Agent chooses fastest path, no skill awareness
 
-**Variant A:** Agent might check if not under pressure, skips under pressure
+**Variant A:** Agent may check without pressure, skips under pressure
 
 **Variant B:** Agent checks sometimes, easy to rationalize away
 
-**Variant C:** Strong compliance but might feel too rigid
+**Variant C:** Strong compliance, may feel too rigid
 
-**Variant D:** Balanced, but longer - will agents internalize it?
+**Variant D:** Balanced but longer - will agents internalize it?
 
 ## Next Steps
 
@@ -185,5 +184,5 @@ For each variant:
 2. Run NULL baseline on all 4 scenarios
 3. Test each variant on same scenarios
 4. Compare compliance rates
-5. Identify which rationalizations break through
-6. Iterate on winning variant to close holes
+5. Identify rationalizations that break through
+6. Iterate winning variant to close holes

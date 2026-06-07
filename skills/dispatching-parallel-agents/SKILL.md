@@ -7,9 +7,9 @@ description: Use when facing 2+ independent tasks that can be worked on without 
 
 ## Overview
 
-You delegate tasks to specialized agents with isolated context. By precisely crafting their instructions and context, you ensure they stay focused and succeed at their task. They should never inherit your session's context or history — you construct exactly what they need. This also preserves your own context for coordination work.
+Delegate tasks to specialized agents with isolated context. Precise instructions + context keep agents focused. They never inherit session context/history — construct only what they need. Preserves your context for coordination.
 
-When you have multiple unrelated failures (different test files, different subsystems, different bugs), investigating them sequentially wastes time. Each investigation is independent and can happen in parallel.
+Multiple unrelated failures (different test files, subsystems, bugs) waste effort sequentially. Independent investigations can run parallel.
 
 **Core principle:** Dispatch one agent per independent problem domain. Let them work concurrently.
 
@@ -34,26 +34,26 @@ digraph when_to_use {
 ```
 
 **Use when:**
-- 3+ test files failing with different root causes
-- Multiple subsystems broken independently
-- Each problem can be understood without context from others
+- 3+ test files fail with different root causes
+- Multiple subsystems break independently
+- Each problem understandable without other context
 - No shared state between investigations
 
 **Don't use when:**
-- Failures are related (fix one might fix others)
-- Need to understand full system state
-- Agents would interfere with each other
+- Failures related (one fix might fix others)
+- Need full system state
+- Agents interfere with each other
 
 ## The Pattern
 
 ### 1. Identify Independent Domains
 
-Group failures by what's broken:
+Group failures by broken area:
 - File A tests: Tool approval flow
 - File B tests: Batch completion behavior
 - File C tests: Abort functionality
 
-Each domain is independent - fixing tool approval doesn't affect abort tests.
+Each domain independent — tool approval fix doesn't affect abort tests.
 
 ### 2. Create Focused Agent Tasks
 
@@ -61,7 +61,7 @@ Each agent gets:
 - **Specific scope:** One test file or subsystem
 - **Clear goal:** Make these tests pass
 - **Constraints:** Don't change other code
-- **Expected output:** Summary of what you found and fixed
+- **Expected output:** Summary of findings + fixes
 
 ### 3. Dispatch in Parallel
 
@@ -115,7 +115,7 @@ Return: Summary of what you found and what you fixed.
 **✅ Specific:** "Fix agent-tool-abort.test.ts" - focused scope
 
 **❌ No context:** "Fix the race condition" - agent doesn't know where
-**✅ Context:** Paste the error messages and test names
+**✅ Context:** Paste error messages and test names
 
 **❌ No constraints:** Agent might refactor everything
 **✅ Constraints:** "Do NOT change production code" or "Fix tests only"
@@ -125,21 +125,21 @@ Return: Summary of what you found and what you fixed.
 
 ## When NOT to Use
 
-**Related failures:** Fixing one might fix others - investigate together first
-**Need full context:** Understanding requires seeing entire system
-**Exploratory debugging:** You don't know what's broken yet
-**Shared state:** Agents would interfere (editing same files, using same resources)
+**Related failures:** Fixing one might fix others — investigate together first
+**Need full context:** Understanding needs entire system
+**Exploratory debugging:** Unknown broken area
+**Shared state:** Agents interfere (same files/resources)
 
 ## Real Example from Session
 
-**Scenario:** 6 test failures across 3 files after major refactoring
+**Scenario:** 6 test failures across 3 files after major refactor
 
 **Failures:**
 - agent-tool-abort.test.ts: 3 failures (timing issues)
 - batch-completion-behavior.test.ts: 2 failures (tools not executing)
 - tool-approval-race-conditions.test.ts: 1 failure (execution count = 0)
 
-**Decision:** Independent domains - abort logic separate from batch completion separate from race conditions
+**Decision:** Independent domains — abort logic separate from batch completion separate from race conditions
 
 **Dispatch:**
 ```
@@ -155,28 +155,28 @@ Agent 3 → Fix tool-approval-race-conditions.test.ts
 
 **Integration:** All fixes independent, no conflicts, full suite green
 
-**Time saved:** 3 problems solved in parallel vs sequentially
+**Time saved:** 3 problems solved parallel vs sequential
 
 ## Key Benefits
 
-1. **Parallelization** - Multiple investigations happen simultaneously
-2. **Focus** - Each agent has narrow scope, less context to track
-3. **Independence** - Agents don't interfere with each other
+1. **Parallelization** - Multiple investigations simultaneously
+2. **Focus** - Narrow scope, less context to track
+3. **Independence** - Agents don't interfere
 4. **Speed** - 3 problems solved in time of 1
 
 ## Verification
 
 After agents return:
-1. **Review each summary** - Understand what changed
+1. **Review each summary** - Understand changes
 2. **Check for conflicts** - Did agents edit same code?
-3. **Run full suite** - Verify all fixes work together
+3. **Run full suite** - Verify fixes together
 4. **Spot check** - Agents can make systematic errors
 
 ## Real-World Impact
 
 From debugging session (2025-10-03):
 - 6 failures across 3 files
-- 3 agents dispatched in parallel
+- 3 agents dispatched parallel
 - All investigations completed concurrently
 - All fixes integrated successfully
 - Zero conflicts between agent changes

@@ -2,19 +2,19 @@
 
 ## Overview
 
-LLMs respond to the same persuasion principles as humans. Understanding this psychology helps you design more effective skills - not to manipulate, but to ensure critical practices are followed even under pressure.
+LLMs respond to same persuasion principles as humans. Use this to design stronger skills - not manipulate, but keep critical practices followed under pressure.
 
 **Research foundation:** Meincke et al. (2025) tested 7 persuasion principles with N=28,000 AI conversations. Persuasion techniques more than doubled compliance rates (33% → 72%, p < .001).
 
 ## The Seven Principles
 
 ### 1. Authority
-**What it is:** Deference to expertise, credentials, or official sources.
+**What it is:** Deference to expertise, credentials, official sources.
 
 **How it works in skills:**
 - Imperative language: "YOU MUST", "Never", "Always"
 - Non-negotiable framing: "No exceptions"
-- Eliminates decision fatigue and rationalization
+- Removes decision fatigue + rationalization
 
 **When to use:**
 - Discipline-enforcing skills (TDD, verification requirements)
@@ -28,7 +28,7 @@ LLMs respond to the same persuasion principles as humans. Understanding this psy
 ```
 
 ### 2. Commitment
-**What it is:** Consistency with prior actions, statements, or public declarations.
+**What it is:** Consistency with prior actions, statements, declarations.
 
 **How it works in skills:**
 - Require announcements: "Announce skill usage"
@@ -36,7 +36,7 @@ LLMs respond to the same persuasion principles as humans. Understanding this psy
 - Use tracking: TodoWrite for checklists
 
 **When to use:**
-- Ensuring skills are actually followed
+- Ensuring skills are followed
 - Multi-step processes
 - Accountability mechanisms
 
@@ -52,7 +52,7 @@ LLMs respond to the same persuasion principles as humans. Understanding this psy
 **How it works in skills:**
 - Time-bound requirements: "Before proceeding"
 - Sequential dependencies: "Immediately after X"
-- Prevents procrastination
+- Blocks procrastination
 
 **When to use:**
 - Immediate verification requirements
@@ -66,7 +66,7 @@ LLMs respond to the same persuasion principles as humans. Understanding this psy
 ```
 
 ### 4. Social Proof
-**What it is:** Conformity to what others do or what's considered normal.
+**What it is:** Conformity to others or normal practice.
 
 **How it works in skills:**
 - Universal patterns: "Every time", "Always"
@@ -103,17 +103,17 @@ LLMs respond to the same persuasion principles as humans. Understanding this psy
 ```
 
 ### 6. Reciprocity
-**What it is:** Obligation to return benefits received.
+**What it is:** Obligation to return received benefits.
 
 **How it works:**
 - Use sparingly - can feel manipulative
 - Rarely needed in skills
 
 **When to avoid:**
-- Almost always (other principles more effective)
+- Almost always (other principles work better)
 
 ### 7. Liking
-**What it is:** Preference for cooperating with those we like.
+**What it is:** Preference for cooperating with liked people.
 
 **How it works:**
 - **DON'T USE for compliance**
@@ -136,16 +136,16 @@ LLMs respond to the same persuasion principles as humans. Understanding this psy
 
 **Bright-line rules reduce rationalization:**
 - "YOU MUST" removes decision fatigue
-- Absolute language eliminates "is this an exception?" questions
-- Explicit anti-rationalization counters close specific loopholes
+- Absolute language kills "is this an exception?" questions
+- Explicit anti-rationalization closes loopholes
 
 **Implementation intentions create automatic behavior:**
 - Clear triggers + required actions = automatic execution
-- "When X, do Y" more effective than "generally do Y"
-- Reduces cognitive load on compliance
+- "When X, do Y" beats "generally do Y"
+- Reduces compliance cognitive load
 
 **LLMs are parahuman:**
-- Trained on human text containing these patterns
+- Trained on human text with these patterns
 - Authority language precedes compliance in training data
 - Commitment sequences (statement → action) frequently modeled
 - Social proof patterns (everyone does X) establish norms
@@ -162,7 +162,7 @@ LLMs respond to the same persuasion principles as humans. Understanding this psy
 - Creating false urgency
 - Guilt-based compliance
 
-**The test:** Would this technique serve the user's genuine interests if they fully understood it?
+**The test:** Would technique serve user's genuine interests if fully understood?
 
 ## Research Citations
 

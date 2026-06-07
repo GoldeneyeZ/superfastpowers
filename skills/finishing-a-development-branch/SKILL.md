@@ -7,7 +7,7 @@ description: Use when implementation is complete, all tests pass, and you need t
 
 ## Overview
 
-Guide completion of development work by presenting clear options and handling chosen workflow.
+Guide dev completion with clear options + chosen workflow.
 
 **Core principle:** Verify tests → Detect environment → Present options → Execute choice → Clean up.
 
@@ -17,7 +17,7 @@ Guide completion of development work by presenting clear options and handling ch
 
 ### Step 1: Verify Tests
 
-**Before presenting options, verify tests pass:**
+**Before options, verify tests pass:**
 
 ```bash
 # Run project's test suite
@@ -39,18 +39,18 @@ Stop. Don't proceed to Step 2.
 
 ### Step 2: Detect Environment
 
-**Determine workspace state before presenting options:**
+**Check workspace state before options:**
 
 ```bash
 GIT_DIR=$(cd "$(git rev-parse --git-dir)" 2>/dev/null && pwd -P)
 GIT_COMMON=$(cd "$(git rev-parse --git-common-dir)" 2>/dev/null && pwd -P)
 ```
 
-This determines which menu to show and how cleanup works:
+State decides menu + cleanup:
 
 | State | Menu | Cleanup |
 |-------|------|---------|
-| `GIT_DIR == GIT_COMMON` (normal repo) | Standard 4 options | No worktree to clean up |
+| `GIT_DIR == GIT_COMMON` (normal repo) | Standard 4 options | No worktree cleanup |
 | `GIT_DIR != GIT_COMMON`, named branch | Standard 4 options | Provenance-based (see Step 6) |
 | `GIT_DIR != GIT_COMMON`, detached HEAD | Reduced 3 options (no merge) | No cleanup (externally managed) |
 
@@ -90,7 +90,7 @@ Implementation complete. You're on a detached HEAD (externally managed workspace
 Which option?
 ```
 
-**Don't add explanation** - keep options concise.
+**Don't add explanation** - concise options only.
 
 ### Step 5: Execute Choice
 
@@ -135,7 +135,7 @@ EOF
 )"
 ```
 
-**Do NOT clean up worktree** — user needs it alive to iterate on PR feedback.
+**Do NOT clean up worktree** — user needs it alive for PR feedback.
 
 #### Option 3: Keep As-Is
 
@@ -170,7 +170,7 @@ git branch -D <feature-branch>
 
 ### Step 6: Cleanup Workspace
 
-**Only runs for Options 1 and 4.** Options 2 and 3 always preserve the worktree.
+**Only Options 1 and 4.** Options 2 and 3 preserve worktree.
 
 ```bash
 GIT_DIR=$(cd "$(git rev-parse --git-dir)" 2>/dev/null && pwd -P)
@@ -178,9 +178,9 @@ GIT_COMMON=$(cd "$(git rev-parse --git-common-dir)" 2>/dev/null && pwd -P)
 WORKTREE_PATH=$(git rev-parse --show-toplevel)
 ```
 
-**If `GIT_DIR == GIT_COMMON`:** Normal repo, no worktree to clean up. Done.
+**If `GIT_DIR == GIT_COMMON`:** Normal repo, no worktree cleanup. Done.
 
-**If worktree path is under `.worktrees/`, `worktrees/`, or `~/.config/superfastpowers/worktrees/`:** Superfastpowers created this worktree — we own cleanup.
+**If worktree path is under `.worktrees/`, `worktrees/`, or `~/.config/superfastpowers/worktrees/`:** Superfastpowers created worktree — own cleanup.
 
 ```bash
 MAIN_ROOT=$(git -C "$(git rev-parse --git-common-dir)/.." rev-parse --show-toplevel)
@@ -189,7 +189,7 @@ git worktree remove "$WORKTREE_PATH"
 git worktree prune  # Self-healing: clean up any stale registrations
 ```
 
-**Otherwise:** The host environment (harness) owns this workspace. Do NOT remove it. If your platform provides a workspace-exit tool, use it. Otherwise, leave the workspace in place.
+**Otherwise:** Host environment (harness) owns workspace. Do NOT remove it. If platform has workspace-exit tool, use it. Else leave workspace.
 
 ## Quick Reference
 
@@ -204,15 +204,15 @@ git worktree prune  # Self-healing: clean up any stale registrations
 
 **Skipping test verification**
 - **Problem:** Merge broken code, create failing PR
-- **Fix:** Always verify tests before offering options
+- **Fix:** Verify tests before offering options
 
 **Open-ended questions**
-- **Problem:** "What should I do next?" is ambiguous
+- **Problem:** "What should I do next?" ambiguous
 - **Fix:** Present exactly 4 structured options (or 3 for detached HEAD)
 
 **Cleaning up worktree for Option 2**
 - **Problem:** Remove worktree user needs for PR iteration
-- **Fix:** Only cleanup for Options 1 and 4
+- **Fix:** Cleanup only for Options 1 and 4
 
 **Deleting branch before removing worktree**
 - **Problem:** `git branch -d` fails because worktree still references the branch
@@ -223,7 +223,7 @@ git worktree prune  # Self-healing: clean up any stale registrations
 - **Fix:** Always `cd` to main repo root before `git worktree remove`
 
 **Cleaning up harness-owned worktrees**
-- **Problem:** Removing a worktree the harness created causes phantom state
+- **Problem:** Removing harness-created worktree causes phantom state
 - **Fix:** Only clean up worktrees under `.worktrees/`, `worktrees/`, or `~/.config/superfastpowers/worktrees/`
 
 **No confirmation for discard**
@@ -237,7 +237,7 @@ git worktree prune  # Self-healing: clean up any stale registrations
 - Merge without verifying tests on result
 - Delete work without confirmation
 - Force-push without explicit request
-- Remove a worktree before confirming merge success
+- Remove worktree before merge success
 - Clean up worktrees you didn't create (provenance check)
 - Run `git worktree remove` from inside the worktree
 

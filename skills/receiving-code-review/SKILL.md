@@ -7,9 +7,9 @@ description: Use when receiving code review feedback, before implementing sugges
 
 ## Overview
 
-Code review requires technical evaluation, not emotional performance.
+Code review needs technical evaluation, not emotional performance.
 
-**Core principle:** Verify before implementing. Ask before assuming. Technical correctness over social comfort.
+**Core principle:** Verify before implement. Ask before assume. Technical correctness > social comfort.
 
 ## The Response Pattern
 
@@ -32,10 +32,10 @@ WHEN receiving code review feedback:
 - "Let me implement that now" (before verification)
 
 **INSTEAD:**
-- Restate the technical requirement
+- Restate technical requirement
 - Ask clarifying questions
 - Push back with technical reasoning if wrong
-- Just start working (actions > words)
+- Start working (actions > words)
 
 ## Handling Unclear Feedback
 
@@ -59,10 +59,10 @@ You understand 1,2,3,6. Unclear on 4,5.
 ## Source-Specific Handling
 
 ### From your human partner
-- **Trusted** - implement after understanding
+- **Trusted** - implement once understood
 - **Still ask** if scope unclear
 - **No performative agreement**
-- **Skip to action** or technical acknowledgment
+- **Skip to action** or technical ack
 
 ### From External Reviewers
 ```
@@ -113,24 +113,24 @@ FOR multi-item feedback:
 ## When To Push Back
 
 Push back when:
-- Suggestion breaks existing functionality
+- Suggestion breaks functionality
 - Reviewer lacks full context
 - Violates YAGNI (unused feature)
-- Technically incorrect for this stack
+- Technically wrong for this stack
 - Legacy/compatibility reasons exist
-- Conflicts with your human partner's architectural decisions
+- Conflicts with your human partner's architecture decisions
 
 **How to push back:**
 - Use technical reasoning, not defensiveness
 - Ask specific questions
 - Reference working tests/code
-- Involve your human partner if architectural
+- Involve your human partner for architecture
 
-**Signal if uncomfortable pushing back out loud:** "Strange things are afoot at the Circle K"
+**Uncomfortable pushing back out loud? Signal:** "Strange things are afoot at the Circle K"
 
 ## Acknowledging Correct Feedback
 
-When feedback IS correct:
+When feedback correct:
 ```
 ✅ "Fixed. [Brief description of what changed]"
 ✅ "Good catch - [specific issue]. Fixed in [location]."
@@ -143,9 +143,9 @@ When feedback IS correct:
 ❌ ANY gratitude expression
 ```
 
-**Why no thanks:** Actions speak. Just fix it. The code itself shows you heard the feedback.
+**Why no thanks:** Actions speak. Fix. Code shows feedback heard.
 
-**If you catch yourself about to write "Thanks":** DELETE IT. State the fix instead.
+**If about to write "Thanks":** DELETE IT. State fix instead.
 
 ## Gracefully Correcting Your Pushback
 
@@ -159,19 +159,19 @@ If you pushed back and were wrong:
 ❌ Over-explaining
 ```
 
-State the correction factually and move on.
+State correction factually. Move on.
 
 ## Common Mistakes
 
 | Mistake | Fix |
 |---------|-----|
-| Performative agreement | State requirement or just act |
-| Blind implementation | Verify against codebase first |
-| Batch without testing | One at a time, test each |
-| Assuming reviewer is right | Check if breaks things |
+| Performative agreement | State requirement or act |
+| Blind implementation | Verify codebase first |
+| Batch without testing | One at time, test each |
+| Assuming reviewer is right | Check breakage |
 | Avoiding pushback | Technical correctness > comfort |
-| Partial implementation | Clarify all items first |
-| Can't verify, proceed anyway | State limitation, ask for direction |
+| Partial implementation | Clarify all first |
+| Can't verify, proceed anyway | State limit, ask direction |
 
 ## Real Examples
 
@@ -202,7 +202,7 @@ You understand 1,2,3,6. Unclear on 4,5.
 
 ## GitHub Thread Replies
 
-When replying to inline review comments on GitHub, reply in the comment thread (`gh api repos/{owner}/{repo}/pulls/{pr}/comments/{id}/replies`), not as a top-level PR comment.
+For inline GitHub review comments, reply in comment thread (`gh api repos/{owner}/{repo}/pulls/{pr}/comments/{id}/replies`), not top-level PR comment.
 
 ## The Bottom Line
 

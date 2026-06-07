@@ -11,21 +11,21 @@ description: Use when creating new skills, editing existing skills, or verifying
 
 **Personal skills live in agent-specific directories (`~/.claude/skills` for Claude Code, `~/.agents/skills/` for Codex)** 
 
-You write test cases (pressure scenarios with subagents), watch them fail (baseline behavior), write the skill (documentation), watch tests pass (agents comply), and refactor (close loopholes).
+Write test cases (pressure scenarios with subagents), watch fail (baseline behavior), write skill (docs), watch pass (agents comply), refactor (close loopholes).
 
-**Core principle:** If you didn't watch an agent fail without the skill, you don't know if the skill teaches the right thing.
+**Core principle:** If you didn't watch agent fail without skill, you don't know if skill teaches right thing.
 
-**REQUIRED BACKGROUND:** You MUST understand superfastpowers:test-driven-development before using this skill. That skill defines the fundamental RED-GREEN-REFACTOR cycle. This skill adapts TDD to documentation.
+**REQUIRED BACKGROUND:** You MUST understand superfastpowers:test-driven-development before this skill. It defines RED-GREEN-REFACTOR. This skill adapts TDD to docs.
 
-**Official guidance:** For Anthropic's official skill authoring best practices, see anthropic-best-practices.md. This document provides additional patterns and guidelines that complement the TDD-focused approach in this skill.
+**Official guidance:** Anthropic official skill authoring best practices: anthropic-best-practices.md. This doc adds TDD-focused patterns/guidelines.
 
 ## What is a Skill?
 
-A **skill** is a reference guide for proven techniques, patterns, or tools. Skills help future Claude instances find and apply effective approaches.
+A **skill** is reference guide for proven techniques, patterns, or tools. Skills help future Claude instances find/apply effective approaches.
 
 **Skills are:** Reusable techniques, patterns, tools, reference guides
 
-**Skills are NOT:** Narratives about how you solved a problem once
+**Skills are NOT:** Narratives about one solved problem
 
 ## TDD Mapping for Skills
 
@@ -42,32 +42,32 @@ A **skill** is a reference guide for proven techniques, patterns, or tools. Skil
 | **Watch it pass** | Verify agent now complies |
 | **Refactor cycle** | Find new rationalizations → plug → re-verify |
 
-The entire skill creation process follows RED-GREEN-REFACTOR.
+Entire skill creation follows RED-GREEN-REFACTOR.
 
 ## When to Create a Skill
 
 **Create when:**
-- Technique wasn't intuitively obvious to you
+- Technique wasn't intuitive
 - You'd reference this again across projects
 - Pattern applies broadly (not project-specific)
-- Others would benefit
+- Others benefit
 
 **Don't create for:**
 - One-off solutions
 - Standard practices well-documented elsewhere
 - Project-specific conventions (put in CLAUDE.md)
-- Mechanical constraints (if it's enforceable with regex/validation, automate it—save documentation for judgment calls)
+- Mechanical constraints (if enforceable with regex/validation, automate it—save docs for judgment calls)
 
 ## Skill Types
 
 ### Technique
-Concrete method with steps to follow (condition-based-waiting, root-cause-tracing)
+Concrete method with steps (condition-based-waiting, root-cause-tracing)
 
 ### Pattern
-Way of thinking about problems (flatten-with-flags, test-invariants)
+Way to think about problems (flatten-with-flags, test-invariants)
 
 ### Reference
-API docs, syntax guides, tool documentation (office docs)
+API docs, syntax guides, tool docs (office docs)
 
 ## Directory Structure
 
@@ -95,10 +95,10 @@ skills/
 **Frontmatter (YAML):**
 - Two required fields: `name` and `description` (see [agentskills.io/specification](https://agentskills.io/specification) for all supported fields)
 - Max 1024 characters total
-- `name`: Use letters, numbers, and hyphens only (no parentheses, special chars)
+- `name`: Use letters, numbers, hyphens only (no parentheses, special chars)
 - `description`: Third-person, describes ONLY when to use (NOT what it does)
   - Start with "Use when..." to focus on triggering conditions
-  - Include specific symptoms, situations, and contexts
+  - Include specific symptoms, situations, contexts
   - **NEVER summarize the skill's process or workflow** (see CSO section for why)
   - Keep under 500 characters if possible
 
@@ -143,19 +143,19 @@ Concrete results
 
 ### 1. Rich Description Field
 
-**Purpose:** Claude reads description to decide which skills to load for a given task. Make it answer: "Should I read this skill right now?"
+**Purpose:** Claude reads description to decide skill load for task. Answer: "Should I read this skill right now?"
 
 **Format:** Start with "Use when..." to focus on triggering conditions
 
 **CRITICAL: Description = When to Use, NOT What the Skill Does**
 
-The description should ONLY describe triggering conditions. Do NOT summarize the skill's process or workflow in the description.
+Description ONLY names triggering conditions. Do NOT summarize process/workflow in description.
 
-**Why this matters:** Testing revealed that when a description summarizes the skill's workflow, Claude may follow the description instead of reading the full skill content. A description saying "code review between tasks" caused Claude to do ONE review, even though the skill's flowchart clearly showed TWO reviews (spec compliance then code quality).
+**Why this matters:** Testing showed workflow-summary descriptions make Claude follow description instead of reading full skill. Description "code review between tasks" caused ONE review, though flowchart showed TWO reviews (spec compliance then code quality).
 
-When the description was changed to just "Use when executing implementation plans with independent tasks" (no workflow summary), Claude correctly read the flowchart and followed the two-stage review process.
+Changed description to only "Use when executing implementation plans with independent tasks" (no workflow summary); Claude read flowchart and followed two-stage review.
 
-**The trap:** Descriptions that summarize workflow create a shortcut Claude will take. The skill body becomes documentation Claude skips.
+**The trap:** Workflow-summary descriptions create shortcut Claude takes. Skill body becomes skipped docs.
 
 ```yaml
 # ❌ BAD: Summarizes workflow - Claude may follow this instead of reading skill
@@ -172,10 +172,10 @@ description: Use when implementing any feature or bugfix, before writing impleme
 ```
 
 **Content:**
-- Use concrete triggers, symptoms, and situations that signal this skill applies
-- Describe the *problem* (race conditions, inconsistent behavior) not *language-specific symptoms* (setTimeout, sleep)
-- Keep triggers technology-agnostic unless the skill itself is technology-specific
-- If skill is technology-specific, make that explicit in the trigger
+- Use concrete triggers, symptoms, situations signaling skill applies
+- Describe *problem* (race conditions, inconsistent behavior) not *language-specific symptoms* (setTimeout, sleep)
+- Keep triggers technology-agnostic unless skill is technology-specific
+- If skill is technology-specific, make trigger explicit
 - Write in third person (injected into system prompt)
 - **NEVER summarize the skill's process or workflow**
 
@@ -212,7 +212,7 @@ Use words Claude would search for:
 
 ### 4. Token Efficiency (Critical)
 
-**Problem:** getting-started and frequently-referenced skills load into EVERY conversation. Every token counts.
+**Problem:** getting-started and frequent skills load into EVERY conversation. Every token counts.
 
 **Target word counts:**
 - getting-started workflows: <150 words each
@@ -254,8 +254,8 @@ You: Searching...
 ```
 
 **Eliminate redundancy:**
-- Don't repeat what's in cross-referenced skills
-- Don't explain what's obvious from command
+- Don't repeat cross-referenced skills
+- Don't explain obvious command behavior
 - Don't include multiple examples of same pattern
 
 **Verification:**
@@ -273,11 +273,11 @@ wc -w skills/path/SKILL.md
 
 **Gerunds (-ing) work well for processes:**
 - `creating-skills`, `testing-skills`, `debugging-with-logs`
-- Active, describes the action you're taking
+- Active, describes action you're taking
 
 ### 4. Cross-Referencing Other Skills
 
-**When writing documentation that references other skills:**
+**When writing docs referencing other skills:**
 
 Use skill name only, with explicit requirement markers:
 - ✅ Good: `**REQUIRED SUB-SKILL:** Use superfastpowers:test-driven-development`
@@ -285,7 +285,7 @@ Use skill name only, with explicit requirement markers:
 - ❌ Bad: `See skills/testing/test-driven-development` (unclear if required)
 - ❌ Bad: `@skills/testing/test-driven-development/SKILL.md` (force-loads, burns context)
 
-**Why no @ links:** `@` syntax force-loads files immediately, consuming 200k+ context before you need them.
+**Why no @ links:** `@` syntax force-loads files immediately, consuming 200k+ context before need.
 
 ## Flowchart Usage
 
@@ -342,7 +342,7 @@ Choose most relevant language:
 - Create fill-in-the-blank templates
 - Write contrived examples
 
-You're good at porting - one great example is enough.
+You're good at porting - one great example enough.
 
 ## File Organization
 
@@ -377,7 +377,7 @@ When: Reference material too large for inline
 NO SKILL WITHOUT A FAILING TEST FIRST
 ```
 
-This applies to NEW skills AND EDITS to existing skills.
+Applies to NEW skills AND EDITS to existing skills.
 
 Write skill before testing? Delete it. Start over.
 Edit skill without testing? Same violation.
@@ -390,7 +390,7 @@ Edit skill without testing? Same violation.
 - Don't "adapt" while running tests
 - Delete means delete
 
-**REQUIRED BACKGROUND:** The superfastpowers:test-driven-development skill explains why this matters. Same principles apply to documentation.
+**REQUIRED BACKGROUND:** superfastpowers:test-driven-development explains why this matters. Same principles apply to docs.
 
 ## Testing All Skill Types
 
@@ -401,19 +401,19 @@ Different skill types need different test approaches:
 **Examples:** TDD, verification-before-completion, designing-before-coding
 
 **Test with:**
-- Academic questions: Do they understand the rules?
+- Academic questions: Do they understand rules?
 - Pressure scenarios: Do they comply under stress?
 - Multiple pressures combined: time + sunk cost + exhaustion
 - Identify rationalizations and add explicit counters
 
-**Success criteria:** Agent follows rule under maximum pressure
+**Success criteria:** Agent follows rule under max pressure
 
 ### Technique Skills (how-to guides)
 
 **Examples:** condition-based-waiting, root-cause-tracing, defensive-programming
 
 **Test with:**
-- Application scenarios: Can they apply the technique correctly?
+- Application scenarios: Can they apply technique correctly?
 - Variation scenarios: Do they handle edge cases?
 - Missing information tests: Do instructions have gaps?
 
@@ -425,21 +425,21 @@ Different skill types need different test approaches:
 
 **Test with:**
 - Recognition scenarios: Do they recognize when pattern applies?
-- Application scenarios: Can they use the mental model?
+- Application scenarios: Can they use mental model?
 - Counter-examples: Do they know when NOT to apply?
 
 **Success criteria:** Agent correctly identifies when/how to apply pattern
 
 ### Reference Skills (documentation/APIs)
 
-**Examples:** API documentation, command references, library guides
+**Examples:** API docs, command references, library guides
 
 **Test with:**
-- Retrieval scenarios: Can they find the right information?
-- Application scenarios: Can they use what they found correctly?
+- Retrieval scenarios: Can they find right information?
+- Application scenarios: Can they use found info correctly?
 - Gap testing: Are common use cases covered?
 
-**Success criteria:** Agent finds and correctly applies reference information
+**Success criteria:** Agent finds and correctly applies reference info
 
 ## Common Rationalizations for Skipping Testing
 
@@ -458,13 +458,13 @@ Different skill types need different test approaches:
 
 ## Bulletproofing Skills Against Rationalization
 
-Skills that enforce discipline (like TDD) need to resist rationalization. Agents are smart and will find loopholes when under pressure.
+Discipline skills (like TDD) must resist rationalization. Agents are smart; under pressure, they find loopholes.
 
-**Psychology note:** Understanding WHY persuasion techniques work helps you apply them systematically. See persuasion-principles.md for research foundation (Cialdini, 2021; Meincke et al., 2025) on authority, commitment, scarcity, social proof, and unity principles.
+**Psychology note:** Understanding WHY persuasion works helps systematic use. See persuasion-principles.md for research foundation (Cialdini, 2021; Meincke et al., 2025) on authority, commitment, scarcity, social proof, unity.
 
 ### Close Every Loophole Explicitly
 
-Don't just state the rule - forbid specific workarounds:
+Don't just state rule - forbid specific workarounds:
 
 <Bad>
 ```markdown
@@ -492,11 +492,11 @@ Add foundational principle early:
 **Violating the letter of the rules is violating the spirit of the rules.**
 ```
 
-This cuts off entire class of "I'm following the spirit" rationalizations.
+Cuts off "I'm following the spirit" rationalizations.
 
 ### Build Rationalization Table
 
-Capture rationalizations from baseline testing (see Testing section below). Every excuse agents make goes in the table:
+Capture baseline rationalizations (see Testing below). Every agent excuse goes in table:
 
 ```markdown
 | Excuse | Reality |
@@ -508,7 +508,7 @@ Capture rationalizations from baseline testing (see Testing section below). Ever
 
 ### Create Red Flags List
 
-Make it easy for agents to self-check when rationalizing:
+Make self-check easy when rationalizing:
 
 ```markdown
 ## Red Flags - STOP and Start Over
@@ -524,7 +524,7 @@ Make it easy for agents to self-check when rationalizing:
 
 ### Update CSO for Violation Symptoms
 
-Add to description: symptoms of when you're ABOUT to violate the rule:
+Add to description: symptoms of ABOUT to violate rule:
 
 ```yaml
 description: use when implementing any feature or bugfix, before writing implementation code
@@ -532,20 +532,20 @@ description: use when implementing any feature or bugfix, before writing impleme
 
 ## RED-GREEN-REFACTOR for Skills
 
-Follow the TDD cycle:
+Follow TDD cycle:
 
 ### RED: Write Failing Test (Baseline)
 
-Run pressure scenario with subagent WITHOUT the skill. Document exact behavior:
+Run pressure scenario with subagent WITHOUT skill. Document exact behavior:
 - What choices did they make?
 - What rationalizations did they use (verbatim)?
 - Which pressures triggered violations?
 
-This is "watch the test fail" - you must see what agents naturally do before writing the skill.
+This is "watch test fail" - see what agents naturally do before writing skill.
 
 ### GREEN: Write Minimal Skill
 
-Write skill that addresses those specific rationalizations. Don't add extra content for hypothetical cases.
+Write skill addressing those specific rationalizations. Don't add extra content for hypothetical cases.
 
 Run same scenarios WITH skill. Agent should now comply.
 
@@ -553,7 +553,7 @@ Run same scenarios WITH skill. Agent should now comply.
 
 Agent found new rationalization? Add explicit counter. Re-test until bulletproof.
 
-**Testing methodology:** See @testing-skills-with-subagents.md for the complete testing methodology:
+**Testing methodology:** See @testing-skills-with-subagents.md for complete testing methodology:
 - How to write pressure scenarios
 - Pressure types (time, sunk cost, authority, exhaustion)
 - Plugging holes systematically
@@ -591,7 +591,7 @@ helper1, helper2, step3, pattern4
 
 **The deployment checklist below is MANDATORY for EACH skill.**
 
-Deploying untested skills = deploying untested code. It's a violation of quality standards.
+Deploying untested skills = deploying untested code. Quality violation.
 
 ## Skill Creation Checklist (TDD Adapted)
 
@@ -642,7 +642,7 @@ How future Claude finds your skill:
 5. **Reads patterns** (quick reference table)
 6. **Loads example** (only when implementing)
 
-**Optimize for this flow** - put searchable terms early and often.
+**Optimize for this flow** - put searchable terms early/often.
 
 ## The Bottom Line
 
@@ -652,4 +652,4 @@ Same Iron Law: No skill without failing test first.
 Same cycle: RED (baseline) → GREEN (write skill) → REFACTOR (close loopholes).
 Same benefits: Better quality, fewer surprises, bulletproof results.
 
-If you follow TDD for code, follow it for skills. It's the same discipline applied to documentation.
+If you follow TDD for code, follow it for skills. Same discipline applied to docs.

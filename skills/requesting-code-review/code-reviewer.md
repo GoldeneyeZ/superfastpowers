@@ -1,8 +1,8 @@
 # Code Reviewer Prompt Template
 
-Use this template when dispatching a code reviewer subagent.
+Use template when dispatching code reviewer subagent.
 
-**Purpose:** Review completed work against requirements and code quality standards before it cascades into more work.
+**Purpose:** Review completed work against requirements + code quality before issues cascade.
 
 ```
 Task tool (general-purpose):
@@ -122,10 +122,10 @@ Task tool (general-purpose):
 ```
 
 **Placeholders:**
-- `{DESCRIPTION}` — brief summary of what was built
-- `{PLAN_OR_REQUIREMENTS}` — what it should do (plan file path, task text, or requirements)
-- `{BASE_SHA}` — starting commit
-- `{HEAD_SHA}` — ending commit
+- `{DESCRIPTION}` — brief built summary
+- `{PLAN_OR_REQUIREMENTS}` — expected behavior source: plan path, task text, or requirements
+- `{BASE_SHA}` — start commit
+- `{HEAD_SHA}` — end commit
 
 **Reviewer returns:** Strengths, Issues (Critical / Important / Minor), Recommendations, Assessment
 

@@ -1,10 +1,10 @@
 # Spec Document Reviewer Prompt Template
 
-Use this template when dispatching a spec document reviewer subagent.
+Use when dispatching spec reviewer subagent.
 
-**Purpose:** Verify the spec is complete, consistent, and ready for implementation planning.
+**Purpose:** Verify spec complete, consistent, implementation-plan ready.
 
-**Dispatch after:** Spec document is written to docs/superfastpowers/specs/
+**Dispatch after:** Spec written to docs/superfastpowers/specs/
 
 ```
 Task tool (general-purpose):
@@ -46,4 +46,4 @@ Task tool (general-purpose):
     - [suggestions for improvement]
 ```
 
-**Reviewer returns:** Status, Issues (if any), Recommendations
+**Reviewer returns:** Status, Issues, Recommendations

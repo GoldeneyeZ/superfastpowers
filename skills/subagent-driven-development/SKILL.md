@@ -5,13 +5,13 @@ description: Use when executing implementation plans with independent tasks in t
 
 # Subagent-Driven Development
 
-Execute plan by dispatching fresh subagent per task, with two-stage review after each: spec compliance review first, then code quality review.
+Execute plan by fresh subagent per task, with two-stage review after each: spec compliance, then code quality.
 
-**Why subagents:** You delegate tasks to specialized agents with isolated context. By precisely crafting their instructions and context, you ensure they stay focused and succeed at their task. They should never inherit your session's context or history — you construct exactly what they need. This also preserves your own context for coordination work.
+**Why subagents:** Delegate to specialized agents with isolated context. Craft exact instructions + context so they stay focused and succeed. They never inherit session context/history; provide only needed inputs. Keeps your context for coordination.
 
 **Core principle:** Fresh subagent per task + two-stage review (spec then quality) = high quality, fast iteration
 
-**Continuous execution:** Do not pause to check in with your human partner between tasks. Execute all tasks from the plan without stopping. The only reasons to stop are: BLOCKED status you cannot resolve, ambiguity that genuinely prevents progress, or all tasks complete. "Should I continue?" prompts and progress summaries waste their time — they asked you to execute the plan, so execute it.
+**Continuous execution:** Do not pause to check with human between tasks. Execute all plan tasks without stopping. Stop only for BLOCKED you cannot resolve, ambiguity blocking progress, or all tasks done. "Should I continue?" prompts and progress summaries waste time — they asked you to execute plan, so execute.
 
 ## When to Use
 
@@ -88,13 +88,13 @@ digraph process {
 
 ## Model Selection
 
-Use the least powerful model that can handle each role to conserve cost and increase speed.
+Use least powerful model that can handle role, conserving cost + increasing speed.
 
-**Mechanical implementation tasks** (isolated functions, clear specs, 1-2 files): use a fast, cheap model. Most implementation tasks are mechanical when the plan is well-specified.
+**Mechanical implementation tasks** (isolated functions, clear specs, 1-2 files): use fast, cheap model. Most implementation tasks are mechanical when plan is well-specified.
 
-**Integration and judgment tasks** (multi-file coordination, pattern matching, debugging): use a standard model.
+**Integration and judgment tasks** (multi-file coordination, pattern matching, debugging): use standard model.
 
-**Architecture, design, and review tasks**: use the most capable available model.
+**Architecture, design, and review tasks**: use most capable available model.
 
 **Task complexity signals:**
 - Touches 1-2 files with a complete spec → cheap model
@@ -103,21 +103,21 @@ Use the least powerful model that can handle each role to conserve cost and incr
 
 ## Handling Implementer Status
 
-Implementer subagents report one of four statuses. Handle each appropriately:
+Implementer subagents report one of four statuses. Handle each right:
 
 **DONE:** Proceed to spec compliance review.
 
-**DONE_WITH_CONCERNS:** The implementer completed the work but flagged doubts. Read the concerns before proceeding. If the concerns are about correctness or scope, address them before review. If they're observations (e.g., "this file is getting large"), note them and proceed to review.
+**DONE_WITH_CONCERNS:** Work complete but doubts flagged. Read concerns before proceeding. If correctness/scope concern, fix before review. If observation (e.g., "this file is getting large"), note and proceed.
 
-**NEEDS_CONTEXT:** The implementer needs information that wasn't provided. Provide the missing context and re-dispatch.
+**NEEDS_CONTEXT:** Implementer lacks needed info. Provide missing context and re-dispatch.
 
-**BLOCKED:** The implementer cannot complete the task. Assess the blocker:
-1. If it's a context problem, provide more context and re-dispatch with the same model
-2. If the task requires more reasoning, re-dispatch with a more capable model
-3. If the task is too large, break it into smaller pieces
-4. If the plan itself is wrong, escalate to the human
+**BLOCKED:** Implementer cannot complete task. Assess blocker:
+1. If context problem, provide more context and re-dispatch with same model
+2. If task needs more reasoning, re-dispatch with more capable model
+3. If task too large, split smaller
+4. If plan wrong, escalate to human
 
-**Never** ignore an escalation or force the same model to retry without changes. If the implementer said it's stuck, something needs to change.
+**Never** ignore escalation or force same model retry unchanged. If implementer stuck, something must change.
 
 ## Prompt Templates
 
@@ -216,22 +216,22 @@ Done!
 
 **Efficiency gains:**
 - No file reading overhead (controller provides full text)
-- Controller curates exactly what context is needed
+- Controller curates exact needed context
 - Subagent gets complete information upfront
-- Questions surfaced before work begins (not after)
+- Questions surface before work begins (not after)
 
 **Quality gates:**
 - Self-review catches issues before handoff
 - Two-stage review: spec compliance, then code quality
-- Review loops ensure fixes actually work
+- Review loops ensure fixes work
 - Spec compliance prevents over/under-building
-- Code quality ensures implementation is well-built
+- Code quality ensures implementation well-built
 
 **Cost:**
 - More subagent invocations (implementer + 2 reviewers per task)
-- Controller does more prep work (extracting all tasks upfront)
+- Controller does more prep (extracting all tasks upfront)
 - Review loops add iterations
-- But catches issues early (cheaper than debugging later)
+- Catches issues early (cheaper than later debugging)
 
 ## Red Flags
 

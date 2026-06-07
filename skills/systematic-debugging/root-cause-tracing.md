@@ -2,9 +2,9 @@
 
 ## Overview
 
-Bugs often manifest deep in the call stack (git init in wrong directory, file created in wrong location, database opened with wrong path). Your instinct is to fix where the error appears, but that's treating a symptom.
+Bugs often surface deep in call stack (git init wrong dir, file created wrong place, database opened wrong path). Instinct: fix where error appears. That treats symptom.
 
-**Core principle:** Trace backward through the call chain until you find the original trigger, then fix at the source.
+**Core principle:** Trace backward through call chain until original trigger, then fix source.
 
 ## When to Use
 
@@ -24,10 +24,10 @@ digraph when_to_use {
 ```
 
 **Use when:**
-- Error happens deep in execution (not at entry point)
-- Stack trace shows long call chain
-- Unclear where invalid data originated
-- Need to find which test/code triggers the problem
+- Error deep in execution, not entry point
+- Stack trace has long call chain
+- Invalid data origin unclear
+- Need find which test/code triggers problem
 
 ## The Tracing Process
 
@@ -37,7 +37,7 @@ Error: git init failed in ~/project/packages/core
 ```
 
 ### 2. Find Immediate Cause
-**What code directly causes this?**
+**Which code directly causes this?**
 ```typescript
 await execFileAsync('git', ['init'], { cwd: projectDir });
 ```
@@ -51,10 +51,10 @@ WorktreeManager.createSessionWorktree(projectDir, sessionId)
 ```
 
 ### 4. Keep Tracing Up
-**What value was passed?**
+**Which value passed?**
 - `projectDir = ''` (empty string!)
 - Empty string as `cwd` resolves to `process.cwd()`
-- That's the source code directory!
+- Source code directory!
 
 ### 5. Find Original Trigger
 **Where did empty string come from?**
@@ -65,7 +65,7 @@ Project.create('name', context.tempDir); // Accessed before beforeEach!
 
 ## Adding Stack Traces
 
-When you can't trace manually, add instrumentation:
+When manual trace fails, add instrumentation:
 
 ```typescript
 // Before the problematic operation
@@ -91,20 +91,20 @@ npm test 2>&1 | grep 'DEBUG git init'
 
 **Analyze stack traces:**
 - Look for test file names
-- Find the line number triggering the call
-- Identify the pattern (same test? same parameter?)
+- Find line number triggering call
+- Identify pattern (same test? same parameter?)
 
 ## Finding Which Test Causes Pollution
 
-If something appears during tests but you don't know which test:
+If something appears during tests but culprit unknown:
 
-Use the bisection script `find-polluter.sh` in this directory:
+Use bisection script `find-polluter.sh` in this directory:
 
 ```bash
 ./find-polluter.sh '.git' 'src/**/*.test.ts'
 ```
 
-Runs tests one-by-one, stops at first polluter. See script for usage.
+Runs tests one-by-one, stops at first polluter. See script usage.
 
 ## Real Example: Empty projectDir
 
@@ -117,9 +117,9 @@ Runs tests one-by-one, stops at first polluter. See script for usage.
 4. Test accessed `context.tempDir` before beforeEach
 5. setupCoreTest() returns `{ tempDir: '' }` initially
 
-**Root cause:** Top-level variable initialization accessing empty value
+**Root cause:** Top-level variable initialization accesses empty value
 
-**Fix:** Made tempDir a getter that throws if accessed before beforeEach
+**Fix:** Made tempDir getter throw if accessed before beforeEach
 
 **Also added defense-in-depth:**
 - Layer 1: Project.create() validates directory
@@ -151,12 +151,12 @@ digraph principle {
 }
 ```
 
-**NEVER fix just where the error appears.** Trace back to find the original trigger.
+**NEVER fix just where error appears.** Trace back to original trigger.
 
 ## Stack Trace Tips
 
 **In tests:** Use `console.error()` not logger - logger may be suppressed
-**Before operation:** Log before the dangerous operation, not after it fails
+**Before operation:** Log before dangerous operation, not after fail
 **Include context:** Directory, cwd, environment variables, timestamps
 **Capture stack:** `new Error().stack` shows complete call chain
 
@@ -165,5 +165,5 @@ digraph principle {
 From debugging session (2025-10-03):
 - Found root cause through 5-level trace
 - Fixed at source (getter validation)
-- Added 4 layers of defense
+- Added 4 defense layers
 - 1847 tests passed, zero pollution

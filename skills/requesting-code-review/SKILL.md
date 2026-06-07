@@ -5,21 +5,21 @@ description: Use when completing tasks, implementing major features, or before m
 
 # Requesting Code Review
 
-Dispatch a code reviewer subagent to catch issues before they cascade. The reviewer gets precisely crafted context for evaluation — never your session's history. This keeps the reviewer focused on the work product, not your thought process, and preserves your own context for continued work.
+Dispatch code reviewer subagent before issues cascade. Reviewer gets exact context for evaluation — never session history. Keeps reviewer focused on work product, not thought process; preserves own context.
 
-**Core principle:** Review early, review often.
+**Core principle:** Review early, often.
 
 ## When to Request Review
 
 **Mandatory:**
-- After each task in subagent-driven development
-- After completing major feature
+- After each subagent-driven development task
+- After major feature
 - Before merge to main
 
 **Optional but valuable:**
-- When stuck (fresh perspective)
-- Before refactoring (baseline check)
-- After fixing complex bug
+- When stuck (fresh view)
+- Before refactor (baseline)
+- After complex bug fix
 
 ## How to Request
 
@@ -31,19 +31,19 @@ HEAD_SHA=$(git rev-parse HEAD)
 
 **2. Dispatch code reviewer subagent:**
 
-Use Task tool with `general-purpose` type, fill template at `code-reviewer.md`
+Use Task tool with `general-purpose` type; fill template at `code-reviewer.md`
 
 **Placeholders:**
-- `{DESCRIPTION}` - Brief summary of what you built
-- `{PLAN_OR_REQUIREMENTS}` - What it should do
-- `{BASE_SHA}` - Starting commit
-- `{HEAD_SHA}` - Ending commit
+- `{DESCRIPTION}` - Short summary of what built
+- `{PLAN_OR_REQUIREMENTS}` - Expected behavior
+- `{BASE_SHA}` - Start commit
+- `{HEAD_SHA}` - End commit
 
 **3. Act on feedback:**
-- Fix Critical issues immediately
-- Fix Important issues before proceeding
-- Note Minor issues for later
-- Push back if reviewer is wrong (with reasoning)
+- Fix Critical now
+- Fix Important before proceeding
+- Note Minor for later
+- Push back if reviewer wrong (with reasoning)
 
 ## Example
 
@@ -76,11 +76,11 @@ You: [Fix progress indicators]
 
 **Subagent-Driven Development:**
 - Review after EACH task
-- Catch issues before they compound
-- Fix before moving to next task
+- Catch issues before compound
+- Fix before next task
 
 **Executing Plans:**
-- Review after each task or at natural checkpoints
+- Review after each task or natural checkpoint
 - Get feedback, apply, continue
 
 **Ad-Hoc Development:**
@@ -90,14 +90,14 @@ You: [Fix progress indicators]
 ## Red Flags
 
 **Never:**
-- Skip review because "it's simple"
+- Skip review because "simple"
 - Ignore Critical issues
 - Proceed with unfixed Important issues
 - Argue with valid technical feedback
 
 **If reviewer wrong:**
 - Push back with technical reasoning
-- Show code/tests that prove it works
+- Show code/tests proving it works
 - Request clarification
 
 See template at: requesting-code-review/code-reviewer.md

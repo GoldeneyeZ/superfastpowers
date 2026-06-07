@@ -1,6 +1,6 @@
 # Gemini CLI Tool Mapping
 
-Skills use Claude Code tool names. When you encounter these in a skill, use your platform equivalent:
+Skills use Claude Code tool names. When skill mentions one, use platform equivalent:
 
 | Skill references | Gemini CLI equivalent |
 |-----------------|----------------------|
@@ -18,9 +18,9 @@ Skills use Claude Code tool names. When you encounter these in a skill, use your
 
 ## Subagent support
 
-Gemini CLI supports subagents natively via the `@` syntax. Use the built-in `@generalist` agent to dispatch any task — it has access to all tools and follows the prompt you provide.
+Gemini CLI supports subagents via `@` syntax. Use built-in `@generalist` for any task — all tools, follows prompt.
 
-When a skill says to dispatch a named agent type, use `@generalist` with the full prompt from the skill's prompt template:
+When skill names agent type, use `@generalist` with full prompt from skill prompt template:
 
 | Skill instruction | Gemini CLI equivalent |
 |-------------------|----------------------|
@@ -32,20 +32,20 @@ When a skill says to dispatch a named agent type, use `@generalist` with the ful
 
 ### Prompt filling
 
-Skills provide prompt templates with placeholders like `{WHAT_WAS_IMPLEMENTED}` or `[FULL TEXT of task]`. Fill all placeholders and pass the complete prompt as the message to `@generalist`. The prompt template itself contains the agent's role, review criteria, and expected output format — `@generalist` will follow it.
+Skills provide prompt templates with placeholders like `{WHAT_WAS_IMPLEMENTED}` or `[FULL TEXT of task]`. Fill all placeholders, pass complete prompt to `@generalist`. Template contains agent role, review criteria, expected output format — `@generalist` follows it.
 
 ### Parallel dispatch
 
-Gemini CLI supports parallel subagent dispatch. When a skill asks you to dispatch multiple independent subagent tasks in parallel, request all of those `@generalist` or named subagent tasks together in the same prompt. Keep dependent tasks sequential, but do not serialize independent subagent tasks just to preserve a simpler history.
+Gemini CLI supports parallel subagent dispatch. If skill asks multiple independent subagent tasks in parallel, request all `@generalist` or named subagent tasks together in same prompt. Keep dependent tasks sequential; don't serialize independent tasks just for simpler history.
 
 ## Additional Gemini CLI tools
 
-These tools are available in Gemini CLI but have no Claude Code equivalent:
+Gemini CLI-only tools:
 
 | Tool | Purpose |
 |------|---------|
 | `list_directory` | List files and subdirectories |
 | `save_memory` | Persist facts to GEMINI.md across sessions |
-| `ask_user` | Request structured input from the user |
-| `tracker_create_task` | Rich task management (create, update, list, visualize) |
-| `enter_plan_mode` / `exit_plan_mode` | Switch to read-only research mode before making changes |
+| `ask_user` | Request structured input from user |
+| `tracker_create_task` | Rich task management: create, update, list, visualize |
+| `enter_plan_mode` / `exit_plan_mode` | Switch to read-only research mode before edits |

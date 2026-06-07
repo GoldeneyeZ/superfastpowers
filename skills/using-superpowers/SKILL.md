@@ -4,15 +4,15 @@ description: Use when starting any conversation - establishes how to find and us
 ---
 
 <SUBAGENT-STOP>
-If you were dispatched as a subagent to execute a specific task, skip this skill.
+Dispatched subagent with specific task: skip this skill.
 </SUBAGENT-STOP>
 
 <EXTREMELY-IMPORTANT>
-If you think there is even a 1% chance a skill might apply to what you are doing, you ABSOLUTELY MUST invoke the skill.
+Even 1% chance skill applies? Invoke it.
 
 IF A SKILL APPLIES TO YOUR TASK, YOU DO NOT HAVE A CHOICE. YOU MUST USE IT.
 
-This is not negotiable. This is not optional. You cannot rationalize your way out of this.
+Not negotiable. Not optional. No rationalizing out.
 </EXTREMELY-IMPORTANT>
 
 ## Instruction Priority
@@ -23,27 +23,27 @@ Superfastpowers skills override default system prompt behavior, but **user instr
 2. **Superfastpowers skills** — override default system behavior where they conflict
 3. **Default system prompt** — lowest priority
 
-If CLAUDE.md, GEMINI.md, or AGENTS.md says "don't use TDD" and a skill says "always use TDD," follow the user's instructions. The user is in control.
+If CLAUDE.md, GEMINI.md, or AGENTS.md says "don't use TDD" and skill says "always use TDD," follow user instructions. User controls.
 
 ## How to Access Skills
 
-**In Claude Code:** Use the `Skill` tool. When you invoke a skill, its content is loaded and presented to you—follow it directly. Never use the Read tool on skill files.
+**In Claude Code:** Use the `Skill` tool. Invoked skill content loads—follow directly. Never use Read tool on skill files.
 
-**In Copilot CLI:** Use the `skill` tool. Skills are auto-discovered from installed plugins. The `skill` tool works the same as Claude Code's `Skill` tool.
+**In Copilot CLI:** Use the `skill` tool. Skills auto-discovered from installed plugins. `skill` tool works like Claude Code's `Skill` tool.
 
-**In Gemini CLI:** Skills activate via the `activate_skill` tool. Gemini loads skill metadata at session start and activates the full content on demand.
+**In Gemini CLI:** Skills activate via `activate_skill` tool. Gemini loads skill metadata at session start; activates full content on demand.
 
-**In other environments:** Check your platform's documentation for how skills are loaded.
+**In other environments:** Check platform docs for skill loading.
 
 ## Platform Adaptation
 
-Skills use Claude Code tool names. Non-CC platforms: see `references/copilot-tools.md` (Copilot CLI), `references/codex-tools.md` (Codex) for tool equivalents. Gemini CLI users get the tool mapping loaded automatically via GEMINI.md.
+Skills use Claude Code tool names. Non-CC platforms: see `references/copilot-tools.md` (Copilot CLI), `references/codex-tools.md` (Codex) for tool equivalents. Gemini CLI users get tool mapping automatically via GEMINI.md.
 
 # Using Skills
 
 ## The Rule
 
-**Invoke relevant or requested skills BEFORE any response or action.** Even a 1% chance a skill might apply means that you should invoke the skill to check. If an invoked skill turns out to be wrong for the situation, you don't need to use it.
+**Invoke relevant or requested skills BEFORE any response or action.** Even 1% chance skill might apply means invoke skill to check. If wrong for situation, no need use it.
 
 ```dot
 digraph skill_flow {
@@ -77,29 +77,29 @@ digraph skill_flow {
 
 ## Red Flags
 
-These thoughts mean STOP—you're rationalizing:
+These thoughts mean STOP—rationalizing:
 
 | Thought | Reality |
 |---------|---------|
-| "This is just a simple question" | Questions are tasks. Check for skills. |
-| "I need more context first" | Skill check comes BEFORE clarifying questions. |
-| "Let me explore the codebase first" | Skills tell you HOW to explore. Check first. |
-| "I can check git/files quickly" | Files lack conversation context. Check for skills. |
-| "Let me gather information first" | Skills tell you HOW to gather information. |
-| "This doesn't need a formal skill" | If a skill exists, use it. |
+| "This is just a simple question" | Questions are tasks. Check skills. |
+| "I need more context first" | Skill check BEFORE clarifying questions. |
+| "Let me explore the codebase first" | Skills tell HOW to explore. Check first. |
+| "I can check git/files quickly" | Files lack conversation context. Check skills. |
+| "Let me gather information first" | Skills tell HOW to gather info. |
+| "This doesn't need a formal skill" | If skill exists, use it. |
 | "I remember this skill" | Skills evolve. Read current version. |
-| "This doesn't count as a task" | Action = task. Check for skills. |
+| "This doesn't count as a task" | Action = task. Check skills. |
 | "The skill is overkill" | Simple things become complex. Use it. |
-| "I'll just do this one thing first" | Check BEFORE doing anything. |
-| "This feels productive" | Undisciplined action wastes time. Skills prevent this. |
-| "I know what that means" | Knowing the concept ≠ using the skill. Invoke it. |
+| "I'll just do this one thing first" | Check BEFORE anything. |
+| "This feels productive" | Undisciplined action wastes time. Skills prevent. |
+| "I know what that means" | Knowing concept ≠ using skill. Invoke it. |
 
 ## Skill Priority
 
-When multiple skills could apply, use this order:
+When multiple skills could apply, use order:
 
-1. **Process skills first** (brainstorming, debugging) - these determine HOW to approach the task
-2. **Implementation skills second** (frontend-design, mcp-builder) - these guide execution
+1. **Process skills first** (brainstorming, debugging) - determine HOW to approach task
+2. **Implementation skills second** (frontend-design, mcp-builder) - guide execution
 
 "Let's build X" → brainstorming first, then implementation skills.
 "Fix this bug" → debugging first, then domain-specific skills.
@@ -110,7 +110,7 @@ When multiple skills could apply, use this order:
 
 **Flexible** (patterns): Adapt principles to context.
 
-The skill itself tells you which.
+Skill itself tells which.
 
 ## User Instructions
 
