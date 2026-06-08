@@ -32,11 +32,23 @@ Task tool (general-purpose):
     1. Implement exactly what the task specifies
     2. Write tests (following TDD if task says to)
     3. Verify implementation works
-    4. Commit your work
+    4. Commit your work using the required task ID prefix
     5. Self-review (see below)
     6. Report back
 
     Work from: [directory]
+    ## Commit Requirement
+
+    When committing, prefix the commit message subject with `[<TASK-ID>]`, where
+    `<TASK-ID>` is composed of the plan acronym and task number from the task
+    description.
+
+    Example: if the plan acronym is `UA` and this is Task 3, commit with:
+    `git commit -m "[UA-3] feat: add user audit trail"`
+
+    If the pasted task description includes a `<TASK-ID>...</TASK-ID>` tag, use
+    that exact value inside brackets.
+
 
     **While you work:** If you encounter something unexpected or unclear, **ask questions**.
     It's always OK to pause and clarify. Don't guess or make assumptions.

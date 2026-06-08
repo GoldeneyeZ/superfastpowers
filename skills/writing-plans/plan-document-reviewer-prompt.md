@@ -22,6 +22,7 @@ Task tool (general-purpose):
     | Completeness | TODOs, placeholders, incomplete tasks, missing steps |
     | Spec Alignment | Plan covers spec requirements, no major scope creep |
     | Task Decomposition | Tasks have clear boundaries, steps are actionable |
+    | Task IDs | Every task has `<TASK-ID>[PLAN-ACRONYM]-[TASK-NUMBER]</TASK-ID>` using the plan acronym |
     | Buildability | Could an engineer follow this plan without getting stuck? |
 
     ## Calibration

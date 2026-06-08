@@ -54,6 +54,8 @@ Structure drives task decomposition. Each task should produce self-contained cha
 **Goal:** [One sentence describing what this builds]
 
 **Architecture:** [2-3 sentences about approach]
+**Plan Acronym:** [UPPERCASE acronym for the feature, used in task IDs]
+
 
 **Tech Stack:** [Key technologies/libraries]
 
@@ -61,9 +63,16 @@ Structure drives task decomposition. Each task should produce self-contained cha
 ```
 
 ## Task Structure
+Every task MUST include a stable task ID immediately under its heading:
+- Format: `<TASK-ID>[PLAN-ACRONYM]-[TASK-NUMBER]</TASK-ID>`
+- Use the plan acronym from the document header.
+- Example: plan acronym `UA`, task 3 => `<TASK-ID>UA-3</TASK-ID>`
+
 
 ````markdown
 ### Task N: [Component Name]
+
+<TASK-ID>[ACRONYM]-N</TASK-ID>
 
 **Files:**
 - Create: `exact/path/to/file.py`
