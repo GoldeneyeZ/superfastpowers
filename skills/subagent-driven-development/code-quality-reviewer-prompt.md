@@ -12,6 +12,8 @@ Task tool (general-purpose):
 
   DESCRIPTION: [task summary, from implementer's report]
   PLAN_OR_REQUIREMENTS: Task N from [plan-file]
+  TASK_PACKAGE_DIR: [path/to/tasks/<TASK-ID>/, if present]
+  TASK_CONTEXT: [task package context.md if present]
   BASE_SHA: [commit before task]
   HEAD_SHA: [current commit]
 ```
@@ -21,5 +23,8 @@ Task tool (general-purpose):
 - Units decomposed for independent understanding + testing?
 - Implementation follows plan file structure?
 - New files already large, or existing files significantly grown? (Don't flag pre-existing file sizes — focus on this change.)
+- `context.md` commit SHA matches the reviewed task commit/range?
+- `context.md` lists files created/modified by the task and relevant files used for implementation?
+- `context.md` verification commands/results are specific enough for a reviewer to reproduce?
 
 **Code reviewer returns:** Strengths, Issues (Critical/Important/Minor), Assessment.

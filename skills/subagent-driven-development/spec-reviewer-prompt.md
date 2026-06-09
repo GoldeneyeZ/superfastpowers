@@ -18,18 +18,28 @@ Task tool (general-purpose):
 
     [From implementer's report]
 
+    ## Task Package Context
+
+    Task package directory: [path/to/tasks/<TASK-ID>/, if present]
+
+    [Paste task package context.md if present]
+
     ## CRITICAL: Do Not Trust the Report
 
-    The implementer finished suspiciously quickly. Their report may be incomplete,
-    inaccurate, or optimistic. You MUST verify everything independently.
+    The implementer report and `context.md` may be incomplete, inaccurate, stale,
+    or optimistic. Use them as a map, not as proof. You MUST verify everything
+    independently.
 
     **DO NOT:**
     - Take their word for what they implemented
     - Trust their claims about completeness
     - Accept their interpretation of requirements
+    - Assume `context.md` lists every relevant file
 
     **DO:**
     - Read the actual code they wrote
+    - Use the task package directory and `context.md` to find the task commit and likely relevant files
+    - Compare `context.md` against the actual diff for missing or inaccurate file lists
     - Compare actual implementation to requirements line by line
     - Check for missing pieces they claimed to implement
     - Look for extra features they didn't mention
@@ -53,9 +63,16 @@ Task tool (general-purpose):
     - Did they solve the wrong problem?
     - Did they implement the right feature but wrong way?
 
+    **Context package hygiene:**
+    - Did the implementer replace the pending commit SHA with the final task commit SHA or reviewed range?
+    - Does `context.md` list files created and modified by the task?
+    - Does it include additional files that were relevant to the task, if any?
+    - Are verification commands/results recorded?
+
     **Verify by reading code, not by trusting report.**
 
     Report:
     - ✅ Spec compliant (if everything matches after code inspection)
     - ❌ Issues found: [list specifically what's missing or extra, with file:line references]
+    - Context package issues, if any
 ```

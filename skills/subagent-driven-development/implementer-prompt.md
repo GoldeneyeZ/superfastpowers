@@ -37,6 +37,28 @@ Task tool (general-purpose):
     6. Report back
 
     Work from: [directory]
+
+    ## Task Package Context
+
+    Task package directory: [path/to/tasks/<TASK-ID>/, if present]
+
+    If this task has a task package, use `[task package directory]/context.md`
+    as starting context. The listed files are starting points, not constraints;
+    inspect any additional files needed to complete the task correctly.
+
+    Before reporting back, update `[task package directory]/context.md` with:
+    - Final task commit SHA
+    - Reviewed commit range, if review fixes added follow-up commits
+    - Files created
+    - Files modified
+    - Additional files inspected or relevant to the task
+    - Verification commands run and results
+
+    Do not leave `Commit SHA` as pending after committing. If you add follow-up
+    commits for review fixes, update `context.md` again before handing back.
+    Reviewer agents use `context.md` as their map for finding the task commit or
+    reviewed range and understanding which files changed or mattered.
+
     ## Commit Requirement
 
     When committing, prefix the commit message subject with `[<TASK-ID>]`, where
@@ -116,6 +138,7 @@ Task tool (general-purpose):
     - What you implemented (or what you attempted, if blocked)
     - What you tested and test results
     - Files changed
+    - Task package `context.md` updated? yes/no, with path
     - Self-review findings (if any)
     - Any issues or concerns
 

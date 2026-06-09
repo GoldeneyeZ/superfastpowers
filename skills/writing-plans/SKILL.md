@@ -15,8 +15,10 @@ Assume skilled developer, but new to toolset/domain and weak test design.
 
 **Context:** If in isolated worktree, it should come from `superfastpowers:using-git-worktrees` skill at execution time.
 
-**Save plans to:** `docs/superfastpowers/plans/YYYY-MM-DD-<feature-name>.md`
-- (User preferences for plan location override this default)
+**Save plans to:** `docs/superfastpowers/plans/<PLAN-ACRONYM>/<YYYY-MM-DD-kebab-feature-name>.md`
+- `<PLAN-ACRONYM>` is the uppercase acronym from the plan header, matching task IDs.
+- Filename is dated + kebab-case so multiple plans under the same acronym do not collide.
+- User preferences for plan location override this default.
 
 ## Scope Check
 
@@ -140,11 +142,52 @@ After complete plan, review spec fresh and check plan against it. Checklist for 
 
 If issues found, fix inline. No re-review — fix and move on. If spec requirement has no task, add task.
 
+## User Validation and Task Packages
+
+After saving the plan, get explicit user validation before creating task packages. Do not assume validation from silence.
+
+Once validated, create one task directory per task under a directory named after the plan filename stem:
+
+`docs/superfastpowers/plans/<PLAN-ACRONYM>/<YYYY-MM-DD-kebab-feature-name>/tasks/<TASK-ID>/`
+
+Each task directory MUST contain:
+
+- `task.md` — the complete task copied from the plan, including task ID, files, steps, code blocks, commands, and expected results.
+- `context.md` — starting context for the agent taking the task.
+
+`context.md` MUST make clear that listed files are starting points, not constraints. The task agent may inspect any file needed to complete the task.
+
+Use this `context.md` structure:
+
+```markdown
+# Context for <TASK-ID>
+
+**Plan:** `docs/superfastpowers/plans/<PLAN-ACRONYM>/<YYYY-MM-DD-kebab-feature-name>.md`
+**Task:** `<TASK-ID>`
+**Commit SHA:** Pending until task completion. If review fixes add commits, update to the latest task commit and note the reviewed range below.
+
+## Starting Context
+
+- `path/to/file`: why this file is relevant
+
+## Open Context Rule
+
+The files above are starting points only. Inspect any additional files needed to complete the task correctly.
+
+## Completion Updates
+
+The implementer updates this section before review with the final task commit
+SHA, reviewed commit range if relevant, files created, files modified,
+additional relevant files, and verification commands/results.
+```
+
+The final `context.md` is the reviewer's map for finding the task commit and understanding the files that changed or mattered.
+
 ## Execution Handoff
 
-After saving plan, offer execution choice:
+After saving the plan and creating validated task packages, offer execution choice:
 
-**"Plan complete and saved to `docs/superfastpowers/plans/<filename>.md`. Two execution options:**
+**"Plan complete and saved to `docs/superfastpowers/plans/<PLAN-ACRONYM>/<YYYY-MM-DD-kebab-feature-name>.md`. Two execution options:**
 
 **1. Subagent-Driven (recommended)** - Dispatch fresh subagent per task, review between tasks, fast iteration
 

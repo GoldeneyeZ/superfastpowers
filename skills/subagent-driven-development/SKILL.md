@@ -60,12 +60,12 @@ digraph process {
         "Mark task complete in TodoWrite" [shape=box];
     }
 
-    "Read plan, extract all tasks with full text, note context, create TodoWrite" [shape=box];
+    "Read plan, extract all tasks with full text, task package paths, context, create TodoWrite" [shape=box];
     "More tasks remain?" [shape=diamond];
     "Dispatch final code reviewer subagent for entire implementation" [shape=box];
     "Use superfastpowers:finishing-a-development-branch" [shape=box style=filled fillcolor=lightgreen];
 
-    "Read plan, extract all tasks with full text, note context, create TodoWrite" -> "Dispatch implementer subagent (./implementer-prompt.md)";
+    "Read plan, extract all tasks with full text, task package paths, context, create TodoWrite" -> "Dispatch implementer subagent (./implementer-prompt.md)";
     "Dispatch implementer subagent (./implementer-prompt.md)" -> "Implementer subagent asks questions?";
     "Implementer subagent asks questions?" -> "Answer questions, provide context" [label="yes"];
     "Answer questions, provide context" -> "Dispatch implementer subagent (./implementer-prompt.md)";
@@ -125,13 +125,18 @@ Implementer subagents report one of four statuses. Handle each right:
 - `./spec-reviewer-prompt.md` - Dispatch spec compliance reviewer subagent
 - `./code-quality-reviewer-prompt.md` - Dispatch code quality reviewer subagent
 
+When task packages exist, pass each task's task package directory path plus
+`task.md` and `context.md` contents into the implementer and reviewer prompts.
+The implementer updates `context.md` before reporting; reviewers use it as a
+map and verify it against the actual diff/commit.
+
 ## Example Workflow
 
 ```
 You: I'm using Subagent-Driven Development to execute this plan.
 
-[Read plan file once: docs/superfastpowers/plans/feature-plan.md]
-[Extract all 5 tasks with full text and context]
+[Read plan file once: docs/superfastpowers/plans/FEATURE/2026-06-09-feature-plan.md]
+[Extract all 5 tasks with full text, task package directory paths, and context.md]
 [Create TodoWrite with all tasks]
 
 Task 1: Hook installation script
