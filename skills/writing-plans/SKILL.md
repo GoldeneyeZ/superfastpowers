@@ -51,7 +51,7 @@ Structure drives task decomposition. Each task should produce self-contained cha
 ```markdown
 # [Feature Name] Implementation Plan
 
-> **For agentic workers:** REQUIRED SUB-SKILL: Use superfastpowers:subagent-driven-development (recommended) or superfastpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
+> **For agentic workers:** REQUIRED SUB-SKILL: Use superfastpowers:subagent-driven-development (recommended), superfastpowers:goal-driven-development, or superfastpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
 **Goal:** [One sentence describing what this builds]
 
@@ -183,21 +183,56 @@ additional relevant files, and verification commands/results.
 
 The final `context.md` is the reviewer's map for finding the task commit and understanding the files that changed or mattered.
 
+## Goal-Driven Progression File
+
+Only create `plan-progression.md` if the user chooses Goal-Driven execution.
+
+Create it in the task package root:
+
+`docs/superfastpowers/plans/<PLAN-ACRONYM>/<YYYY-MM-DD-kebab-feature-name>/plan-progression.md`
+
+Generate one section per task, in plan order:
+
+```markdown
+# Plan Progression
+
+Last updated: YYYY-MM-DD HH:MM
+
+## Task N: [Task Name]
+
+- Path: `docs/superfastpowers/plans/<PLAN-ACRONYM>/<YYYY-MM-DD-kebab-feature-name>/tasks/<TASK-ID>/`
+- Task status: pending
+- Implementer: unchecked
+- Spec review: unchecked
+- Code quality: unchecked
+- Next action: Start implementation.
+```
+
+Do not include review findings, implementation notes, or detailed handoffs in
+`plan-progression.md`. Those belong in each task directory.
+
 ## Execution Handoff
 
 After saving the plan and creating validated task packages, offer execution choice:
 
-**"Plan complete and saved to `docs/superfastpowers/plans/<PLAN-ACRONYM>/<YYYY-MM-DD-kebab-feature-name>.md`. Two execution options:**
+**"Plan complete and saved to `docs/superfastpowers/plans/<PLAN-ACRONYM>/<YYYY-MM-DD-kebab-feature-name>.md`. Three execution options:**
 
 **1. Subagent-Driven (recommended)** - Dispatch fresh subagent per task, review between tasks, fast iteration
 
-**2. Inline Execution** - Execute tasks in this session using executing-plans, batch execution with checkpoints
+**2. Goal-Driven** - Use the Codex/OMP goal mechanism for the overall objective, with task packages and `plan-progression.md` to orchestrate implementer/spec/quality phases
+
+**3. Inline Execution** - Execute tasks in this session using executing-plans, batch execution with checkpoints
 
 **Which approach?"**
 
 **If Subagent-Driven chosen:**
 - **REQUIRED SUB-SKILL:** Use superfastpowers:subagent-driven-development
 - Fresh subagent per task + two-stage review
+
+**If Goal-Driven chosen:**
+- Create `plan-progression.md` using the structure above
+- **REQUIRED SUB-SKILL:** Use superfastpowers:goal-driven-development
+- Same-session phase loop with implementer, strict spec review, and code quality completion gate
 
 **If Inline Execution chosen:**
 - **REQUIRED SUB-SKILL:** Use superfastpowers:executing-plans
