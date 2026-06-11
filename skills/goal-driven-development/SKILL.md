@@ -7,9 +7,11 @@ description: Use when executing implementation plans with task package directori
 
 Execute a pre-split plan by walking task package directories one at a time, using `plan-progression.md` for task stage/status and task-local files for detailed review loops.
 
-**Core principle:** Keep global progress concise; keep detailed implementation and review findings inside each task's own directory.
+**Core principle:** Keep controller context small; keep detailed implementation and review findings inside each task's own directory.
 
-**Execution mechanism:** Do not spawn or dispatch subagents. In Codex, use the `goal` tool only to track the overall active implementation objective. The main agent executes each implementer, spec review, code quality review, and final integration review phase sequentially in the same session, using the phase templates below as instructions. If OMP has richer goal semantics, adapt only where the tool genuinely supports it; do not imply worker isolation unless the harness provides it.
+**Execution mechanism:** The main agent is a lightweight controller. When the harness supports isolated workers, dispatch one isolated worker per task. That worker runs the full task lifecycle: implementation, spec review, quality review, and any review-fix loops for that task. The controller keeps one active goal for the whole plan, selects the next task, verifies task files/progression after each worker returns, and avoids carrying detailed task history in chat.
+
+If isolated workers are unavailable, execute the same per-task lifecycle inline, but keep detailed findings in task files and summarize aggressively before moving to the next task.
 
 **Continuous execution:** Do not pause to check with the human between tasks. Execute all plan tasks without stopping. Stop only for BLOCKED you cannot resolve, ambiguity blocking progress, or all tasks done.
 
@@ -19,7 +21,7 @@ Use this when:
 - An implementation plan is already split into task directories
 - Each task directory has `context.md`
 - Review findings and handoffs should stay with the task they belong to
-- You need a controller loop that moves each task through implementation, spec review, and code quality review
+- You need a controller loop that moves one task worker at a time through implementation, spec review, and code quality review
 
 Do not use this for ordinary plans that are not packaged into per-task directories. Use `subagent-driven-development` instead.
 
@@ -30,7 +32,7 @@ When this skill starts:
 2. Locate the plan file, task package root, and `plan-progression.md`.
 3. If `plan-progression.md` is missing, stop and use `writing-plans` to create task packages and progression first.
 4. Select the first task whose `Task status` is not `complete`.
-5. Begin the phase loop for that task.
+5. Dispatch one task worker for that task, or run the task worker template inline if worker isolation is unavailable.
 
 If the user chose Goal-Driven execution directly from `writing-plans`, start here immediately after `plan-progression.md` is created.
 
@@ -122,21 +124,13 @@ digraph process {
     "Read existing plan-progression.md" [shape=box];
     "Select next non-complete task" [shape=box];
     "Mark task implementing" [shape=box];
-    "Run implementer phase" [shape=box];
-    "Implementer asks questions?" [shape=diamond];
-    "Answer questions or add context" [shape=box];
-    "Implementer updates context.md, plan-progression.md, clears handoff" [shape=box];
-    "Mark spec-checking" [shape=box];
-    "Run spec review phase" [shape=box];
-    "Spec checked?" [shape=diamond];
-    "Spec reviewer writes spec-review.md and progression status" [shape=box];
-    "Spec reviewer writes spec-review.md, handoff, and progression status" [shape=box];
-    "Mark quality-checking" [shape=box];
-    "Run code quality review phase" [shape=box];
-    "Quality checked?" [shape=diamond];
-    "Quality reviewer writes code-quality.md and progression status" [shape=box];
-    "Quality reviewer writes code-quality.md, handoff, and progression status" [shape=box];
-    "Quality reviewer marks task complete or failed" [shape=box];
+    "Dispatch one isolated task worker (./task-worker-prompt.md)" [shape=box];
+    "Worker needs context?" [shape=diamond];
+    "Answer question or update task files" [shape=box];
+    "Worker completes task lifecycle" [shape=box];
+    "Controller verifies task files and progression" [shape=box];
+    "Task blocked or needs context?" [shape=diamond];
+    "Task complete?" [shape=diamond];
     "More tasks?" [shape=diamond];
     "Final integration reviewer audits whole goal" [shape=box];
     "Use finishing-a-development-branch" [shape=box style=filled fillcolor=lightgreen];
@@ -144,25 +138,17 @@ digraph process {
     "Read plan and task directories" -> "Read existing plan-progression.md";
     "Read existing plan-progression.md" -> "Select next non-complete task";
     "Select next non-complete task" -> "Mark task implementing";
-    "Mark task implementing" -> "Run implementer phase";
-    "Run implementer phase" -> "Implementer asks questions?";
-    "Implementer asks questions?" -> "Answer questions or add context" [label="yes"];
-    "Answer questions or add context" -> "Run implementer phase";
-    "Implementer asks questions?" -> "Implementer updates context.md, plan-progression.md, clears handoff" [label="no"];
-    "Implementer updates context.md, plan-progression.md, clears handoff" -> "Mark spec-checking";
-    "Mark spec-checking" -> "Run spec review phase";
-    "Run spec review phase" -> "Spec checked?";
-    "Spec checked?" -> "Spec reviewer writes spec-review.md, handoff, and progression status" [label="no"];
-    "Spec reviewer writes spec-review.md, handoff, and progression status" -> "Mark task implementing";
-    "Spec checked?" -> "Spec reviewer writes spec-review.md and progression status" [label="yes"];
-    "Spec reviewer writes spec-review.md and progression status" -> "Mark quality-checking";
-    "Mark quality-checking" -> "Run code quality review phase";
-    "Run code quality review phase" -> "Quality checked?";
-    "Quality checked?" -> "Quality reviewer writes code-quality.md, handoff, and progression status" [label="no"];
-    "Quality reviewer writes code-quality.md, handoff, and progression status" -> "Mark task implementing";
-    "Quality checked?" -> "Quality reviewer writes code-quality.md and progression status" [label="yes"];
-    "Quality reviewer writes code-quality.md and progression status" -> "Quality reviewer marks task complete or failed";
-    "Quality reviewer marks task complete or failed" -> "More tasks?";
+    "Mark task implementing" -> "Dispatch one isolated task worker (./task-worker-prompt.md)";
+    "Dispatch one isolated task worker (./task-worker-prompt.md)" -> "Worker needs context?";
+    "Worker needs context?" -> "Answer question or update task files" [label="yes"];
+    "Answer question or update task files" -> "Dispatch one isolated task worker (./task-worker-prompt.md)";
+    "Worker needs context?" -> "Worker completes task lifecycle" [label="no"];
+    "Worker completes task lifecycle" -> "Controller verifies task files and progression";
+    "Controller verifies task files and progression" -> "Task blocked or needs context?";
+    "Task blocked or needs context?" -> "Answer question or update task files" [label="yes, resolvable"];
+    "Task blocked or needs context?" -> "Task complete?" [label="no"];
+    "Task complete?" -> "Mark task implementing" [label="no"];
+    "Task complete?" -> "More tasks?" [label="yes"];
     "More tasks?" -> "Select next non-complete task" [label="yes"];
     "More tasks?" -> "Final integration reviewer audits whole goal" [label="no"];
     "Final integration reviewer audits whole goal" -> "Use finishing-a-development-branch";
@@ -173,20 +159,21 @@ digraph process {
 
 At the start of execution, create or confirm one active goal for the whole implementation plan. Keep that goal active until every task and the final integration review are complete, or until the work is genuinely blocked.
 
-Do not create a separate Codex goal for each role phase. Codex goals track objectives; they do not run isolated workers or scoped role prompts.
+Do not create a separate Codex goal for each task or role phase. Codex goals track the overall objective; task workers provide context isolation.
 
-Before each phase:
-1. Read the task's `context.md`
-2. Read current task-local handoff/review files if they exist
-3. Ensure `plan-progression.md` reflects the current stage
-4. Follow the relevant phase template
-5. Use the exact file paths the phase must update
+Before each task worker:
+1. Read `plan-progression.md` enough to select the next non-complete task
+2. Ensure that task's `context.md` exists
+3. Mark the task `implementing` with a concise `Next action`
+4. Dispatch `./task-worker-prompt.md` with exact paths for the plan, task directory, task context, handoff/review files, and progression file
+5. Do not paste unrelated previous task details into the worker prompt
 
-After each phase completes:
+After each task worker completes:
 1. Verify required files were updated
 2. Verify `plan-progression.md` matches task-local review files
 3. Keep `Next action` concise
-4. Continue the loop until the task is complete or genuinely blocked
+4. If the task is incomplete but not blocked, dispatch a fresh worker for the same task using only the task files and current handoff
+5. Continue the loop until every task is complete or genuinely blocked
 
 If `plan-progression.md` disagrees with task-local review files, the task-local review file wins. Correct progression before continuing.
 
@@ -198,24 +185,31 @@ Reviewers must inspect the actual changed files. Prefer the task commit or revie
 
 ## Phase Templates
 
+- `./task-worker-prompt.md` - Task worker full lifecycle instructions
 - `./implementer-prompt.md` - Implementer phase instructions
 - `./spec-reviewer-prompt.md` - Spec compliance review phase instructions
 - `./code-quality-reviewer-prompt.md` - Code quality review phase instructions
+
+## Task Worker Template
+
+Use one isolated task worker per task when the harness supports it. The worker runs the implementer, spec review, and code quality review phases for only that task. The phase templates are role checklists inside the worker, not separate worker dispatches.
+
+The controller gives the worker paths and concise task context. The worker reads task-local files, inspects relevant code, updates durable files, and returns a short report. The controller should not retain detailed review findings in chat; those belong in `spec-review.md`, `code-quality.md`, and `implementer-handoff.md`.
 
 ## Handoff Rules
 
 Reviewers must write detailed findings in task-local files, not in `plan-progression.md`.
 
-When a review fails:
+When a review fails inside the task worker:
 - Reviewer updates its review file with findings
 - Reviewer updates `implementer-handoff.md` with required fixes
 - Reviewer marks its review as `failed` in `plan-progression.md`
-- Controller sends the implementer back to the same task with the handoff path
+- Worker runs the implementer phase again for the same task with the handoff path
 
-When a review passes:
+When a review passes inside the task worker:
 - Reviewer updates its review file with a short pass record and evidence
 - Reviewer marks its review as `checked` in `plan-progression.md`
-- Controller advances to the next stage
+- Worker advances to the next phase, or marks the task complete after quality review passes
 
 Spec review is strict: any missing, extra, or misunderstood requirement is `failed`.
 
@@ -254,8 +248,10 @@ Never:
 - Let the implementer ignore `implementer-handoff.md`
 - Leave an active handoff after the implementer reports DONE
 - Leave stale failed review files without a fresh pass record
-- Spawn or dispatch subagents for this skill
-- Create separate Codex goals for each phase
-- Run multiple implementer phases against different tasks in parallel
+- Dispatch separate workers for implementer/spec/quality phases
+- Run multiple task workers in parallel
+- Give a task worker details from unrelated prior tasks
+- Keep detailed implementation or review history in controller context
+- Create separate Codex goals for each task or phase
 - Skip updating `context.md` after implementation or repair work
 - Treat `plan-progression.md` as proof that work is correct
