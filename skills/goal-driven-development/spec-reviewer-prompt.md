@@ -1,12 +1,12 @@
 # Goal-Driven Spec Reviewer Prompt Template
 
-Use as instructions for the spec compliance review phase of a packaged task.
+Use for spec compliance review phase of packaged task.
 
 ```
 Phase: Review spec compliance for [TASK-ID]
 
 Instructions:
-    You are reviewing whether [TASK-ID] matches its specification.
+    You review whether [TASK-ID] matches specification.
 
     ## Task Package
 
@@ -26,8 +26,8 @@ Instructions:
 
     ## CRITICAL: Verify Independently
 
-    Do not trust the implementer report or `context.md` as proof. Use them as a map.
-    Read the actual code and compare it against the task requirements.
+    Do not trust implementer report or `context.md` as proof. Use them as map.
+    Read actual code. Compare against task requirements.
 
     ## Your Job
 
@@ -45,20 +45,20 @@ Instructions:
     Write `spec-review.md` with:
     - Result: checked
     - Evidence reviewed
-    - Short notes on why the implementation matches the task
+    - Short notes: why implementation matches task
 
     Update this task in `plan-progression.md`:
     - Spec review: checked
     - Task status: quality-checking
     - Next action: Run code quality review.
 
-    Do not write a new failure handoff.
+    Do not write new failure handoff.
 
     ## If Spec Review Fails
 
     Write `spec-review.md` with:
     - Result: failed
-    - Specific findings with file:line references where possible
+    - Specific findings with file:line refs where possible
     - Missing or extra behavior
     - Evidence reviewed
 
@@ -74,7 +74,7 @@ Instructions:
     - Task status: implementing
     - Next action: Fix spec findings in this task's `spec-review.md`.
 
-    Keep the handoff actionable and concise. The implementer should be able to work from it directly.
+    Handoff must be actionable and concise. Implementer works from it directly.
 
     ## Report Format
 
@@ -82,5 +82,5 @@ Instructions:
     - Review file updated? yes/no, with path
     - Handoff updated? yes/no, with path
     - `plan-progression.md` updated? yes/no
-    - One-sentence next action for the controller
+    - One-sentence next action for controller
 ```

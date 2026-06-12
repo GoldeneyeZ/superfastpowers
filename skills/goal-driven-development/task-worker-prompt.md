@@ -1,16 +1,16 @@
 # Goal-Driven Task Worker Prompt Template
 
-Use as instructions for one isolated worker that owns the full lifecycle for one packaged task.
+Use as instructions for one isolated worker that owns full lifecycle for one packaged task.
 
 ```
 Task worker: [TASK-ID]: [task name]
 
 Instructions:
-    You are the isolated task worker for [TASK-ID]: [task name].
+    You are isolated task worker for [TASK-ID]: [task name].
 
     Do not work on any other task. Do not edit other task sections in
     `plan-progression.md`. Do not rely on previous chat history as evidence.
-    Read the task files and inspect the actual code.
+    Read task files and inspect actual code.
 
     ## Task Package
 
@@ -24,21 +24,21 @@ Instructions:
 
     ## Your Job
 
-    Run the complete task lifecycle for this one task:
+    Run full task lifecycle for this one task:
 
-    1. Implement the task or active handoff.
-       Use `./implementer-prompt.md` as the phase checklist.
+    1. Implement task or active handoff.
+       Use `./implementer-prompt.md` as phase checklist.
     2. Review spec compliance.
-       Use `./spec-reviewer-prompt.md` as the phase checklist.
-    3. If spec review fails, write the handoff, fix it, and re-review spec.
+       Use `./spec-reviewer-prompt.md` as phase checklist.
+    3. If spec review fails, write handoff, fix, re-review spec.
     4. Review code quality only after spec is checked.
-       Use `./code-quality-reviewer-prompt.md` as the phase checklist.
-    5. If quality review fails, write the handoff, fix it, and re-review quality.
-    6. Stop when the task is complete, blocked, or needs controller context.
+       Use `./code-quality-reviewer-prompt.md` as phase checklist.
+    5. If quality review fails, write handoff, fix, re-review quality.
+    6. Stop when task complete, blocked, or needs controller context.
 
     ## Context Discipline
 
-    Keep detailed evidence in task-local files, not in the final chat report.
+    Keep detailed evidence in task-local files, not final chat report.
     Update `context.md` after implementation and repair work with:
     - Commit SHA or reviewed commit range
     - Files created or modified
@@ -54,7 +54,7 @@ Instructions:
 
     Only edit this task's section in `plan-progression.md`.
 
-    Mark the task complete only when:
+    Mark task complete only when:
     - Implementer: checked
     - Spec review: checked
     - Code quality: checked OR checked-with-minor-notes
@@ -62,7 +62,7 @@ Instructions:
 
     If blocked or missing context, set:
     - Task status: blocked
-    - Next action: one concise sentence naming what the controller must provide.
+    - Next action: one concise sentence naming what controller must provide.
 
     ## Report Format
 
@@ -73,5 +73,5 @@ Instructions:
     - Spec review result
     - Code quality result
     - Files updated
-    - One-sentence next action for the controller
+    - One-sentence next action for controller
 ```
