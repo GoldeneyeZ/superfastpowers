@@ -15,10 +15,10 @@ Last updated: 2026-07-13
 ## Goal Phases
 
 - Implementation: checked
-- Spec review: unchecked
+- Spec review: checked
 - Code quality: unchecked
 - Integration review: unchecked
-- Next action: Re-run whole-plan spec review after repair.
+- Next action: Run whole-plan code-quality review.
 
 ## Task 1: Establish RED Behavioral Evals
 

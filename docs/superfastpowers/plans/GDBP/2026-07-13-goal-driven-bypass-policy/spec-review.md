@@ -27,3 +27,20 @@ Reviewed range: `ed9dc5d..HEAD`
 - `git diff --check ed9dc5d..HEAD` — passed with no output.
 - The Claude Code behavioral runner remains unavailable because the `claude` CLI is not installed; the recorded isolated-agent RED/GREEN eval evidence was reviewed but not treated as proof of the contradictory repair prompt.
 
+## Re-review after repair commit `5a6b920`
+
+Result: checked
+
+### Evidence
+
+- Reviewed the approved design, implementation plan, every changed implementation/test/documentation file in `ed9dc5d..HEAD`, task contexts, progression, and the prior failed finding.
+- Commit `5a6b920` resolves the contradiction: the implementation-repair worker may update the affected task and the policy-required plan-scoped review fields needed for invalidation, while unrelated task and goal fields remain forbidden.
+- The repair contract now explicitly distinguishes behavioral/spec, quality-only, and uncertain repairs; reopens the target; resets the required phases; returns a successful bypass repair to `implemented`; and preserves the final plan gates.
+- The static contract test includes a regression assertion for the repaired plan-scoped invalidation permission.
+- No remaining missing, extra, or contradictory behavior was found against the approved design or plan.
+
+### Fresh verification
+
+- `STATIC_ONLY=1 bash tests/claude-code/test-goal-driven-development.sh` — passed all 10 static assertions.
+- `bash -n tests/claude-code/test-goal-driven-development.sh` — passed.
+- `git status --short` — clean before review-artifact updates.
