@@ -36,7 +36,7 @@ Example bypass policy:
 ## Execution Policy
 
 - Preset: goal-driven-bypass
-- Task completion gate: implementation
+- Task-local gate: implementation
 - Phases:
   1. implementation | scope: task | requires: none
   2. spec-review | scope: plan | requires: all tasks implemented
@@ -139,7 +139,7 @@ A repair that changes behavior invalidates all checked downstream phases. A qual
 ## Execution Policy
 
 - Preset: goal-driven-gated
-- Task completion gate: code-quality
+- Task-local gate: code-quality
 - Phases:
   1. implementation | scope: task | requires: none
   2. spec-review | scope: task | requires: task implementation checked

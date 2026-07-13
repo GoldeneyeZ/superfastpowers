@@ -1,0 +1,51 @@
+# Plan Progression
+
+Last updated: 2026-07-13
+
+## Execution Policy
+
+- Preset: goal-driven-bypass
+- Task-local gate: implementation
+- Phases:
+  1. implementation | scope: task | requires: none | artifact: `tasks/<TASK-ID>/context.md` | worker: `skills/goal-driven-development/implementer-prompt.md`
+  2. spec-review | scope: plan | requires: all tasks implemented | artifact: `spec-review.md` | worker: `skills/goal-driven-development/spec-reviewer-prompt.md`
+  3. code-quality | scope: plan | requires: spec-review checked | artifact: `code-quality.md` | worker: `skills/goal-driven-development/code-quality-reviewer-prompt.md`
+  4. integration-review | scope: plan | requires: code-quality checked | artifact: `final-review.md` | worker: `skills/goal-driven-development/integration-reviewer-prompt.md`
+
+## Goal Phases
+
+- Implementation: pending
+- Spec review: unchecked
+- Code quality: unchecked
+- Integration review: unchecked
+- Next action: Implement GDBP-1.
+
+## Task 1: Establish RED Behavioral Evals
+
+- Path: `docs/superfastpowers/plans/GDBP/2026-07-13-goal-driven-bypass-policy/tasks/GDBP-1/`
+- Status: pending
+- Next action: Start implementation.
+
+## Task 2: Make Goal-Driven Execution Policy-Driven
+
+- Path: `docs/superfastpowers/plans/GDBP/2026-07-13-goal-driven-bypass-policy/tasks/GDBP-2/`
+- Status: pending
+- Next action: Start implementation after GDBP-1.
+
+## Task 3: Generate Policies and Recommend Bypass in Writing Plans
+
+- Path: `docs/superfastpowers/plans/GDBP/2026-07-13-goal-driven-bypass-policy/tasks/GDBP-3/`
+- Status: pending
+- Next action: Start implementation after GDBP-2.
+
+## Task 4: Surface Time Trade-off During Brainstorming and Documentation
+
+- Path: `docs/superfastpowers/plans/GDBP/2026-07-13-goal-driven-bypass-policy/tasks/GDBP-4/`
+- Status: pending
+- Next action: Start implementation after GDBP-3.
+
+## Task 5: Complete GREEN/REFACTOR Eval and Regression Verification
+
+- Path: `docs/superfastpowers/plans/GDBP/2026-07-13-goal-driven-bypass-policy/tasks/GDBP-5/`
+- Status: pending
+- Next action: Start implementation after GDBP-4.
