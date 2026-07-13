@@ -2,7 +2,9 @@
 
 ## Problem
 
-Goal-Driven Development currently embeds one lifecycle: implement each task, review its spec compliance, review its code quality, then mark it complete. This catches issues early but forces review context switches after every task. Users need a bypass mode that implements and verifies every task first, then runs one whole-plan spec review and one whole-plan code-quality review.
+Goal-Driven Development currently embeds one lifecycle: implement each task, review its spec compliance, review its code quality, then mark it complete. For a plan with `N` tasks, the happy path performs `2N` review phases. Repeated reviewer setup, code inspection, artifact updates, and review context switches make plan execution too time-consuming.
+
+The primary goal is shorter implementation-plan execution. Bypass implements and verifies every task first, then runs one whole-plan spec review and one whole-plan code-quality review. The happy path therefore performs two review phases regardless of task count. Required fix re-reviews remain uncapped because correctness still gates completion.
 
 Bypass changes review timing only. It never bypasses TDD, task verification, commits, blocker handling, required fixes, or re-review.
 
@@ -15,7 +17,14 @@ Ship two presets:
 - `goal-driven-bypass` — recommended default: task-scoped implementation followed by plan-scoped spec review, code-quality review, and integration review.
 - `goal-driven-gated` — current behavior: task-scoped implementation, spec review, and code-quality review followed by plan-scoped integration review.
 
-Brainstorming and plan handoff recommend `goal-driven-bypass`. Explicit user choice always overrides the recommendation.
+Brainstorming and plan handoff recommend `goal-driven-bypass` because it removes repeated review overhead. Explicit user choice always overrides the recommendation.
+
+## Success Criteria
+
+- Happy-path spec and code-quality review phases decrease from `2N` to `2` for an `N`-task plan.
+- Task implementation continues without review pauses until every task is implemented or work becomes blocked.
+- Spec, quality, and integration gates still block completion when findings remain unresolved.
+- Gated preset preserves current early-feedback behavior for users who prefer it over execution speed.
 
 ## Execution Policy Contract
 
@@ -142,7 +151,7 @@ Existing task-local artifacts remain valid for this preset: `spec-review.md`, `c
 
 ## Brainstorming and Plan Handoff
 
-Brainstorming recommends Goal-Driven Bypass when transitioning from approved design to implementation planning. It explains the trade-off: fewer review context switches and better whole-feature visibility, with later discovery of task-local mistakes.
+Brainstorming recommends Goal-Driven Bypass when transitioning from approved design to implementation planning. It explains the trade-off: faster execution through two plan-wide review phases and fewer context switches, with later discovery of task-local mistakes.
 
 Writing Plans offers these execution choices after user validation and task-package creation:
 
@@ -173,6 +182,7 @@ Skill changes follow `writing-skills` RED-GREEN-REFACTOR:
 5. Validation eval proves malformed, incomplete, and cyclic policies stop safely before implementation.
 6. Invalidation eval proves behavioral repair resets spec, quality, and integration; quality-only repair resets quality and integration.
 7. Recommendation eval proves brainstorming and Writing Plans recommend Goal-Driven Bypass while honoring explicit user choice.
+8. Efficiency eval compares an `N`-task happy path: gated runs `2N` review phases; bypass runs `2`, with no review phase starting before all tasks are implemented.
 
 ## Scope
 
