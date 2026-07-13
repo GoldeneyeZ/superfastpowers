@@ -17,4 +17,13 @@ Files above are starting points only. Inspect any additional files needed to com
 
 ## Completion Updates
 
-Implementer updates this section before review with final task commit SHA, reviewed commit range if relevant, files created, files modified, additional relevant files, and verification commands/results.
+- Implementation commit SHA: recorded after commit.
+- Completed GREEN pressure scenarios and documented evidence.
+- REFACTOR closed stale task/goal completion and failed-phase invalidation loopholes.
+- Added deterministic `STATIC_ONLY=1` contract mode for environments without Claude Code CLI.
+- Updated Claude Code test documentation.
+- Verification: static Goal-Driven contract test passed all assertions.
+- Verification: every `tests/claude-code/*.sh` file passes Git Bash syntax parsing.
+- Verification: policy phase order/invalidation consistency scan passed; no active skill references deleted `task-worker-prompt.md`.
+- Verification: `git diff --check` passed.
+- Limitation: Claude Code behavioral suite unavailable because `claude` CLI is not installed; isolated Codex RED/GREEN pressure evals passed.

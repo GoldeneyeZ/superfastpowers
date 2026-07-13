@@ -39,4 +39,23 @@ Baseline confirms target gaps: lifecycle hard-coded per task, goal-level invalid
 
 ## GREEN Results
 
-Results recorded after skill changes and repeated pressure scenarios.
+| Scenario | Result | Evidence |
+|---|---|---|
+| 1 | Pass | Agent rejected lead-authorized skipping; read expanded progression policy; implemented all tasks before plan spec → plan quality → integration; counted two spec/quality reviews. |
+| 2 | Pass after REFACTOR | Agent rejected deadline/sunk-cost shortcut; repaired affected tasks; reset spec, quality, integration; reran all gates. Initial GREEN exposed stale `complete` and failed-phase wording loopholes. |
+| 3 | Pass | Agent recommended Goal-Driven Bypass for elapsed time, emitted exact expanded policy, and selected Goal-Driven Gated when early feedback was explicit priority. |
+
+## REFACTOR
+
+Initial invalidation wording covered downstream checked evidence but did not explicitly:
+
+- Reopen already-complete tasks/goals before repair.
+- Reset repair-triggering phase when its prior result was `failed` rather than `checked`.
+
+Skill and implementer template now require task `implementing`, goal incomplete, repair-triggering phase `unchecked`, downstream invalidation, then bypass task `implemented` after successful repair. Re-test confirmed no stale completion loophole.
+
+## Verification
+
+- `STATIC_ONLY=1 tests/claude-code/test-goal-driven-development.sh`: passed all policy/recommendation contracts.
+- `bash -n tests/claude-code/*.sh`: all Claude Code shell scripts parse.
+- Claude Code behavioral runner remains unavailable because `claude` CLI is not installed; isolated Codex pressure agents provide RED/GREEN evidence above.

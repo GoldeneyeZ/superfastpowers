@@ -203,7 +203,9 @@ Review failure is not worker failure. Reviewer writes findings/handoff, marks re
 
 ## Invalidation
 
-Repairs invalidate checked evidence:
+Before repair, reopen affected target: set task `implementing` and goal incomplete. After successful repair, bypass returns task to `implemented`; gated advances to configured review phase. Never leave task or goal `complete` while any required phase is failed, checking, or unchecked.
+
+Repair-triggering phase returns to `unchecked` after fix, whether prior result was `failed` or `checked`. Repairs also invalidate downstream checked evidence:
 
 | Repair type | Invalidate |
 |---|---|
@@ -256,6 +258,7 @@ Never:
 - Begin plan-scoped bypass review before every task is `implemented`.
 - Treat bypass as permission to skip TDD, verification, review, fixes, or integration.
 - Preserve downstream checked phase after invalidating repair.
+- Leave task or goal `complete` after repair reopens required phase.
 - Put detailed findings in `plan-progression.md`.
 - Trust `context.md` or implementer report as correctness proof.
 - Run multiple implementation workers in parallel.

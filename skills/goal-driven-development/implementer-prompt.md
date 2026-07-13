@@ -14,6 +14,8 @@ Policy/progression: [path/to/plan-progression.md]
 
 Implement only target task or active handoff. Use test-driven-development: write test, watch correct failure, implement minimally, watch pass, refactor while green. Inspect any needed file; starting context is not constraint.
 
+For repair, reopen affected target before editing: task `implementing`, goal incomplete. Reset repair-triggering and downstream phases per policy. After successful bypass repair, return task to `implemented`, never `complete`.
+
 Before COMPLETE:
 - task requirements or handoff satisfied
 - focused and relevant regression verification passed

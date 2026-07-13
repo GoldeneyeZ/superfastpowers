@@ -101,6 +101,12 @@ Tests policy-driven Goal-Driven behavior (~4 minutes):
 - Repair invalidation and spec-before-quality invariant
 - Brainstorming and Writing Plans recommend bypass for elapsed time
 
+Run deterministic contract checks without Claude Code CLI:
+
+```bash
+STATIC_ONLY=1 ./test-goal-driven-development.sh
+```
+
 ### Integration Tests (use --integration flag)
 
 #### test-subagent-driven-development-integration.sh

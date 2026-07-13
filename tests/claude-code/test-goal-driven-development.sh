@@ -6,6 +6,46 @@ source "$SCRIPT_DIR/test-helpers.sh"
 
 echo "=== Test: goal-driven-development policy workflow ==="
 
+ROOT_DIR="$(cd "$SCRIPT_DIR/../.." && pwd)"
+
+assert_file_contains() {
+    local file="$1"
+    local pattern="$2"
+    local name="$3"
+    if grep -Fq -- "$pattern" "$file"; then
+        echo "PASS: $name"
+    else
+        echo "FAIL: $name"
+        echo "  Missing: $pattern"
+        echo "  File: $file"
+        exit 1
+    fi
+}
+
+goal_skill="$ROOT_DIR/skills/goal-driven-development/SKILL.md"
+writing_skill="$ROOT_DIR/skills/writing-plans/SKILL.md"
+brainstorm_skill="$ROOT_DIR/skills/brainstorming/SKILL.md"
+
+assert_file_contains "$goal_skill" 'Preset: goal-driven-bypass' "Bypass preset contract"
+assert_file_contains "$goal_skill" 'Preset: goal-driven-gated' "Gated preset contract"
+assert_file_contains "$goal_skill" 'implementation | scope: task' "Task-scoped implementation"
+assert_file_contains "$goal_skill" 'spec-review | scope: plan | requires: all tasks implemented' "Plan spec waits for all tasks"
+assert_file_contains "$goal_skill" 'code-quality | scope: plan | requires: spec-review checked' "Plan quality waits for spec"
+assert_file_contains "$goal_skill" 'Bypass means defer reviews, never skip reviews.' "Bypass safety boundary"
+assert_file_contains "$writing_skill" 'Goal-Driven Bypass (recommended)' "Writing Plans default recommendation"
+assert_file_contains "$writing_skill" 'Explicit user choice overrides recommendation.' "Execution override"
+assert_file_contains "$brainstorm_skill" 'reduce happy-path spec/quality reviews from `2N` to `2`' "Brainstorming time rationale"
+
+if [[ -e "$ROOT_DIR/skills/goal-driven-development/task-worker-prompt.md" ]]; then
+    echo "FAIL: hard-coded task worker still exists"
+    exit 1
+fi
+
+if [[ "${STATIC_ONLY:-0}" == "1" ]]; then
+    echo "=== Static goal-driven-development contract passed ==="
+    exit 0
+fi
+
 output=$(run_claude "Describe Goal-Driven Bypass precisely: policy source, task state after implementation, phase order, happy-path review count, and completion gates." 60)
 assert_contains "$output" "plan-progression.md" "Policy comes from progression file"
 assert_contains "$output" "implemented" "Tasks stop at implemented before plan reviews"

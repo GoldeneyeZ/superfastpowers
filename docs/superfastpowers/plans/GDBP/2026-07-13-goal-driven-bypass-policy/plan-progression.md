@@ -14,11 +14,11 @@ Last updated: 2026-07-13
 
 ## Goal Phases
 
-- Implementation: active
+- Implementation: checked
 - Spec review: unchecked
 - Code quality: unchecked
 - Integration review: unchecked
-- Next action: Complete GREEN/REFACTOR eval and regression verification for GDBP-5.
+- Next action: Run one whole-plan spec review.
 
 ## Task 1: Establish RED Behavioral Evals
 
@@ -47,5 +47,5 @@ Last updated: 2026-07-13
 ## Task 5: Complete GREEN/REFACTOR Eval and Regression Verification
 
 - Path: `docs/superfastpowers/plans/GDBP/2026-07-13-goal-driven-bypass-policy/tasks/GDBP-5/`
-- Status: implementing
-- Next action: Re-run pressure scenarios, close loopholes, and verify repository.
+- Status: implemented
+- Next action: Await plan-scoped reviews.
