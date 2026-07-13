@@ -17,7 +17,8 @@ Files above are starting points only. Inspect any additional files needed to com
 
 ## Completion Updates
 
-- Commit SHA: `05d5be5` (amended task commit).
+- Implementation commit SHA: `a14acbf`.
+- Metadata follow-up: this context correction only; no implementation change.
 - Created: `tests/claude-code/test-goal-driven-development.sh`.
 - Created: `docs/superfastpowers/evals/goal-driven-bypass-policy.md`.
 - Modified: `tests/claude-code/run-skill-tests.sh`.
