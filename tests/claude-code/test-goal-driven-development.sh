@@ -27,4 +27,12 @@ assert_contains "$output" "cycle\|cyclic" "Cycles are rejected"
 assert_contains "$output" "invalidat\|reset" "Repairs invalidate downstream phases"
 assert_order "$output" "spec" "quality" "Spec remains before quality"
 
+output=$(run_claude "After validating a multi-task implementation plan, what execution choice should Writing Plans recommend when time matters, and what exact policy must it write to plan-progression.md?" 60)
+assert_contains "$output" "Goal-Driven Bypass\|goal-driven-bypass" "Writing Plans recommends bypass"
+assert_contains "$output" "recommended\|recommend" "Recommendation is explicit"
+assert_contains "$output" "scope: task" "Policy contains task implementation scope"
+assert_contains "$output" "scope: plan" "Policy contains plan review scope"
+assert_order "$output" "implementation" "spec-review\|spec review" "Implementation precedes spec"
+assert_order "$output" "spec-review\|spec review" "code-quality\|code quality" "Spec precedes quality"
+
 echo "=== All goal-driven-development tests passed ==="

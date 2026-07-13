@@ -18,7 +18,7 @@ Last updated: 2026-07-13
 - Spec review: unchecked
 - Code quality: unchecked
 - Integration review: unchecked
-- Next action: Update Writing Plans policy generation and recommendation for GDBP-3.
+- Next action: Surface bypass time trade-off in Brainstorming and docs for GDBP-4.
 
 ## Task 1: Establish RED Behavioral Evals
 
@@ -35,14 +35,14 @@ Last updated: 2026-07-13
 ## Task 3: Generate Policies and Recommend Bypass in Writing Plans
 
 - Path: `docs/superfastpowers/plans/GDBP/2026-07-13-goal-driven-bypass-policy/tasks/GDBP-3/`
-- Status: implementing
-- Next action: Emit expanded policies and recommend Goal-Driven Bypass.
+- Status: implemented
+- Next action: Await plan-scoped reviews after all tasks are implemented.
 
 ## Task 4: Surface Time Trade-off During Brainstorming and Documentation
 
 - Path: `docs/superfastpowers/plans/GDBP/2026-07-13-goal-driven-bypass-policy/tasks/GDBP-4/`
-- Status: pending
-- Next action: Start implementation after GDBP-3.
+- Status: implementing
+- Next action: Add brainstorming recommendation and user-facing documentation.
 
 ## Task 5: Complete GREEN/REFACTOR Eval and Regression Verification
 

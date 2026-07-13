@@ -16,4 +16,11 @@ Files above are starting points only. Inspect any additional files needed to com
 
 ## Completion Updates
 
-Implementer updates this section before review with final task commit SHA, reviewed commit range if relevant, files created, files modified, additional relevant files, and verification commands/results.
+- Implementation commit SHA: recorded after commit.
+- Updated plan header recommendation to Goal-Driven Bypass.
+- Writing Plans now emits complete bypass/gated policies and generic task/goal state.
+- Execution handoff now offers Bypass, Gated, Subagent-Driven, and Inline in requested order.
+- Explicit user choice overrides default recommendation.
+- Added behavioral assertions for recommendation, scopes, and phase ordering.
+- Verification: policy terms present, option order correct, Markdown fences balanced.
+- Verification: isolated GREEN probe produced exact expanded bypass contract and correctly distinguished elapsed time from early feedback.

@@ -51,7 +51,7 @@ Structure drives task decomposition. Each task should produce self-contained cha
 ```markdown
 # [Feature Name] Implementation Plan
 
-> **For agentic workers:** REQUIRED SUB-SKILL: Use superfastpowers:subagent-driven-development (recommended), superfastpowers:goal-driven-development, or superfastpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
+> **For agentic workers:** REQUIRED SUB-SKILL: Use superfastpowers:goal-driven-development with `goal-driven-bypass` (recommended), `goal-driven-gated`, superfastpowers:subagent-driven-development, or superfastpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
 **Goal:** [One sentence describing what this builds]
 
@@ -185,7 +185,7 @@ The final `context.md` is the reviewer's map for finding the task commit and und
 
 ## Goal-Driven Progression File
 
-Only create `plan-progression.md` if the user chooses Goal-Driven execution.
+Create `plan-progression.md` when user chooses either Goal-Driven option. Write selected preset plus fully expanded phase lines. Preset name alone is invalid because progression file is durable execution contract.
 
 Create it in the task package root:
 
@@ -198,41 +198,78 @@ Generate one section per task, in plan order:
 
 Last updated: YYYY-MM-DD HH:MM
 
+## Execution Policy
+
+- Preset: goal-driven-bypass
+- Task-local gate: implementation
+- Phases:
+  1. implementation | scope: task | requires: none | artifact: `tasks/<TASK-ID>/context.md` | worker: `skills/goal-driven-development/implementer-prompt.md`
+  2. spec-review | scope: plan | requires: all tasks implemented | artifact: `spec-review.md` | worker: `skills/goal-driven-development/spec-reviewer-prompt.md`
+  3. code-quality | scope: plan | requires: spec-review checked | artifact: `code-quality.md` | worker: `skills/goal-driven-development/code-quality-reviewer-prompt.md`
+  4. integration-review | scope: plan | requires: code-quality checked | artifact: `final-review.md` | worker: `skills/goal-driven-development/integration-reviewer-prompt.md`
+
+## Goal Phases
+
+- Implementation: pending
+- Spec review: unchecked
+- Code quality: unchecked
+- Integration review: unchecked
+- Next action: Implement next pending task.
+
 ## Task N: [Task Name]
 
 - Path: `docs/superfastpowers/plans/<PLAN-ACRONYM>/<YYYY-MM-DD-kebab-feature-name>/tasks/<TASK-ID>/`
-- Task status: pending
-- Implementer: unchecked
-- Spec review: unchecked
-- Code quality: unchecked
+- Status: pending
 - Next action: Start implementation.
 ```
 
-Do not include review findings, implementation notes, or detailed handoffs in
-`plan-progression.md`. Those belong in each task directory.
+For Goal-Driven Gated, emit this policy instead:
+
+```markdown
+## Execution Policy
+
+- Preset: goal-driven-gated
+- Task-local gate: code-quality
+- Phases:
+  1. implementation | scope: task | requires: none | artifact: `tasks/<TASK-ID>/context.md` | worker: `skills/goal-driven-development/implementer-prompt.md`
+  2. spec-review | scope: task | requires: task implementation checked | artifact: `tasks/<TASK-ID>/spec-review.md` | worker: `skills/goal-driven-development/spec-reviewer-prompt.md`
+  3. code-quality | scope: task | requires: task spec-review checked | artifact: `tasks/<TASK-ID>/code-quality.md` | worker: `skills/goal-driven-development/code-quality-reviewer-prompt.md`
+  4. integration-review | scope: plan | requires: all tasks complete | artifact: `final-review.md` | worker: `skills/goal-driven-development/integration-reviewer-prompt.md`
+```
+
+Do not include review findings, implementation notes, or detailed handoffs in `plan-progression.md`. Task-scoped details belong in task directory; plan-scoped details live beside progression file.
 
 ## Execution Handoff
 
 After saving the plan and creating validated task packages, offer execution choice:
 
-**"Plan complete and saved to `docs/superfastpowers/plans/<PLAN-ACRONYM>/<YYYY-MM-DD-kebab-feature-name>.md`. Three execution options:**
+**"Plan complete and saved to `docs/superfastpowers/plans/<PLAN-ACRONYM>/<YYYY-MM-DD-kebab-feature-name>.md`. Four execution options:**
 
-**1. Subagent-Driven (recommended)** - Dispatch fresh subagent per task, review between tasks, fast iteration
+**1. Goal-Driven Bypass (recommended)** - Fastest plan execution; implement all tasks, then plan-wide spec and quality gates
 
-**2. Goal-Driven** - Use the Codex/OMP goal mechanism for the overall objective, with task packages and `plan-progression.md` to orchestrate implementer/spec/quality phases
+**2. Goal-Driven Gated** - Earlier feedback; spec and quality gates after each task
 
-**3. Inline Execution** - Execute tasks in this session using executing-plans, batch execution with checkpoints
+**3. Subagent-Driven** - Fresh subagent plus two reviews per task
+
+**4. Inline Execution** - Execute tasks using executing-plans checkpoints
 
 **Which approach?"**
+
+Explicit user choice overrides recommendation.
+
+**If Goal-Driven Bypass chosen:**
+- Create task packages and expanded `goal-driven-bypass` progression policy
+- **REQUIRED SUB-SKILL:** Use superfastpowers:goal-driven-development
+- All tasks implement first; plan-scoped spec, quality, then integration
+
+**If Goal-Driven Gated chosen:**
+- Create task packages and expanded `goal-driven-gated` progression policy
+- **REQUIRED SUB-SKILL:** Use superfastpowers:goal-driven-development
+- Per-task spec and quality gates; plan-scoped integration
 
 **If Subagent-Driven chosen:**
 - **REQUIRED SUB-SKILL:** Use superfastpowers:subagent-driven-development
 - Fresh subagent per task + two-stage review
-
-**If Goal-Driven chosen:**
-- Create `plan-progression.md` using the structure above
-- **REQUIRED SUB-SKILL:** Use superfastpowers:goal-driven-development
-- Same-session phase loop with implementer, strict spec review, and code quality completion gate
 
 **If Inline Execution chosen:**
 - **REQUIRED SUB-SKILL:** Use superfastpowers:executing-plans
