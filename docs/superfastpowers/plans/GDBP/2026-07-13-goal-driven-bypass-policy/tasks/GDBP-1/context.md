@@ -17,4 +17,12 @@ Files above are starting points only. Inspect any additional files needed to com
 
 ## Completion Updates
 
-Implementer updates this section before review with final task commit SHA, reviewed commit range if relevant, files created, files modified, additional relevant files, and verification commands/results.
+- Commit SHA: `05d5be5` (amended task commit).
+- Created: `tests/claude-code/test-goal-driven-development.sh`.
+- Created: `docs/superfastpowers/evals/goal-driven-bypass-policy.md`.
+- Modified: `tests/claude-code/run-skill-tests.sh`.
+- Modified: this context and `plan-progression.md`.
+- Verification: three isolated RED pressure scenarios completed; current lifecycle produced 17 happy-path reviews for eight tasks.
+- Verification: `Git Bash -n tests/claude-code/test-goal-driven-development.sh` passed.
+- Verification: deterministic RED scan confirmed missing `goal-driven-bypass`, `goal-driven-gated`, `Task-local gate`, and `scope: plan` contracts.
+- Limitation: Claude Code CLI unavailable, so `run_claude` behavioral script cannot execute locally.

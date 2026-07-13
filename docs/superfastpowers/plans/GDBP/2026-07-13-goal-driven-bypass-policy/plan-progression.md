@@ -14,23 +14,23 @@ Last updated: 2026-07-13
 
 ## Goal Phases
 
-- Implementation: pending
+- Implementation: active
 - Spec review: unchecked
 - Code quality: unchecked
 - Integration review: unchecked
-- Next action: Implement GDBP-1.
+- Next action: Implement policy-driven controller and phase workers for GDBP-2.
 
 ## Task 1: Establish RED Behavioral Evals
 
 - Path: `docs/superfastpowers/plans/GDBP/2026-07-13-goal-driven-bypass-policy/tasks/GDBP-1/`
-- Status: pending
-- Next action: Start implementation.
+- Status: implemented
+- Next action: Await plan-scoped reviews after all tasks are implemented.
 
 ## Task 2: Make Goal-Driven Execution Policy-Driven
 
 - Path: `docs/superfastpowers/plans/GDBP/2026-07-13-goal-driven-bypass-policy/tasks/GDBP-2/`
-- Status: pending
-- Next action: Start implementation after GDBP-1.
+- Status: implementing
+- Next action: Replace hard-coded lifecycle with validated policy interpreter.
 
 ## Task 3: Generate Policies and Recommend Bypass in Writing Plans
 
