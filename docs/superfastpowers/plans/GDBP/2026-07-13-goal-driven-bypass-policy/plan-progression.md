@@ -18,7 +18,7 @@ Last updated: 2026-07-13
 - Spec review: unchecked
 - Code quality: unchecked
 - Integration review: unchecked
-- Next action: Implement policy-driven controller and phase workers for GDBP-2.
+- Next action: Update Writing Plans policy generation and recommendation for GDBP-3.
 
 ## Task 1: Establish RED Behavioral Evals
 
@@ -29,14 +29,14 @@ Last updated: 2026-07-13
 ## Task 2: Make Goal-Driven Execution Policy-Driven
 
 - Path: `docs/superfastpowers/plans/GDBP/2026-07-13-goal-driven-bypass-policy/tasks/GDBP-2/`
-- Status: implementing
-- Next action: Replace hard-coded lifecycle with validated policy interpreter.
+- Status: implemented
+- Next action: Await plan-scoped reviews after all tasks are implemented.
 
 ## Task 3: Generate Policies and Recommend Bypass in Writing Plans
 
 - Path: `docs/superfastpowers/plans/GDBP/2026-07-13-goal-driven-bypass-policy/tasks/GDBP-3/`
-- Status: pending
-- Next action: Start implementation after GDBP-2.
+- Status: implementing
+- Next action: Emit expanded policies and recommend Goal-Driven Bypass.
 
 ## Task 4: Surface Time Trade-off During Brainstorming and Documentation
 

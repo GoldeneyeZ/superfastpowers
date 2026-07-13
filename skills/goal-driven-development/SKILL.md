@@ -5,253 +5,269 @@ description: Use when executing implementation plans with task package directori
 
 # Goal-Driven Development
 
-Execute pre-split plan by walking task package dirs one at time. Use `plan-progression.md` for stage/status. Keep detail in task-local files.
+## Overview
 
-**Core principle:** Controller context stays small; implementation and review findings live in each task dir.
+Execute packaged plans by interpreting the explicit execution policy in `plan-progression.md`.
 
-**Execution mechanism:** Main agent = lightweight controller. If harness supports isolated workers, dispatch one isolated worker per task. Worker owns full task lifecycle: implementation, spec review, quality review, review-fix loops. Controller keeps one active goal for whole plan, picks next task, verifies files/progression after worker returns, and avoids carrying task detail in chat.
+**Core principle:** Policy controls phase order and scope; invariants protect correctness.
 
-If isolated workers unavailable, run same per-task lifecycle inline. Still keep findings in task files. Summarize hard before next task.
+**Default recommendation:** `goal-driven-bypass` minimizes elapsed time. Implement every task first, then run two plan-wide review phases. For `N` tasks, happy-path spec and quality reviews fall from `2N` to `2`.
 
-**Continuous execution:** Do not pause between tasks. Execute all plan tasks. Stop only for unresolved BLOCKED, ambiguity blocking progress, or all tasks done.
+Main agent stays lightweight: validate policy, select next runnable target, dispatch one isolated phase worker, verify durable artifacts/state, repeat. Detailed implementation and review evidence stays in task or goal files.
+
+**Continuous execution:** Do not pause between phases or tasks. Stop only for unresolved `BLOCKED`, ambiguity preventing progress, invalid policy, or completed goal.
 
 ## When to Use
 
 Use when:
-- Implementation plan already split into task dirs
-- Each task dir has `context.md`
-- Review findings and handoffs must stay with owning task
-- Need controller loop through implementation, spec review, code quality review
 
-Do not use for ordinary plans without per-task dirs. Use `subagent-driven-development` instead.
+- Implementation plan has task package directories.
+- Each task has `task.md` and `context.md`.
+- `plan-progression.md` declares execution policy.
+- User chooses Goal-Driven execution.
+
+If progression or task packages are absent, use `writing-plans` first. Ordinary un-packaged plans use `subagent-driven-development` or `executing-plans`.
 
 ## Entry Point
 
-At start:
-1. Confirm one active implementation goal, or create one for whole plan.
-2. Locate plan file, task package root, and `plan-progression.md`.
-3. If `plan-progression.md` missing, stop and use `writing-plans` to create task packages and progression first.
-4. Select first task whose `Task status` is not `complete`.
-5. Dispatch one task worker, or run task worker template inline if worker isolation unavailable.
+1. Confirm one active goal for whole plan. Never create separate goals per task or phase.
+2. Locate plan, task-package root, and `plan-progression.md`.
+3. Read and validate complete execution policy before implementation.
+4. Select first incomplete phase whose prerequisites are satisfied.
+5. Dispatch exactly one phase worker using `./phase-worker-prompt.md`.
 
-If user chose Goal-Driven execution from `writing-plans`, start here immediately after `plan-progression.md` exists.
+If policy is invalid, stop before implementation and report exact invalid field, reference, or dependency.
 
-## Required Task Package Shape
+## Execution Policy
 
-Each task dir must contain:
+`plan-progression.md` contains preset label plus fully expanded phases. Preset alone is insufficient; expanded lines are durable contract.
 
-```text
-tasks/<TASK-ID>/
-  context.md
-```
-
-Create as loop needs:
+Each phase line uses:
 
 ```text
-tasks/<TASK-ID>/
-  implementer-handoff.md
-  spec-review.md
-  code-quality.md
+N. <name> | scope: task|plan | requires: <state> | artifact: <path pattern> | worker: <template>
 ```
 
-`context.md`: running task map: summary, relevant files, commit SHA or reviewed range, verification commands, notes later agents need.
+Supported phases:
 
-`implementer-handoff.md`: current repair brief. Reviewers write concise actionable fixes here when review fails.
+- `implementation`
+- `spec-review`
+- `code-quality`
+- `integration-review`
 
-`spec-review.md`: spec compliance review detail.
+### Validate Before Work
 
-`code-quality.md`: code quality review detail.
+- Phase name known.
+- Scope is `task` or `plan`.
+- Every prerequisite references existing phase/state.
+- Dependency graph acyclic.
+- Task-local and goal completion gates reachable.
+- Artifact and worker declarations present.
+- `spec-review` precedes matching `code-quality`.
+- `integration-review` is final.
+- Task-scoped phase has eligible task target.
+- Plan-scoped phase has goal-level artifact.
 
-## Plan Progression File
+Unknown phases are not executable extensions. Stop and ask for policy correction.
 
-`writing-plans` creates initial `plan-progression.md` next to plan or task root. Keep concise. Not review log.
+## Shipped Presets
 
-Shape:
+### Goal-Driven Bypass — Recommended
+
+Use when elapsed time matters more than earliest task-local review feedback.
 
 ```markdown
-# Plan Progression
+## Execution Policy
 
-Last updated: YYYY-MM-DD HH:MM
+- Preset: goal-driven-bypass
+- Task-local gate: implementation
+- Phases:
+  1. implementation | scope: task | requires: none | artifact: `tasks/<TASK-ID>/context.md` | worker: `skills/goal-driven-development/implementer-prompt.md`
+  2. spec-review | scope: plan | requires: all tasks implemented | artifact: `spec-review.md` | worker: `skills/goal-driven-development/spec-reviewer-prompt.md`
+  3. code-quality | scope: plan | requires: spec-review checked | artifact: `code-quality.md` | worker: `skills/goal-driven-development/code-quality-reviewer-prompt.md`
+  4. integration-review | scope: plan | requires: code-quality checked | artifact: `final-review.md` | worker: `skills/goal-driven-development/integration-reviewer-prompt.md`
+```
 
+Happy path: implement all tasks → one whole-plan spec review → one whole-plan code-quality review → final integration review. Required fix re-reviews remain uncapped.
+
+### Goal-Driven Gated
+
+Use when early task-local feedback matters more than elapsed time.
+
+```markdown
+## Execution Policy
+
+- Preset: goal-driven-gated
+- Task-local gate: code-quality
+- Phases:
+  1. implementation | scope: task | requires: none | artifact: `tasks/<TASK-ID>/context.md` | worker: `skills/goal-driven-development/implementer-prompt.md`
+  2. spec-review | scope: task | requires: task implementation checked | artifact: `tasks/<TASK-ID>/spec-review.md` | worker: `skills/goal-driven-development/spec-reviewer-prompt.md`
+  3. code-quality | scope: task | requires: task spec-review checked | artifact: `tasks/<TASK-ID>/code-quality.md` | worker: `skills/goal-driven-development/code-quality-reviewer-prompt.md`
+  4. integration-review | scope: plan | requires: all tasks complete | artifact: `final-review.md` | worker: `skills/goal-driven-development/integration-reviewer-prompt.md`
+```
+
+This reproduces per-task implementation → spec → quality behavior without embedding that sequence in controller logic.
+
+Explicit user choice always overrides default recommendation.
+
+## Required Package Shape
+
+```text
+<package-root>/
+  plan-progression.md
+  tasks/<TASK-ID>/
+    task.md
+    context.md
+```
+
+Create as policy needs:
+
+```text
+<package-root>/
+  implementer-handoff.md       # goal-scoped repair brief
+  spec-review.md               # plan-scoped spec evidence
+  code-quality.md              # plan-scoped quality evidence
+  final-review.md              # final integration evidence
+  tasks/<TASK-ID>/
+    implementer-handoff.md     # task-scoped repair brief
+    spec-review.md              # task-scoped spec evidence
+    code-quality.md             # task-scoped quality evidence
+```
+
+`context.md` is reviewer map, never proof: commit/range, files changed, relevant files inspected, verification commands/results, notes.
+
+## Progression State
+
+Task section:
+
+```markdown
 ## Task 1: Name
 
-- Path: tasks/TASK-1
-- Task status: pending
-- Implementer: unchecked
-- Spec review: unchecked
-- Code quality: unchecked
+- Path: `tasks/PLAN-1/`
+- Status: pending
 - Next action: Start implementation.
 ```
 
-Allowed `Status` values:
+Task status values:
+
 - `pending`
 - `implementing`
-- `spec-checking`
-- `quality-checking`
+- `implemented`
 - `complete`
 - `blocked`
 
-Allowed `Spec` values:
-- `unchecked`
-- `checked`
-- `failed`
+Goal section:
 
-Allowed `Implementer` values:
-- `unchecked`
-- `checked`
-- `failed`
+```markdown
+## Goal Phases
 
-Allowed `Quality` values:
-- `unchecked`
-- `checked`
-- `failed`
-- `checked-with-minor-notes`
-
-`Next action` = one concise sentence. Details belong in task dir.
-
-Examples:
-- `Fix spec findings in tasks/GD-2/spec-review.md.`
-- `Run quality review.`
-- `Task complete; continue to next task.`
-
-## Process
-
-```dot
-digraph process {
-    rankdir=TB;
-
-    "Read plan and task dirs" [shape=box];
-    "Read plan-progression.md" [shape=box];
-    "Select next non-complete task" [shape=box];
-    "Mark task implementing" [shape=box];
-    "Dispatch one isolated task worker (./task-worker-prompt.md)" [shape=box];
-    "Worker needs context?" [shape=diamond];
-    "Answer or update task files" [shape=box];
-    "Worker completes lifecycle" [shape=box];
-    "Controller verifies files and progression" [shape=box];
-    "Task blocked or needs context?" [shape=diamond];
-    "Task complete?" [shape=diamond];
-    "More tasks?" [shape=diamond];
-    "Final integration reviewer audits whole goal" [shape=box];
-    "Use finishing-a-development-branch" [shape=box style=filled fillcolor=lightgreen];
-
-    "Read plan and task dirs" -> "Read plan-progression.md";
-    "Read plan-progression.md" -> "Select next non-complete task";
-    "Select next non-complete task" -> "Mark task implementing";
-    "Mark task implementing" -> "Dispatch one isolated task worker (./task-worker-prompt.md)";
-    "Dispatch one isolated task worker (./task-worker-prompt.md)" -> "Worker needs context?";
-    "Worker needs context?" -> "Answer or update task files" [label="yes"];
-    "Answer or update task files" -> "Dispatch one isolated task worker (./task-worker-prompt.md)";
-    "Worker needs context?" -> "Worker completes lifecycle" [label="no"];
-    "Worker completes lifecycle" -> "Controller verifies files and progression";
-    "Controller verifies files and progression" -> "Task blocked or needs context?";
-    "Task blocked or needs context?" -> "Answer or update task files" [label="yes, resolvable"];
-    "Task blocked or needs context?" -> "Task complete?" [label="no"];
-    "Task complete?" -> "Mark task implementing" [label="no"];
-    "Task complete?" -> "More tasks?" [label="yes"];
-    "More tasks?" -> "Select next non-complete task" [label="yes"];
-    "More tasks?" -> "Final integration reviewer audits whole goal" [label="no"];
-    "Final integration reviewer audits whole goal" -> "Use finishing-a-development-branch";
-}
+- Implementation: pending
+- Spec review: unchecked
+- Code quality: unchecked
+- Integration review: unchecked
+- Next action: Implement next pending task.
 ```
 
-## Session Goal Responsibilities
+Implementation values: `pending`, `active`, `checked`, `failed`.
 
-Start execution with one active goal for whole implementation plan. Keep it active until every task plus final integration review complete, or work genuinely blocked.
+Review values: `unchecked`, `checking`, `checked`, `failed`.
 
-Do not create separate Codex goal per task or phase. Codex goal tracks overall objective. Task workers give context isolation.
+Under bypass, successful task implementation sets `Status: implemented`; task becomes `complete` only after every plan-scoped gate passes. Under gated, successful task quality phase sets `Status: complete`.
 
-Before each task worker:
-1. Read `plan-progression.md` enough to select next non-complete task.
-2. Ensure task `context.md` exists.
-3. Mark task `implementing` with concise `Next action`.
-4. Dispatch `./task-worker-prompt.md` with exact paths for plan, task dir, task context, handoff/review files, progression file.
-5. Do not paste unrelated previous task details into worker prompt.
+`Next action` stays one sentence. Detailed findings belong in artifacts/handoffs.
 
-After each task worker:
-1. Verify required files updated.
-2. Verify `plan-progression.md` matches task-local review files.
-3. Keep `Next action` concise.
-4. If task incomplete but not blocked, dispatch fresh worker for same task using only task files and current handoff.
-5. Continue until every task complete or genuinely blocked.
+## Controller Algorithm
 
-If `plan-progression.md` disagrees with task-local review files, task-local review file wins. Correct progression before continuing.
+1. Validate policy before implementation.
+2. Find first phase whose prerequisite is satisfied and result incomplete.
+3. For task scope, select first eligible task in plan order. For plan scope, select whole goal.
+4. Mark selected phase/target active.
+5. Dispatch `./phase-worker-prompt.md` with exact plan, policy, context, artifact, worker-template, and reviewed-range paths.
+6. Verify returned artifact against actual files/diff and progression.
+7. If progression disagrees with artifact, artifact evidence wins; correct progression.
+8. Apply invalidation rules after repair.
+9. Repeat until configured completion gate passes or work is blocked.
+
+Never dispatch multiple implementation workers concurrently. Never carry unrelated prior-task details into worker prompt.
+
+## Phase Results
+
+Workers return:
+
+- `COMPLETE`: artifact/state valid; advance policy.
+- `BLOCKED`: unresolved external or plan blocker; stop.
+- `NEEDS_CONTEXT`: provide exact missing context and redispatch.
+- `FAILED`: inspect failure; change context, model capability, task split, or plan before retry.
+
+Review failure is not worker failure. Reviewer writes findings/handoff, marks review `failed`, and controller dispatches implementation repair before re-running same review.
+
+## Invalidation
+
+Repairs invalidate checked evidence:
+
+| Repair type | Invalidate |
+|---|---|
+| Behavioral/spec | Spec, quality, integration |
+| Quality-only | Quality, integration |
+| Uncertain scope | Spec, quality, integration |
+
+Reset invalidated phase to `unchecked`; remove no evidence. Review artifact keeps prior result plus fresh result/history. Any uncertainty about behavior counts as behavioral/spec repair.
+
+## Non-Configurable Invariants
+
+Policy can change order/scope only. It cannot disable:
+
+- TDD and watched failing tests.
+- Task verification before `implemented`.
+- One implementation worker at a time.
+- Prefer one commit per task; record reviewed range in `context.md`.
+- Continuous execution without unnecessary user pauses.
+- Stop for unresolved blockers or ambiguity.
+- Fix every blocking review finding and re-run its review.
+- Spec review checked before code-quality review starts.
+- Integration review as final gate.
+- Independent inspection of actual code/diff; never trust reports as proof.
+
+Bypass means defer reviews, never skip reviews.
 
 ## Commit Policy
 
-Prefer one commit per task. Implementer may amend task commit while fixing review findings if repo policy permits. If follow-up commits unavoidable, `context.md` must record reviewed commit range.
+Prefer one implementation commit per task. Repair may amend if repository policy permits. Otherwise record full reviewed range. Metadata-only context updates may follow implementation commit; distinguish them explicitly.
 
-Reviewers must inspect actual changed files. Prefer task commit or reviewed range from `context.md`. If work uncommitted, inspect staged and unstaged diff before review.
+Reviewers inspect actual task commit/range for task scope or combined goal range for plan scope. Uncommitted changes require staged and unstaged diff inspection.
 
 ## Phase Templates
 
-- `./task-worker-prompt.md` - Task worker full lifecycle instructions
-- `./implementer-prompt.md` - Implementer phase instructions
-- `./spec-reviewer-prompt.md` - Spec compliance review phase instructions
-- `./code-quality-reviewer-prompt.md` - Code quality review phase instructions
-
-## Task Worker Template
-
-Use one isolated task worker per task when harness supports it. Worker runs implementer, spec review, and code quality review phases for only that task. Phase templates are role checklists inside worker, not separate worker dispatches.
-
-Controller gives worker paths and concise task context. Worker reads task-local files, inspects relevant code, updates durable files, returns short report. Controller should not retain detailed review findings in chat; those belong in `spec-review.md`, `code-quality.md`, and `implementer-handoff.md`.
-
-## Handoff Rules
-
-Reviewers write detailed findings in task-local files, not `plan-progression.md`.
-
-When review fails inside task worker:
-- Reviewer updates review file with findings.
-- Reviewer updates `implementer-handoff.md` with required fixes.
-- Reviewer marks review `failed` in `plan-progression.md`.
-- Worker runs implementer phase again for same task with handoff path.
-
-When review passes inside task worker:
-- Reviewer updates review file with short pass record and evidence.
-- Reviewer marks review `checked` in `plan-progression.md`.
-- Worker advances to next phase, or marks task complete after quality review passes.
-
-Spec review strict: any missing, extra, or misunderstood requirement = `failed`.
-
-Code quality may pass with minor notes when issues are outside task goal or not worth blocking. Record notes in `code-quality.md`; mark `Code quality: checked-with-minor-notes`. Code quality is final per-task gate and sets `Task status: complete` when task acceptable.
-
-After implementer finishes review-fix pass, clear `implementer-handoff.md`: replace with short resolved note naming commit or range.
-
-## Final Integration Review
-
-After all tasks complete, run one final integration review phase. Audit whole goal, not each task alone.
-
-Final reviewer reads:
-- Original plan
-- `plan-progression.md`
-- Every task `context.md`
-- Every `spec-review.md`
-- Every `code-quality.md`
-- Final combined diff or commit range
-
-Check:
-- All tasks complete or explicitly accepted with minor quality notes
-- No spec failure remains unresolved
-- Task boundaries integrate cleanly
-- No later task regressed earlier task
-- Tests and verification evidence cover combined behavior
-- No uncommitted or unreviewed changes remain
-
-Final findings go in goal-level `final-review.md` next to `plan-progression.md`.
+- `./phase-worker-prompt.md` — generic one-phase dispatch envelope.
+- `./implementer-prompt.md` — implementation or active repair only.
+- `./spec-reviewer-prompt.md` — task- or plan-scoped spec review.
+- `./code-quality-reviewer-prompt.md` — task- or plan-scoped quality review.
+- `./integration-reviewer-prompt.md` — final plan-scoped integration review.
 
 ## Red Flags
 
 Never:
-- Put detailed review findings in `plan-progression.md`
-- Move to code quality review before spec review is `checked`
-- Mark task complete before spec is `checked` and quality is `checked` or `checked-with-minor-notes`
-- Let implementer ignore `implementer-handoff.md`
-- Leave active handoff after implementer reports DONE
-- Leave stale failed review files without fresh pass record
-- Dispatch separate workers for implementer/spec/quality phases
-- Run multiple task workers in parallel
-- Give task worker details from unrelated prior tasks
-- Keep detailed implementation or review history in controller context
-- Create separate Codex goals for each task or phase
-- Skip updating `context.md` after implementation or repair work
-- Treat `plan-progression.md` as proof work is correct
+
+- Execute preset label without expanded phase lines.
+- Embed implementation → spec → quality lifecycle in controller/worker.
+- Start phase before declared prerequisite.
+- Start quality before spec is `checked`.
+- Mark bypass task complete when only implementation finished.
+- Begin plan-scoped bypass review before every task is `implemented`.
+- Treat bypass as permission to skip TDD, verification, review, fixes, or integration.
+- Preserve downstream checked phase after invalidating repair.
+- Put detailed findings in `plan-progression.md`.
+- Trust `context.md` or implementer report as correctness proof.
+- Run multiple implementation workers in parallel.
+- Create separate goal per task or phase.
+- Finish branch while configured gate remains unchecked/failed.
+
+## Integration
+
+**Required workflow skills:**
+
+- `using-git-worktrees` — isolated execution unless human explicitly approves current branch.
+- `writing-plans` — creates task packages and expanded policy.
+- `test-driven-development` — implementation phases.
+- `verification-before-completion` — final verification evidence.
+- `finishing-a-development-branch` — completion handoff.

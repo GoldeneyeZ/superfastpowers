@@ -19,4 +19,13 @@ Files above are starting points only. Inspect any additional files needed to com
 
 ## Completion Updates
 
-Implementer updates this section before review with final task commit SHA, reviewed commit range if relevant, files created, files modified, additional relevant files, and verification commands/results.
+- Implementation commit SHA: recorded after commit.
+- Replaced hard-coded Goal-Driven lifecycle with validated policy interpreter.
+- Added `goal-driven-bypass` and `goal-driven-gated` expanded presets.
+- Added task/goal state, invalidation, invariants, controller algorithm, and phase result contracts.
+- Created `phase-worker-prompt.md` and `integration-reviewer-prompt.md`.
+- Replaced implementation/spec/quality templates with single-phase, scope-aware contracts.
+- Deleted `task-worker-prompt.md` full-lifecycle template.
+- Verification: all six Goal-Driven Markdown files have balanced fences.
+- Verification: required policy terms/scopes/presets present; deleted template references remain only in plan/history.
+- Verification: isolated GREEN probe correctly reported all tasks implemented → plan spec → plan quality → integration; 2 happy-path spec/quality reviews.

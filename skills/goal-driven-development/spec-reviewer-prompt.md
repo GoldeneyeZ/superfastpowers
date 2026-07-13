@@ -1,86 +1,34 @@
 # Goal-Driven Spec Reviewer Prompt Template
 
-Use for spec compliance review phase of packaged task.
+Use for configured `spec-review` phase after its prerequisite passes.
 
 ```
-Phase: Review spec compliance for [TASK-ID]
+Phase: spec-review
+Scope: [task|plan]
+Target: [TASK-ID|whole goal]
 
-Instructions:
-    You review whether [TASK-ID] matches specification.
+Specification: [path/to/spec.md]
+Plan/task requirements: [path(s)]
+Target context: [one task context.md | every task context.md]
+Reviewed range: [task commit/range | combined goal range]
+Artifact: [task-local spec-review.md | goal-level spec-review.md]
+Handoff: [task- or goal-level implementer-handoff.md]
+Policy/progression: [path/to/plan-progression.md]
 
-    ## Task Package
+Verify independently. Read actual code and diff. Context/reports are maps, not proof.
 
-    Task directory: [path/to/tasks/<TASK-ID>/]
-    Context file: [path/to/tasks/<TASK-ID>/context.md]
-    Spec review file: [path/to/tasks/<TASK-ID>/spec-review.md]
-    Implementer handoff file: [path/to/tasks/<TASK-ID>/implementer-handoff.md]
-    Plan progression file: [path/to/plan-progression.md]
+Check missing, extra, misunderstood, or regressed requirements; stale context/range/file lists; and missing verification evidence. Task scope compares one task. Plan scope compares original specification, complete plan, every task context, and combined implementation.
 
-    ## Task Context
+Pass:
+- Write Result: checked with evidence and concise coverage notes.
+- Mark owned spec phase checked.
+- Advance only to policy-declared next phase.
 
-    [Paste context.md contents]
+Fail:
+- Write Result: failed with specific findings and file:line refs where possible.
+- Write actionable handoff with fixes and re-review acceptance criteria.
+- Mark owned spec phase failed; reset quality and integration to unchecked.
+- Dispatch no later review.
 
-    ## Implementer Report
-
-    [Paste implementer report]
-
-    ## CRITICAL: Verify Independently
-
-    Do not trust implementer report or `context.md` as proof. Use them as map.
-    Read actual code. Compare against task requirements.
-
-    ## Your Job
-
-    Check:
-    - Missing requirements
-    - Extra or unrequested behavior
-    - Misunderstood requirements
-    - Incorrect or stale `context.md` details
-    - Missing commit SHA, reviewed range, file list, or verification evidence
-
-    Only edit this task's spec review fields in `plan-progression.md`.
-
-    ## If Spec Review Passes
-
-    Write `spec-review.md` with:
-    - Result: checked
-    - Evidence reviewed
-    - Short notes: why implementation matches task
-
-    Update this task in `plan-progression.md`:
-    - Spec review: checked
-    - Task status: quality-checking
-    - Next action: Run code quality review.
-
-    Do not write new failure handoff.
-
-    ## If Spec Review Fails
-
-    Write `spec-review.md` with:
-    - Result: failed
-    - Specific findings with file:line refs where possible
-    - Missing or extra behavior
-    - Evidence reviewed
-
-    Write `implementer-handoff.md` with:
-    - Review type: spec
-    - Required fixes
-    - Files or areas to inspect
-    - Acceptance criteria for re-review
-
-    Update this task in `plan-progression.md`:
-    - Spec review: failed
-    - Code quality: unchecked
-    - Task status: implementing
-    - Next action: Fix spec findings in this task's `spec-review.md`.
-
-    Handoff must be actionable and concise. Implementer works from it directly.
-
-    ## Report Format
-
-    - **Result:** checked | failed
-    - Review file updated? yes/no, with path
-    - Handoff updated? yes/no, with path
-    - `plan-progression.md` updated? yes/no
-    - One-sentence next action for controller
+Return result, artifact/handoff paths, reviewed range, progression fields changed, and next action.
 ```
