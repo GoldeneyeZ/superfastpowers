@@ -17,7 +17,7 @@ Files above are starting points only. Inspect any additional files needed to com
 
 ## Completion Updates
 
-- Implementation commit SHA: recorded after commit.
+- Implementation commit SHA: `93ff8c2`.
 - Completed GREEN pressure scenarios and documented evidence.
 - REFACTOR closed stale task/goal completion and failed-phase invalidation loopholes.
 - Added deterministic `STATIC_ONLY=1` contract mode for environments without Claude Code CLI.
