@@ -1,3 +1,3 @@
 # Goal-Driven Bypass Policy Implementer Handoff
 
-Resolved: implementer repair contract now permits policy-required plan-scoped invalidation, distinguishes behavioral/spec and quality-only repair, and has deterministic regression coverage. Await fresh whole-plan spec review.
+Resolved: review-count assertions now bind two reviews to Bypass spec/quality, reject Bypass per-task/`2N` counts, assert Gated lifecycle order, and pass deterministic wrong/correct probes. Await fresh whole-plan quality review.

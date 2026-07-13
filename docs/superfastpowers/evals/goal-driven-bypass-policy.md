@@ -56,6 +56,8 @@ Skill and implementer template now require task `implementing`, goal incomplete,
 
 Whole-plan spec review found a second contradiction: repair worker was required to reset plan-scoped review fields but later restricted to task/implementation fields. RED static assertion reproduced failure. Implementer contract now explicitly permits policy-required plan-scoped invalidation and distinguishes behavioral/spec from quality-only repair.
 
+Whole-plan quality review found behavioral review-count assertion accepted any unrelated `2`, including `2N`. Focused negative probe reproduced false positive. Test now binds Bypass to two spec/quality reviews, rejects Bypass per-task/`2N` counts, asserts Gated lifecycle order, and includes deterministic wrong/correct regex self-test.
+
 ## Verification
 
 - `STATIC_ONLY=1 tests/claude-code/test-goal-driven-development.sh`: passed all policy/recommendation contracts.
