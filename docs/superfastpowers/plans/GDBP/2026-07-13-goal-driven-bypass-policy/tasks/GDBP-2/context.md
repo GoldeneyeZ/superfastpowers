@@ -19,7 +19,7 @@ Files above are starting points only. Inspect any additional files needed to com
 
 ## Completion Updates
 
-- Implementation commit SHA: recorded after commit.
+- Implementation commit SHA: `38c2581`.
 - Replaced hard-coded Goal-Driven lifecycle with validated policy interpreter.
 - Added `goal-driven-bypass` and `goal-driven-gated` expanded presets.
 - Added task/goal state, invalidation, invariants, controller algorithm, and phase result contracts.
