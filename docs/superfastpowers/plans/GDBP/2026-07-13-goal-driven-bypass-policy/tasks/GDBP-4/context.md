@@ -17,7 +17,7 @@ Files above are starting points only. Inspect any additional files needed to com
 
 ## Completion Updates
 
-- Implementation commit SHA: recorded after commit.
+- Implementation commit SHA: `021a0ce`.
 - Brainstorming now recommends Goal-Driven Bypass for elapsed time while preserving Writing Plans as terminal next skill.
 - README documents Bypass versus Gated speed/feedback trade-off and removes Subagent-Driven default wording.
 - Claude Code test README documents policy behavioral coverage.
