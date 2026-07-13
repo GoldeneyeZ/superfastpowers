@@ -29,3 +29,22 @@ Fix: assert that the Bypass result explicitly binds `two` or `2` to the plan-sco
 - False-positive probe against the exact `two\|2` pattern — `grep_exit=0` for an intentionally wrong Bypass count.
 - Full `run_claude` behavioral execution remains unavailable because the `claude` CLI is not installed.
 
+## Re-review after repair commit `ea71f4e`
+
+Result: failed
+
+### Important — correct one-plus-one review wording is rejected
+
+The original false positive is fixed, but `tests/claude-code/test-goal-driven-development.sh:57` now requires the literal aggregate `two` or `2`. A correct response such as “Bypass performs one plan-wide spec review and one plan-wide code-quality review after all tasks, then final integration” does not match (`correct_one_plus_one_exit=1`). This is common wording taken directly from the skill contract and violates the prior handoff acceptance criterion that one spec plus one quality review must pass.
+
+The deterministic self-test at lines 81-94 does not cover that required form; its only positive fixture at line 83 uses `2 spec/quality reviews`, so it masks the false-negative risk.
+
+Fix: make the positive assertion accept both supported correct forms—an explicit aggregate two/2 tied to spec and quality, or one plan-scoped spec review plus one plan-scoped quality review—while preserving the negative rejection of Bypass `2N`/per-task counts. Add both correct forms and the wrong-count form to `REGEX_SELF_TEST`.
+
+### Fresh evidence
+
+- `REGEX_SELF_TEST=1 tests/claude-code/test-goal-driven-development.sh` — existing wrong/aggregate-correct/Gated fixtures passed.
+- Direct correct one-plus-one probe — rejected with `correct_one_plus_one_exit=1`.
+- `STATIC_ONLY=1 tests/claude-code/test-goal-driven-development.sh` — all 10 static assertions passed.
+- `bash -n tests/claude-code/*.sh` — all shell scripts parsed.
+- `git diff --check ed9dc5d..HEAD` also reports the prior review artifact's extra blank line at EOF; preserve clean diff formatting when updating this artifact.

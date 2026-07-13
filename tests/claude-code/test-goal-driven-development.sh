@@ -54,7 +54,7 @@ assert_not_ere() {
     fi
 }
 
-bypass_count_pattern='bypass.{0,200}(two|2)[[:space:]]+(plan-wide[[:space:]]+)?(spec[/ -]?(and|&)?[[:space:]]*quality|spec[^.]{0,80}quality|review phases)'
+bypass_count_pattern='bypass.{0,320}((two|2)[[:space:]]+(plan-wide[[:space:]]+)?(spec[/ -]?(and|&)?[[:space:]]*quality|spec[^.]{0,80}quality|review phases)|one[[:space:]]+(plan-wide[[:space:]]+)?spec[^.]{0,100}review.{0,160}one[[:space:]]+(plan-wide[[:space:]]+)?(code[ -]?)?quality[^.]{0,100}review)'
 bypass_wrong_count_pattern='bypass.{0,160}(2N|per-task|per task|two[[:space:]]+per[[:space:]]+task)'
 gated_order_pattern='gated.{0,300}(task|per-task).{0,120}implementation.{0,120}spec.{0,120}(code[ -]?quality|quality).{0,160}(plan|integration)'
 
@@ -80,15 +80,18 @@ fi
 
 if [[ "${REGEX_SELF_TEST:-0}" == "1" ]]; then
     wrong='Bypass performs three review phases. Gated performs 2N review phases.'
-    correct='Goal-Driven Bypass performs 2 spec/quality reviews after all tasks, then final integration.'
+    correct_aggregate='Goal-Driven Bypass performs 2 spec/quality reviews after all tasks, then final integration.'
+    correct_decomposed='Goal-Driven Bypass performs one plan-wide spec review and one plan-wide code-quality review after all tasks, then final integration.'
     gated='Goal-Driven Gated uses per-task implementation, task spec review, task code-quality review, then plan integration.'
 
     if printf '%s' "$wrong" | grep -Eiq -- "$bypass_count_pattern"; then
         echo "FAIL: wrong Bypass count produced false positive"
         exit 1
     fi
-    printf '%s' "$correct" | grep -Eiq -- "$bypass_count_pattern"
-    ! printf '%s' "$correct" | grep -Eiq -- "$bypass_wrong_count_pattern"
+    printf '%s' "$correct_aggregate" | grep -Eiq -- "$bypass_count_pattern"
+    printf '%s' "$correct_decomposed" | grep -Eiq -- "$bypass_count_pattern"
+    ! printf '%s' "$correct_aggregate" | grep -Eiq -- "$bypass_wrong_count_pattern"
+    ! printf '%s' "$correct_decomposed" | grep -Eiq -- "$bypass_wrong_count_pattern"
     printf '%s' "$gated" | grep -Eiq -- "$gated_order_pattern"
     echo "=== Review-count regex self-test passed ==="
     exit 0

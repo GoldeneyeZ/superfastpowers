@@ -29,3 +29,4 @@ Files above are starting points only. Inspect any additional files needed to com
 - Limitation: Claude Code behavioral suite unavailable because `claude` CLI is not installed; isolated Codex RED/GREEN pressure evals passed.
 - Spec repair: added failing static assertion, corrected plan-scoped repair invalidation permission, and reran static contract plus `git diff --check` successfully.
 - Quality repair: replaced permissive `two\|2` assertion with Bypass-bound positive/negative EREs, explicit Gated ordering, and deterministic false-positive self-test.
+- Quality repair 2: added decomposed one-spec-plus-one-quality acceptance fixture without weakening negative wrong-count checks.

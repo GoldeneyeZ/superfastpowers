@@ -58,6 +58,8 @@ Whole-plan spec review found a second contradiction: repair worker was required 
 
 Whole-plan quality review found behavioral review-count assertion accepted any unrelated `2`, including `2N`. Focused negative probe reproduced false positive. Test now binds Bypass to two spec/quality reviews, rejects Bypass per-task/`2N` counts, asserts Gated lifecycle order, and includes deterministic wrong/correct regex self-test.
 
+Quality re-review found correct decomposed wording (`one` plan spec + `one` plan quality) was rejected. Positive matcher and self-test now accept aggregate and decomposed correct forms while retaining wrong-count rejection.
+
 ## Verification
 
 - `STATIC_ONLY=1 tests/claude-code/test-goal-driven-development.sh`: passed all policy/recommendation contracts.

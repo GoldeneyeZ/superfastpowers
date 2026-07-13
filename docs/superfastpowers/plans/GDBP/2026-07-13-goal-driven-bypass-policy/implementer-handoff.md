@@ -1,3 +1,3 @@
 # Goal-Driven Bypass Policy Implementer Handoff
 
-Resolved: review-count assertions now bind two reviews to Bypass spec/quality, reject Bypass per-task/`2N` counts, assert Gated lifecycle order, and pass deterministic wrong/correct probes. Await fresh whole-plan quality review.
+Resolved: review-count matcher/self-test accepts aggregate two and decomposed one-plus-one correct forms, rejects wrong Bypass counts, and preserves Gated lifecycle coverage. Await fresh whole-plan quality review.
