@@ -17,35 +17,35 @@ Last updated: 2026-07-13
 - Implementation: checked
 - Spec review: checked
 - Code quality: checked
-- Integration review: unchecked
-- Next action: Run final integration review.
+- Integration review: checked
+- Next action: Goal complete; proceed to completion handoff.
 
 ## Task 1: Establish RED Behavioral Evals
 
 - Path: `docs/superfastpowers/plans/GDBP/2026-07-13-goal-driven-bypass-policy/tasks/GDBP-1/`
-- Status: implemented
-- Next action: Await plan-scoped reviews after all tasks are implemented.
+- Status: complete
+- Next action: Task complete.
 
 ## Task 2: Make Goal-Driven Execution Policy-Driven
 
 - Path: `docs/superfastpowers/plans/GDBP/2026-07-13-goal-driven-bypass-policy/tasks/GDBP-2/`
-- Status: implemented
-- Next action: Await plan-scoped reviews after all tasks are implemented.
+- Status: complete
+- Next action: Task complete.
 
 ## Task 3: Generate Policies and Recommend Bypass in Writing Plans
 
 - Path: `docs/superfastpowers/plans/GDBP/2026-07-13-goal-driven-bypass-policy/tasks/GDBP-3/`
-- Status: implemented
-- Next action: Await plan-scoped reviews after all tasks are implemented.
+- Status: complete
+- Next action: Task complete.
 
 ## Task 4: Surface Time Trade-off During Brainstorming and Documentation
 
 - Path: `docs/superfastpowers/plans/GDBP/2026-07-13-goal-driven-bypass-policy/tasks/GDBP-4/`
-- Status: implemented
-- Next action: Await plan-scoped reviews after all tasks are implemented.
+- Status: complete
+- Next action: Task complete.
 
 ## Task 5: Complete GREEN/REFACTOR Eval and Regression Verification
 
 - Path: `docs/superfastpowers/plans/GDBP/2026-07-13-goal-driven-bypass-policy/tasks/GDBP-5/`
-- Status: implemented
-- Next action: Await plan-scoped reviews.
+- Status: complete
+- Next action: Task complete.
