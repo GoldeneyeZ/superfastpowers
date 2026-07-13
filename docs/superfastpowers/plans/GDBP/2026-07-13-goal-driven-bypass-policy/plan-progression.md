@@ -18,7 +18,7 @@ Last updated: 2026-07-13
 - Spec review: unchecked
 - Code quality: unchecked
 - Integration review: unchecked
-- Next action: Run one whole-plan spec review.
+- Next action: Re-run whole-plan spec review after repair.
 
 ## Task 1: Establish RED Behavioral Evals
 

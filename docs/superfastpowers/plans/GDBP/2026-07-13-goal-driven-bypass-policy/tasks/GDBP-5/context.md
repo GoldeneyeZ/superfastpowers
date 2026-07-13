@@ -27,3 +27,4 @@ Files above are starting points only. Inspect any additional files needed to com
 - Verification: policy phase order/invalidation consistency scan passed; no active skill references deleted `task-worker-prompt.md`.
 - Verification: `git diff --check` passed.
 - Limitation: Claude Code behavioral suite unavailable because `claude` CLI is not installed; isolated Codex RED/GREEN pressure evals passed.
+- Spec repair: added failing static assertion, corrected plan-scoped repair invalidation permission, and reran static contract plus `git diff --check` successfully.

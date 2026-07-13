@@ -54,6 +54,8 @@ Initial invalidation wording covered downstream checked evidence but did not exp
 
 Skill and implementer template now require task `implementing`, goal incomplete, repair-triggering phase `unchecked`, downstream invalidation, then bypass task `implemented` after successful repair. Re-test confirmed no stale completion loophole.
 
+Whole-plan spec review found a second contradiction: repair worker was required to reset plan-scoped review fields but later restricted to task/implementation fields. RED static assertion reproduced failure. Implementer contract now explicitly permits policy-required plan-scoped invalidation and distinguishes behavioral/spec from quality-only repair.
+
 ## Verification
 
 - `STATIC_ONLY=1 tests/claude-code/test-goal-driven-development.sh`: passed all policy/recommendation contracts.

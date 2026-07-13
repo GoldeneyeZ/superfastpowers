@@ -32,6 +32,7 @@ assert_file_contains "$goal_skill" 'implementation | scope: task' "Task-scoped i
 assert_file_contains "$goal_skill" 'spec-review | scope: plan | requires: all tasks implemented' "Plan spec waits for all tasks"
 assert_file_contains "$goal_skill" 'code-quality | scope: plan | requires: spec-review checked' "Plan quality waits for spec"
 assert_file_contains "$goal_skill" 'Bypass means defer reviews, never skip reviews.' "Bypass safety boundary"
+assert_file_contains "$ROOT_DIR/skills/goal-driven-development/implementer-prompt.md" 'policy-required plan-scoped review fields' "Repair worker may invalidate plan review fields"
 assert_file_contains "$writing_skill" 'Goal-Driven Bypass (recommended)' "Writing Plans default recommendation"
 assert_file_contains "$writing_skill" 'Explicit user choice overrides recommendation.' "Execution override"
 assert_file_contains "$brainstorm_skill" 'reduce happy-path spec/quality reviews from `2N` to `2`' "Brainstorming time rationale"
