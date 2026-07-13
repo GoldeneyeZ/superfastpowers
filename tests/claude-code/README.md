@@ -92,6 +92,15 @@ Tests skill content and requirements (~2 minutes):
 - Review loops documented
 - Task context provision documented
 
+#### test-goal-driven-development.sh
+Tests policy-driven Goal-Driven behavior (~4 minutes):
+- Expanded policy source and validation
+- Bypass ordering: all tasks implemented before plan reviews
+- Two happy-path spec/quality review phases
+- Gated compatibility and explicit user override
+- Repair invalidation and spec-before-quality invariant
+- Brainstorming and Writing Plans recommend bypass for elapsed time
+
 ### Integration Tests (use --integration flag)
 
 #### test-subagent-driven-development-integration.sh

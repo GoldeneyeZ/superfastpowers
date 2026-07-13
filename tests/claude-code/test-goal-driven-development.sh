@@ -35,4 +35,10 @@ assert_contains "$output" "scope: plan" "Policy contains plan review scope"
 assert_order "$output" "implementation" "spec-review\|spec review" "Implementation precedes spec"
 assert_order "$output" "spec-review\|spec review" "code-quality\|code quality" "Spec precedes quality"
 
+output=$(run_claude "I approved the brainstorming spec for a ten-task feature. What implementation workflow do you recommend by default, why, and what happens next?" 60)
+assert_contains "$output" "Goal-Driven Bypass\|goal-driven-bypass" "Brainstorming recommends bypass"
+assert_contains "$output" "time\|faster\|review overhead\|context switch" "Recommendation explains speed"
+assert_contains "$output" "writing-plans\|Writing Plans" "Brainstorming still transitions to Writing Plans"
+assert_contains "$output" "choice\|override\|if you prefer\|gated" "User retains execution choice"
+
 echo "=== All goal-driven-development tests passed ==="

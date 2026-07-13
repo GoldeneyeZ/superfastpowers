@@ -14,7 +14,7 @@ Once it's teased a spec out of the conversation, it shows it to you in chunks sh
 
 After you've signed off on the design, your agent puts together an implementation plan that's clear enough for an enthusiastic junior engineer with poor taste, no judgement, no project context, and an aversion to testing to follow. It emphasizes true red/green TDD, YAGNI (You Aren't Gonna Need It), and DRY. 
 
-Next up, once you say "go", it launches a *subagent-driven-development* process, having agents work through each engineering task, inspecting and reviewing their work, and continuing forward. It's not uncommon for Claude to be able to work autonomously for a couple hours at a time without deviating from the plan you put together.
+Next up, once you say "go", it recommends *Goal-Driven Bypass*: agents implement every task, then run one plan-wide spec review and one plan-wide code-quality review before final integration. This reduces repeated review overhead while preserving completion gates. You can choose gated per-task feedback instead.
 
 There's a bunch more to it, but that's the core of the system. And because the skills trigger automatically, you don't need to do anything special. Your coding agent just has Superfastpowers.
 
@@ -159,7 +159,7 @@ already use it in another harness.
 
 3. **writing-plans** - Activates with approved design. Breaks work into bite-sized tasks (2-5 minutes each). Every task has exact file paths, complete code, verification steps.
 
-4. **subagent-driven-development** or **executing-plans** - Activates with plan. Dispatches fresh subagent per task with two-stage review (spec compliance, then code quality), or executes in batches with human checkpoints.
+4. **goal-driven-development**, **subagent-driven-development**, or **executing-plans** - Activates with plan. Goal-Driven Bypass is recommended for elapsed time: implement all tasks, then two plan-wide review phases. Goal-Driven Gated and Subagent-Driven preserve per-task review feedback; Inline executes with checkpoints.
 
 5. **test-driven-development** - Activates during implementation. Enforces RED-GREEN-REFACTOR: write failing test, watch it fail, write minimal code, watch it pass, commit. Deletes code written before tests.
 
@@ -183,13 +183,14 @@ already use it in another harness.
 **Collaboration** 
 - **brainstorming** - Socratic design refinement
 - **writing-plans** - Detailed implementation plans
+- **goal-driven-development** - Policy-driven execution. Bypass (recommended for speed) performs two plan-wide review phases instead of two per task; Gated preserves early per-task feedback.
 - **executing-plans** - Batch execution with checkpoints
 - **dispatching-parallel-agents** - Concurrent subagent workflows
 - **requesting-code-review** - Pre-review checklist
 - **receiving-code-review** - Responding to feedback
 - **using-git-worktrees** - Parallel development branches
 - **finishing-a-development-branch** - Merge/PR decision workflow
-- **subagent-driven-development** - Fast iteration with two-stage review (spec compliance, then code quality)
+- **subagent-driven-development** - Fresh subagent with two-stage review per task (spec compliance, then code quality)
 
 **Meta**
 - **writing-skills** - Create new skills following best practices (includes testing methodology)

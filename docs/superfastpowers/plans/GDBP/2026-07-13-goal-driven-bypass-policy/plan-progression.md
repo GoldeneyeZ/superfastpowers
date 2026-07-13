@@ -18,7 +18,7 @@ Last updated: 2026-07-13
 - Spec review: unchecked
 - Code quality: unchecked
 - Integration review: unchecked
-- Next action: Surface bypass time trade-off in Brainstorming and docs for GDBP-4.
+- Next action: Complete GREEN/REFACTOR eval and regression verification for GDBP-5.
 
 ## Task 1: Establish RED Behavioral Evals
 
@@ -41,11 +41,11 @@ Last updated: 2026-07-13
 ## Task 4: Surface Time Trade-off During Brainstorming and Documentation
 
 - Path: `docs/superfastpowers/plans/GDBP/2026-07-13-goal-driven-bypass-policy/tasks/GDBP-4/`
-- Status: implementing
-- Next action: Add brainstorming recommendation and user-facing documentation.
+- Status: implemented
+- Next action: Await plan-scoped reviews after all tasks are implemented.
 
 ## Task 5: Complete GREEN/REFACTOR Eval and Regression Verification
 
 - Path: `docs/superfastpowers/plans/GDBP/2026-07-13-goal-driven-bypass-policy/tasks/GDBP-5/`
-- Status: pending
-- Next action: Start implementation after GDBP-4.
+- Status: implementing
+- Next action: Re-run pressure scenarios, close loopholes, and verify repository.

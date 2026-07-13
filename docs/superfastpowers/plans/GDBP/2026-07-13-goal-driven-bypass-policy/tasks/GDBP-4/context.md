@@ -17,4 +17,10 @@ Files above are starting points only. Inspect any additional files needed to com
 
 ## Completion Updates
 
-Implementer updates this section before review with final task commit SHA, reviewed commit range if relevant, files created, files modified, additional relevant files, and verification commands/results.
+- Implementation commit SHA: recorded after commit.
+- Brainstorming now recommends Goal-Driven Bypass for elapsed time while preserving Writing Plans as terminal next skill.
+- README documents Bypass versus Gated speed/feedback trade-off and removes Subagent-Driven default wording.
+- Claude Code test README documents policy behavioral coverage.
+- Added brainstorming recommendation assertions to behavioral test.
+- Verification: required recommendation/trade-off terms present; terminal Writing Plans gate preserved; old README default removed.
+- Verification: isolated GREEN probe recommended Bypass, quantified `2N` to `2`, preserved explicit choice, and kept plan validation/package gates.

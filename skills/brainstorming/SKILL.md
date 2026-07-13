@@ -132,6 +132,8 @@ Wait for user response. If they request changes, make them and re-run spec revie
 
 **Implementation:**
 
+- Tell human partner Writing Plans will recommend **Goal-Driven Bypass** by default: implement all tasks first, then run two plan-wide review gates. Reason: reduce happy-path spec/quality reviews from `2N` to `2`, shortening elapsed execution time.
+- Explain trade-off: fewer review context switches, but task-local mistakes may be discovered later. Explicit execution choice always overrides recommendation; Goal-Driven Gated remains available for early per-task feedback.
 - Invoke writing-plans skill to create detailed implementation plan
 - Do NOT invoke any other skill. writing-plans is next step.
 
