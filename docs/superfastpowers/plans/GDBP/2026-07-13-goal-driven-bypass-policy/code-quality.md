@@ -48,3 +48,18 @@ Fix: make the positive assertion accept both supported correct forms—an explic
 - `STATIC_ONLY=1 tests/claude-code/test-goal-driven-development.sh` — all 10 static assertions passed.
 - `bash -n tests/claude-code/*.sh` — all shell scripts parsed.
 - `git diff --check ed9dc5d..HEAD` also reports the prior review artifact's extra blank line at EOF; preserve clean diff formatting when updating this artifact.
+
+## Final re-review after repair commit `4eacd0b`
+
+Result: checked
+
+### Evidence
+
+- Reviewed both prior Important findings, repair commit `4eacd0b`, the current focused test, all changed skill contracts, and the complete `ed9dc5d..HEAD` diff.
+- The Bypass matcher now accepts both correct forms: aggregate two/2 spec-and-quality reviews and decomposed one plan-wide spec review plus one plan-wide code-quality review.
+- The negative matcher continues to reject Bypass per-task and `2N` counts, and the Gated matcher asserts task implementation → task spec → task quality → plan integration.
+- `REGEX_SELF_TEST=1 tests/claude-code/test-goal-driven-development.sh` passed the wrong-count, aggregate-correct, decomposed-correct, and Gated fixtures.
+- `STATIC_ONLY=1 tests/claude-code/test-goal-driven-development.sh` passed all 10 contract assertions.
+- Every `tests/claude-code/*.sh` file passed Git Bash syntax parsing.
+- `git diff --check ed9dc5d..HEAD` passed with no output; the worktree was clean before review-artifact updates.
+- No remaining Critical or Important correctness, consistency, maintainability, portability, stale-reference, or unrelated-change issue was found.
