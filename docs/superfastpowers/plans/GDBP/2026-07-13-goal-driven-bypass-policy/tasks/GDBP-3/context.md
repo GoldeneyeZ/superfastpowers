@@ -16,7 +16,7 @@ Files above are starting points only. Inspect any additional files needed to com
 
 ## Completion Updates
 
-- Implementation commit SHA: recorded after commit.
+- Implementation commit SHA: `178da02`.
 - Updated plan header recommendation to Goal-Driven Bypass.
 - Writing Plans now emits complete bypass/gated policies and generic task/goal state.
 - Execution handoff now offers Bypass, Gated, Subagent-Driven, and Inline in requested order.
