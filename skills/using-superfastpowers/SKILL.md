@@ -14,6 +14,7 @@ Dispatched subagent with specific task: skip this skill.
 - **Affirmative consent:** Record consent for this conversation and apply the automatic skill rules below. Do not ask again during the same conversation.
 - **Declined consent:** Record refusal for this conversation and do not automatically invoke Superfastpowers skills. Do not ask again during the same conversation.
 - **No answer:** Silence is unresolved consent. Do not automatically invoke another Superfastpowers skill. Ask only once; wait for the user's answer rather than treating urgency, simplicity, or prior-conversation consent as current consent.
+- **Instruction not to ask:** If the user explicitly says not to ask questions or to proceed without questions before answering the consent prompt, treat that instruction as declined automatic-use consent. Do not ask and do not automatically invoke Superfastpowers skills for this conversation.
 - **Explicit request:** If the user explicitly requests a named Superfastpowers skill, invoke that requested skill without requiring automatic-use consent. This does not enable unrelated automatic skills or change the stored conversation preference.
 
 <EXTREMELY-IMPORTANT>
@@ -103,6 +104,7 @@ These thoughts mean STOP—rationalizing:
 | "The task is urgent/simple, so consent can wait" | Unresolved consent blocks automatic invocation. Ask once and wait. |
 | "Consent from a prior conversation still applies" | Consent is conversation-scoped. Ask once in this conversation. |
 | "Silence probably means yes" | Silence is unresolved, never affirmative consent. |
+| "The user said not to ask, so automatic use can proceed" | No-question instructions count as refusal, never affirmative consent. |
 | "This is just a simple question" | Questions are tasks. Check skills. |
 | "I need more context first" | Skill check BEFORE clarifying questions. |
 | "Let me explore the codebase first" | Skills tell HOW to explore. Check first. |
