@@ -2,7 +2,7 @@
 
 **Plan:** `docs/superfastpowers/plans/SCG/2026-07-14-superfastpowers-consent-gate.md`
 **Task:** `SCG-1`
-**Commit SHA:** Pending until task completion. If review fixes add commits, update to latest task commit and note reviewed range below.
+**Commit SHA:** This task's `feat: require consent for automatic skill use` commit. If review fixes add commits, update to latest task commit and note reviewed range below.
 
 ## Starting Context
 
@@ -30,4 +30,33 @@ Core failure: current bootstrap has no unresolved-consent state. Its uncondition
 
 ## Completion Updates
 
-Pending implementation commit SHA, reviewed range, changed files, additional relevant files, and verification commands/results.
+### GREEN Evidence
+
+The consent gate now gives the five RED scenarios deterministic outcomes:
+
+| Scenario | Governing contract | Result |
+|---|---|---|
+| Unresolved consent | “Before automatically invoking any other Superfastpowers skill, ask once … Then wait for the answer before automatic invocation.” | PASS |
+| Consent granted | “Affirmative consent” records consent, enables automatic rules, and says “Do not ask again during the same conversation.” | PASS |
+| Consent declined | “Declined consent” records refusal, disables automatic invocation, and prevents a repeat prompt. | PASS |
+| Explicit request after decline | “Explicit request” permits the named skill and “does not enable unrelated automatic skills or change the stored conversation preference.” | PASS |
+| Urgent, authoritative, simple task with unresolved consent | “No answer” forbids treating “urgency, simplicity, or prior-conversation consent as current consent.” | PASS |
+
+No new behavioral loophole was observed in the contract walkthrough; no REFACTOR text beyond the approved urgency, silence, and prior-conversation counters was needed. Per execution direction, no live Claude harness eval was run.
+
+### Changed Files
+
+- `skills/using-superfastpowers/SKILL.md`: added conversation-scoped automatic-use consent gate, explicit-request/bootstrap exceptions, gated decision flow, and consent rationalization counters.
+- `tests/claude-code/test-using-superfastpowers-consent.sh`: added 12 static assertions covering prompt timing, yes/no/silence, conversation scope, gate ordering, and explicit requests.
+- `docs/superfastpowers/plans/SCG/2026-07-14-superfastpowers-consent-gate/tasks/SCG-1/context.md`: recorded RED/GREEN and verification evidence.
+
+### Verification Evidence
+
+- RED: `C:\Program Files\Git\bin\bash.exe tests/claude-code/test-using-superfastpowers-consent.sh` → expected failure, 12/12 consent-contract assertions missing from unmodified skill.
+- GREEN: same command → PASS, all 12 assertions plus final contract result.
+- Syntax: `C:\Program Files\Git\bin\bash.exe -n tests/claude-code/test-using-superfastpowers-consent.sh` → PASS.
+- Regression: `STATIC_ONLY=1 C:\Program Files\Git\bin\bash.exe tests/claude-code/test-goal-driven-development.sh` → PASS.
+- Final consent test rerun → PASS.
+- `git diff --check` → PASS.
+
+Environment note: Windows `bash.exe` resolves to disabled WSL on this machine; tests were run successfully with Git Bash at `C:\Program Files\Git\bin\bash.exe`.

@@ -1,16 +1,25 @@
 ---
 name: using-superfastpowers
-description: Use when starting any conversation - establishes how to find and use skills, requiring Skill tool invocation before ANY response including clarifying questions
+description: Use when starting a conversation where Superfastpowers skills are available
 ---
 
 <SUBAGENT-STOP>
 Dispatched subagent with specific task: skip this skill.
 </SUBAGENT-STOP>
 
-<EXTREMELY-IMPORTANT>
-Even 1% chance skill applies? Invoke it.
+## Conversation Consent Gate
 
-IF A SKILL APPLIES TO YOUR TASK, YOU DO NOT HAVE A CHOICE. YOU MUST USE IT.
+`using-superfastpowers` is the bootstrap exception: it may load so it can ask for consent. Before automatically invoking any other Superfastpowers skill, ask once: **"Use Superfastpowers skills automatically for this conversation?"** Then wait for the answer before automatic invocation.
+
+- **Affirmative consent:** Record consent for this conversation and apply the automatic skill rules below. Do not ask again during the same conversation.
+- **Declined consent:** Record refusal for this conversation and do not automatically invoke Superfastpowers skills. Do not ask again during the same conversation.
+- **No answer:** Silence is unresolved consent. Do not automatically invoke another Superfastpowers skill. Ask only once; wait for the user's answer rather than treating urgency, simplicity, or prior-conversation consent as current consent.
+- **Explicit request:** If the user explicitly requests a named Superfastpowers skill, invoke that requested skill without requiring automatic-use consent. This does not enable unrelated automatic skills or change the stored conversation preference.
+
+<EXTREMELY-IMPORTANT>
+After affirmative consent, even 1% chance a Superfastpowers skill applies? Invoke it.
+
+IF AUTOMATIC USE IS ENABLED AND A SUPERFASTPOWERS SKILL APPLIES, YOU MUST USE IT. AN EXPLICITLY REQUESTED SUPERFASTPOWERS SKILL MAY ALWAYS BE USED.
 
 Not negotiable. Not optional. No rationalizing out.
 </EXTREMELY-IMPORTANT>
@@ -43,11 +52,15 @@ Skills use Claude Code tool names. Non-CC platforms: see `references/copilot-too
 
 ## The Rule
 
-**Invoke relevant or requested skills BEFORE any response or action.** Even 1% chance skill might apply means invoke skill to check. If wrong for situation, no need use it.
+**When affirmative consent enables automatic use, invoke relevant Superfastpowers skills BEFORE any response or action.** Even 1% chance a skill might apply means invoke it to check. If wrong for situation, no need use it. Explicitly requested named Superfastpowers skills remain available regardless of automatic-use preference.
 
 ```dot
 digraph skill_flow {
     "User message received" [shape=doublecircle];
+    "Automatic-use preference resolved?" [shape=diamond];
+    "Ask once and wait" [shape=box];
+    "Automatic use enabled?" [shape=diamond];
+    "Named skill explicitly requested?" [shape=diamond];
     "About to EnterPlanMode?" [shape=doublecircle];
     "Already brainstormed?" [shape=diamond];
     "Invoke brainstorming skill" [shape=box];
@@ -64,7 +77,13 @@ digraph skill_flow {
     "Already brainstormed?" -> "Might any skill apply?" [label="yes"];
     "Invoke brainstorming skill" -> "Might any skill apply?";
 
-    "User message received" -> "Might any skill apply?";
+    "User message received" -> "Named skill explicitly requested?";
+    "Named skill explicitly requested?" -> "Invoke Skill tool" [label="yes"];
+    "Named skill explicitly requested?" -> "Automatic-use preference resolved?" [label="no"];
+    "Automatic-use preference resolved?" -> "Ask once and wait" [label="no"];
+    "Automatic-use preference resolved?" -> "Automatic use enabled?" [label="yes"];
+    "Automatic use enabled?" -> "Might any skill apply?" [label="yes"];
+    "Automatic use enabled?" -> "Respond (including clarifications)" [label="no"];
     "Might any skill apply?" -> "Invoke Skill tool" [label="yes, even 1%"];
     "Might any skill apply?" -> "Respond (including clarifications)" [label="definitely not"];
     "Invoke Skill tool" -> "Announce: 'Using [skill] to [purpose]'";
@@ -81,6 +100,9 @@ These thoughts mean STOP—rationalizing:
 
 | Thought | Reality |
 |---------|---------|
+| "The task is urgent/simple, so consent can wait" | Unresolved consent blocks automatic invocation. Ask once and wait. |
+| "Consent from a prior conversation still applies" | Consent is conversation-scoped. Ask once in this conversation. |
+| "Silence probably means yes" | Silence is unresolved, never affirmative consent. |
 | "This is just a simple question" | Questions are tasks. Check skills. |
 | "I need more context first" | Skill check BEFORE clarifying questions. |
 | "Let me explore the codebase first" | Skills tell HOW to explore. Check first. |
