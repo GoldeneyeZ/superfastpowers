@@ -1,6 +1,6 @@
 # Plan Progression
 
-Last updated: 2026-07-14 00:00
+Last updated: 2026-07-14
 
 ## Execution Policy
 
@@ -14,14 +14,14 @@ Last updated: 2026-07-14 00:00
 
 ## Goal Phases
 
-- Implementation: active
-- Spec review: unchecked
-- Code quality: unchecked
-- Integration review: unchecked
-- Next action: Implement next pending task.
+- Implementation: checked
+- Spec review: checked
+- Code quality: checked
+- Integration review: checked
+- Next action: Goal complete.
 
 ## Task 1: Add conversation-scoped automatic-skill consent
 
 - Path: `docs/superfastpowers/plans/SCG/2026-07-14-superfastpowers-consent-gate/tasks/SCG-1/`
-- Status: implementing
-- Next action: Run RED evals and implement consent gate.
+- Status: complete
+- Next action: Goal complete.

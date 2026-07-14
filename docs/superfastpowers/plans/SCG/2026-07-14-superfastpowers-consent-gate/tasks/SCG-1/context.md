@@ -2,7 +2,7 @@
 
 **Plan:** `docs/superfastpowers/plans/SCG/2026-07-14-superfastpowers-consent-gate.md`
 **Task:** `SCG-1`
-**Commit SHA:** This task's `feat: require consent for automatic skill use` commit. If review fixes add commits, update to latest task commit and note reviewed range below.
+**Commit SHA:** `7109875` (reviewed implementation range: `8ae948b..7109875`)
 
 ## Starting Context
 
@@ -47,13 +47,16 @@ No new behavioral loophole was observed in the contract walkthrough; no REFACTOR
 ### Changed Files
 
 - `skills/using-superfastpowers/SKILL.md`: added conversation-scoped automatic-use consent gate, explicit-request/bootstrap exceptions, gated decision flow, and consent rationalization counters.
-- `tests/claude-code/test-using-superfastpowers-consent.sh`: added 12 static assertions covering prompt timing, yes/no/silence, conversation scope, gate ordering, and explicit requests.
+- `tests/claude-code/test-using-superfastpowers-consent.sh`: added 13 static assertions covering prompt timing, yes/no/silence, no-question refusal, conversation scope, gate ordering, and explicit requests.
 - `docs/superfastpowers/plans/SCG/2026-07-14-superfastpowers-consent-gate/tasks/SCG-1/context.md`: recorded RED/GREEN and verification evidence.
 
 ### Verification Evidence
 
 - RED: `C:\Program Files\Git\bin\bash.exe tests/claude-code/test-using-superfastpowers-consent.sh` → expected failure, 12/12 consent-contract assertions missing from unmodified skill.
-- GREEN: same command → PASS, all 12 assertions plus final contract result.
+- GREEN: same command → PASS, all 12 initial assertions plus final contract result.
+- Behavioral GREEN: independent pressure eval → PASS, 5/5 approved scenarios.
+- REFACTOR RED: added no-question-refusal assertion → expected FAIL, 1 missing contract assertion.
+- REFACTOR GREEN: same command → PASS, all 13 assertions; independent scenario confirmed no prompt and no automatic skill invocation.
 - Syntax: `C:\Program Files\Git\bin\bash.exe -n tests/claude-code/test-using-superfastpowers-consent.sh` → PASS.
 - Regression: `STATIC_ONLY=1 C:\Program Files\Git\bin\bash.exe tests/claude-code/test-goal-driven-development.sh` → PASS.
 - Final consent test rerun → PASS.
