@@ -11,7 +11,7 @@ Load plan, review critically, execute all tasks, report complete.
 
 **Announce at start:** "I'm using the executing-plans skill to implement this plan."
 
-**Note:** Tell human partner Superfastpowers works much better with subagent access. Work quality much higher on platforms with subagent support (Claude Code or Codex). If subagents available, use superfastpowers:subagent-driven-development instead of this skill.
+**Note:** Tell human partner Superfastpowers works much better with subagent access. If subagents are available, use superfastpowers:subagent-driven-development instead.
 
 ## The Process
 

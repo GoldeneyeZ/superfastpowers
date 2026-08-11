@@ -44,8 +44,6 @@ DEST_REL="plugins/superfastpowers"
 # (.DS_Store is intentionally unanchored — Finder creates them everywhere.)
 EXCLUDES=(
   # Dotfiles and infra — top-level only
-  "/.claude/"
-  "/.claude-plugin/"
   "/.codex/"
   "/.cursor-plugin/"
   "/.git/"
@@ -60,7 +58,6 @@ EXCLUDES=(
   # Root ceremony files
   "/AGENTS.md"
   "/CHANGELOG.md"
-  "/CLAUDE.md"
   "/GEMINI.md"
   "/RELEASE-NOTES.md"
   "/gemini-extension.json"

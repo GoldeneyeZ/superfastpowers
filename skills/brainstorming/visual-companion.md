@@ -49,21 +49,6 @@ Save `screen_dir` and `state_dir` from response. Tell user to open URL.
 
 **Launching the server by platform:**
 
-**Claude Code (macOS / Linux):**
-```bash
-# Default mode works — the script backgrounds the server itself
-scripts/start-server.sh --project-dir /path/to/project
-```
-
-**Claude Code (Windows):**
-```bash
-# Windows auto-detects and uses foreground mode, which blocks the tool call.
-# Use run_in_background: true on the Bash tool call so the server survives
-# across conversation turns.
-scripts/start-server.sh --project-dir /path/to/project
-```
-When calling via Bash tool, set `run_in_background: true`. Then read `$STATE_DIR/server-info` next turn for URL/port.
-
 **Codex:**
 ```bash
 # Codex reaps background processes. The script auto-detects CODEX_CI and

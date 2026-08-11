@@ -38,7 +38,7 @@ progress, and some were intentionally declined.
 | Field | Value |
 |-------|-------|
 | Superfastpowers version | |
-| Harness (Claude Code, Cursor, etc.) | |
+| Harness (Codex, Cursor, etc.) | |
 | Harness version | |
 | Your model + version | |
 | All plugins installed | |

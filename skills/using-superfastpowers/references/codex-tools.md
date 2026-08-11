@@ -1,6 +1,6 @@
 # Codex Tool Mapping
 
-Skills use Claude Code tool names. When skill names them, use platform equivalent:
+When a skill uses generic tool labels, map them to Codex equivalents:
 
 | Skill references | Codex equivalent |
 |-----------------|------------------|

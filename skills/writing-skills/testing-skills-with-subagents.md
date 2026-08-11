@@ -12,8 +12,6 @@ Run scenarios without skill (RED - watch fail), write skill for those failures (
 
 **REQUIRED BACKGROUND:** MUST understand superfastpowers:test-driven-development first. It defines RED-GREEN-REFACTOR. This skill adds skill-test formats: pressure scenarios, rationalization tables.
 
-**Complete worked example:** See examples/CLAUDE_MD_TESTING.md for full campaign testing CLAUDE.md variants.
-
 ## When to Use
 
 Test skills that:

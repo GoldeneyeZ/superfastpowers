@@ -28,7 +28,7 @@ requested or discussed.
 
 | Field | Value |
 |-------|-------|
-| Harness you currently use (Claude Code, Cursor, etc.) | |
+| Harness you currently use (Codex, Cursor, etc.) | |
 | Harness version | |
 | Your model + version | |
 | All plugins installed | |

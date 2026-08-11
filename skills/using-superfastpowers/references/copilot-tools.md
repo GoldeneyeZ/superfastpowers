@@ -1,6 +1,6 @@
 # Copilot CLI Tool Mapping
 
-Skills use Claude Code tool names. Map to platform equivalent:
+Map generic skill tool labels to Copilot CLI equivalents:
 
 | Skill references | Copilot CLI equivalent |
 |-----------------|----------------------|
@@ -21,7 +21,7 @@ Skills use Claude Code tool names. Map to platform equivalent:
 
 ## Async shell sessions
 
-Copilot CLI supports persistent async shell sessions. No direct Claude Code equivalent:
+Copilot CLI supports persistent async shell sessions:
 
 | Tool | Purpose |
 |------|---------|

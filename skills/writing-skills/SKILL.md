@@ -9,7 +9,7 @@ description: Use when creating new skills, editing existing skills, or verifying
 
 **Writing skills IS Test-Driven Development applied to process documentation.**
 
-**Personal skills live in agent-specific directories (`~/.claude/skills` for Claude Code, `~/.agents/skills/` for Codex)** 
+**Personal skills live in agent-specific directories such as `~/.agents/skills/` for Codex.**
 
 Write test cases (pressure scenarios with subagents), watch fail (baseline behavior), write skill (docs), watch pass (agents comply), refactor (close loopholes).
 
@@ -17,11 +17,9 @@ Write test cases (pressure scenarios with subagents), watch fail (baseline behav
 
 **REQUIRED BACKGROUND:** You MUST understand superfastpowers:test-driven-development before this skill. It defines RED-GREEN-REFACTOR. This skill adapts TDD to docs.
 
-**Official guidance:** Anthropic official skill authoring best practices: anthropic-best-practices.md. This doc adds TDD-focused patterns/guidelines.
-
 ## What is a Skill?
 
-A **skill** is reference guide for proven techniques, patterns, or tools. Skills help future Claude instances find/apply effective approaches.
+A **skill** is reference guide for proven techniques, patterns, or tools. Skills help future agents find/apply effective approaches.
 
 **Skills are:** Reusable techniques, patterns, tools, reference guides
 
@@ -55,7 +53,7 @@ Entire skill creation follows RED-GREEN-REFACTOR.
 **Don't create for:**
 - One-off solutions
 - Standard practices well-documented elsewhere
-- Project-specific conventions (put in CLAUDE.md)
+- Project-specific conventions (put in AGENTS.md)
 - Mechanical constraints (if enforceable with regex/validation, automate it—save docs for judgment calls)
 
 ## Skill Types
@@ -137,13 +135,13 @@ Concrete results
 ```
 
 
-## Claude Search Optimization (CSO)
+## Skill Search Optimization
 
-**Critical for discovery:** Future Claude needs to FIND your skill
+**Critical for discovery:** Future agents need to FIND your skill.
 
 ### 1. Rich Description Field
 
-**Purpose:** Claude reads description to decide skill load for task. Answer: "Should I read this skill right now?"
+**Purpose:** Agent reads description to decide skill load for task. Answer: "Should I read this skill right now?"
 
 **Format:** Start with "Use when..." to focus on triggering conditions
 
@@ -151,14 +149,14 @@ Concrete results
 
 Description ONLY names triggering conditions. Do NOT summarize process/workflow in description.
 
-**Why this matters:** Testing showed workflow-summary descriptions make Claude follow description instead of reading full skill. Description "code review between tasks" caused ONE review, though flowchart showed TWO reviews (spec compliance then code quality).
+**Why this matters:** Testing showed workflow-summary descriptions can make agents follow description instead of reading full skill. Description "code review between tasks" caused ONE review, though flowchart showed TWO reviews.
 
-Changed description to only "Use when executing implementation plans with independent tasks" (no workflow summary); Claude read flowchart and followed two-stage review.
+Changed description to only "Use when executing implementation plans with independent tasks"; agent then read flowchart and followed two-stage review.
 
-**The trap:** Workflow-summary descriptions create shortcut Claude takes. Skill body becomes skipped docs.
+**The trap:** Workflow-summary descriptions create a shortcut. Skill body becomes skipped docs.
 
 ```yaml
-# ❌ BAD: Summarizes workflow - Claude may follow this instead of reading skill
+# ❌ BAD: Summarizes workflow - agent may follow this instead of reading skill
 description: Use when executing plans - dispatches subagent per task with code review between tasks
 
 # ❌ BAD: Too much process detail
@@ -198,7 +196,7 @@ description: Use when using React Router and handling authentication redirects
 
 ### 2. Keyword Coverage
 
-Use words Claude would search for:
+Use words agents would search for:
 - Error messages: "Hook timed out", "ENOTEMPTY", "race condition"
 - Symptoms: "flaky", "hanging", "zombie", "pollution"
 - Synonyms: "timeout/hang/freeze", "cleanup/teardown/afterEach"
@@ -634,7 +632,7 @@ Deploying untested skills = deploying untested code. Quality violation.
 
 ## Discovery Workflow
 
-How future Claude finds your skill:
+How future agents find your skill:
 
 1. **Encounters problem** ("tests are flaky")
 3. **Finds SKILL** (description matches)

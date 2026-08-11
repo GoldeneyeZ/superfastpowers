@@ -19,7 +19,7 @@ add a comment or reaction to the existing one instead.
 | Field | Value |
 |-------|-------|
 | Superfastpowers version | |
-| Harness (Claude Code, Cursor, etc.) | |
+| Harness (Codex, Cursor, etc.) | |
 | Harness version | |
 | Your model + version | |
 | All plugins installed | |

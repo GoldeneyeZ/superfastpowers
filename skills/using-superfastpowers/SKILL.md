@@ -29,17 +29,15 @@ Not negotiable. Not optional. No rationalizing out.
 
 Superfastpowers skills override default system prompt behavior, but **user instructions always take precedence**:
 
-1. **User's explicit instructions** (CLAUDE.md, GEMINI.md, AGENTS.md, direct requests) — highest priority
+1. **User's explicit instructions** (AGENTS.md, GEMINI.md, direct requests) — highest priority
 2. **Superfastpowers skills** — override default system behavior where they conflict
 3. **Default system prompt** — lowest priority
 
-If CLAUDE.md, GEMINI.md, or AGENTS.md says "don't use TDD" and skill says "always use TDD," follow user instructions. User controls.
+If AGENTS.md, GEMINI.md, or direct instructions say "don't use TDD" and skill says "always use TDD," follow user instructions. User controls.
 
 ## How to Access Skills
 
-**In Claude Code:** Use the `Skill` tool. Invoked skill content loads—follow directly. Never use Read tool on skill files.
-
-**In Copilot CLI:** Use the `skill` tool. Skills auto-discovered from installed plugins. `skill` tool works like Claude Code's `Skill` tool.
+**In Copilot CLI:** Use the `skill` tool. Skills auto-discovered from installed plugins.
 
 **In Gemini CLI:** Skills activate via `activate_skill` tool. Gemini loads skill metadata at session start; activates full content on demand.
 
@@ -47,7 +45,7 @@ If CLAUDE.md, GEMINI.md, or AGENTS.md says "don't use TDD" and skill says "alway
 
 ## Platform Adaptation
 
-Skills use Claude Code tool names. Non-CC platforms: see `references/copilot-tools.md` (Copilot CLI), `references/codex-tools.md` (Codex) for tool equivalents. Gemini CLI users get tool mapping automatically via GEMINI.md.
+Adapt skill tool names to the active platform. See `references/copilot-tools.md` and `references/codex-tools.md`; Gemini CLI users get mappings via GEMINI.md.
 
 # Using Skills
 

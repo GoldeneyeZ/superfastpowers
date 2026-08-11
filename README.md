@@ -4,7 +4,7 @@ Superfastpowers is a complete software development methodology for your coding a
 
 ## Quickstart
 
-Give your agent Superfastpowers: [Claude Code](#claude-code), [Codex CLI](#codex-cli), [Codex App](#codex-app), [Factory Droid](#factory-droid), [Gemini CLI](#gemini-cli), [OpenCode](#opencode), [Cursor](#cursor), [GitHub Copilot CLI](#github-copilot-cli).
+Give your agent Superfastpowers: [Codex CLI](#codex-cli), [Codex App](#codex-app), [Factory Droid](#factory-droid), [Gemini CLI](#gemini-cli), [OpenCode](#opencode), [Cursor](#cursor), [GitHub Copilot CLI](#github-copilot-cli).
 
 ## How it works
 
@@ -31,34 +31,6 @@ Thanks!
 ## Installation
 
 Installation differs by harness. If you use more than one, install Superfastpowers separately for each one.
-
-### Claude Code
-
-Superfastpowers is available via the [official Claude plugin marketplace](https://claude.com/plugins/superfastpowers)
-
-#### Official Marketplace
-
-- Install the plugin from Anthropic's official marketplace:
-
-  ```bash
-  /plugin install superfastpowers@claude-plugins-official
-  ```
-
-#### Superfastpowers Marketplace
-
-The Superfastpowers marketplace provides Superfastpowers and some other related plugins for Claude Code.
-
-- Register the marketplace:
-
-  ```bash
-  /plugin marketplace add obra/superfastpowers-marketplace
-  ```
-
-- Install the plugin from this marketplace:
-
-  ```bash
-  /plugin install superfastpowers@superfastpowers-marketplace
-  ```
 
 ### Codex CLI
 
