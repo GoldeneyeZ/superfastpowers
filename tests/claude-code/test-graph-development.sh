@@ -17,6 +17,7 @@ matcher_fork() {
     local output="$1"
     printf '%s' "$output" | grep -Eiq '(dispatch|spawn).{0,80}(both|two).{0,80}branch|both.{0,80}branch.{0,80}(dispatch|spawn)' \
         && ! printf '%s' "$output" | grep -Eiq '(do not|don.t|must not|never).{0,60}(dispatch|spawn).{0,80}(both|two).{0,40}branch|(leave|keep).{0,40}(left|right|one).{0,40}branch.{0,40}(idle|undispatched)' \
+        && ! printf '%s' "$output" | grep -Eiq '(both|two).{0,40}branch(es)?.{0,40}(must not|must never|cannot|can.t|should not).{0,40}(be )?(dispatch|spawn)' \
         && ! printf '%s' "$output" | grep -Eiq '(run|execute).{0,80}join.{0,80}(before|while).{0,80}(branch|predecessor).{0,80}(complete|verified)'
 }
 
@@ -34,7 +35,8 @@ matcher_failure() {
     printf '%s' "$output" | grep -Eiq '(healthy|other|sibling).{0,80}(complete|continue|finish)|(let|allow).{0,40}(healthy|other|sibling).{0,80}(complete|continue|finish)' \
         && printf '%s' "$output" | grep -Eiq '(block|hold|do not run|cannot run).{0,80}(join|merge)' \
         && printf '%s' "$output" | grep -Eiq '(retry|rerun).{0,80}(failed|failing|failure).{0,80}branch' \
-        && ! printf '%s' "$output" | grep -Eiq '(do not|don.t|must not|never).{0,80}(let|allow).{0,40}(healthy|other|sibling).{0,80}(complete|continue|finish)|(stop|cancel).{0,60}(healthy|other|sibling)'
+        && ! printf '%s' "$output" | grep -Eiq '(do not|don.t|must not|never).{0,80}(let|allow).{0,40}(healthy|other|sibling).{0,80}(complete|continue|finish)|(stop|cancel).{0,60}(healthy|other|sibling)' \
+        && ! printf '%s' "$output" | grep -Eiq '(healthy|other|sibling).{0,60}(cannot|can.t|must not|must never|should not).{0,40}(complete|continue|finish)'
 }
 
 matcher_git_ownership() {
@@ -53,6 +55,7 @@ if [[ "${ORACLE_SELF_TEST:-0}" == "1" ]]; then
     matcher_fork 'Spawn the two branch workers concurrently; merge runs only after both finish.' || exit 1
     ! matcher_fork 'Dispatch both branches, then execute the join while branches are incomplete.' || exit 1
     ! matcher_fork 'Do not dispatch both branches; leave the right branch idle.' || exit 1
+    ! matcher_fork 'Both branches must never be dispatched; run them serially.' || exit 1
     matcher_capacity 'Checkpoint state, release its slot, then a continuation reconstructs and resumes.' || exit 1
     matcher_capacity 'Free the parent capacity after saving state; another agent reconstructs the state and resumes.' || exit 1
     ! matcher_capacity 'Keep the parent process alive and waiting in its capacity slot.' || exit 1
@@ -61,6 +64,7 @@ if [[ "${ORACLE_SELF_TEST:-0}" == "1" ]]; then
     matcher_failure 'Let the other branch finish, hold merge, then rerun the failing branch alone.' || exit 1
     ! matcher_failure 'Stop every sibling and run the join despite the failed branch.' || exit 1
     ! matcher_failure 'Do not let the healthy sibling complete; block the join and retry the failed branch.' || exit 1
+    ! matcher_failure 'The healthy sibling cannot continue; block merge then rerun only the failed branch.' || exit 1
     matcher_git_ownership 'The branch worker must not stage or commit; the parent owns the aggregate commit.' || exit 1
     matcher_git_ownership 'Workers leave Git untouched; their logical parent creates the combined commit.' || exit 1
     ! matcher_git_ownership 'The branch worker stages and commits quickly; the parent observes it.' || exit 1
