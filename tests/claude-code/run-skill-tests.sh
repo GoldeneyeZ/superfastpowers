@@ -59,6 +59,8 @@ while [[ $# -gt 0 ]]; do
             echo "Tests:"
             echo "  test-subagent-driven-development.sh  Test skill loading and requirements"
             echo "  test-goal-driven-development.sh  Test policy-driven Goal-Driven workflow"
+            echo "  test-graph-development-static.sh  Test Graph Development contracts"
+            echo "  test-graph-development.sh  Test Graph Development behavior"
             echo ""
             echo "Integration Tests (use --integration):"
             echo "  test-subagent-driven-development-integration.sh  Full workflow execution"
@@ -76,6 +78,8 @@ done
 tests=(
     "test-subagent-driven-development.sh"
     "test-goal-driven-development.sh"
+    "test-graph-development-static.sh"
+    "test-graph-development.sh"
     "test-worktree-opt-in.sh"
 )
 
@@ -109,8 +113,13 @@ for test in "${tests[@]}"; do
     test_path="$SCRIPT_DIR/$test"
 
     if [ ! -f "$test_path" ]; then
-        echo "  [SKIP] Test file not found: $test"
-        skipped=$((skipped + 1))
+        if [[ "$test" == *-static.sh ]]; then
+            echo "  [FAIL] Required static test file not found: $test"
+            failed=$((failed + 1))
+        else
+            echo "  [SKIP] Optional behavioral test file not found: $test"
+            skipped=$((skipped + 1))
+        fi
         continue
     fi
 

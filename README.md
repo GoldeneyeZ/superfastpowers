@@ -159,11 +159,15 @@ already use it in another harness.
 
 3. **goal-driven-development**, **subagent-driven-development**, or **executing-plans** - Activates with plan. Goal-Driven Bypass is recommended for elapsed time: implement all tasks, then two plan-wide review phases. Goal-Driven Gated and Subagent-Driven preserve per-task review feedback; Inline executes with checkpoints.
 
-4. **test-driven-development** - Activates during implementation. Enforces RED-GREEN-REFACTOR: write failing test, watch it fail, write minimal code, watch it pass, commit. Deletes code written before tests.
+4. **graph-development** — Executes validated structured task graphs: linear agent continuity, parallel branches, durable parent continuations, parent-owned joins and commits. It is an optional execution workflow for plans that include graph artifacts; Goal-Driven Bypass remains the recommended default.
 
-5. **requesting-code-review** - Activates at execution-mode review points: between tasks for gated workflows, plan-wide after implementation for Goal-Driven Bypass. Reports issues by severity; critical issues block progress.
+When `writing-plans` creates graph artifacts, choose `json`, `markdown`, or `both`; the default is `both`. Graph Development reads the validated graph artifacts when that workflow is selected.
 
-6. **finishing-a-development-branch** - Activates when tasks complete. Verifies tests, presents options (merge/PR/keep/discard), and performs the selected cleanup.
+5. **test-driven-development** - Activates during implementation. Enforces RED-GREEN-REFACTOR: write failing test, watch it fail, write minimal code, watch it pass, commit. Deletes code written before tests.
+
+6. **requesting-code-review** - Activates at execution-mode review points: between tasks for gated workflows, plan-wide after implementation for Goal-Driven Bypass. Reports issues by severity; critical issues block progress.
+
+7. **finishing-a-development-branch** - Activates when tasks complete. Verifies tests, presents options (merge/PR/keep/discard), and performs the selected cleanup.
 
 **The agent checks for relevant skills before any task.** Mandatory workflows, not suggestions.
 
@@ -181,6 +185,7 @@ already use it in another harness.
 **Collaboration** 
 - **brainstorming** - Socratic design refinement
 - **writing-plans** - Detailed implementation plans
+- **graph-development** - Executes validated structured task graphs
 - **goal-driven-development** - Policy-driven execution. Bypass (recommended for speed) performs two plan-wide review phases instead of two per task; Gated preserves early per-task feedback.
 - **executing-plans** - Batch execution with checkpoints
 - **dispatching-parallel-agents** - Concurrent subagent workflows
