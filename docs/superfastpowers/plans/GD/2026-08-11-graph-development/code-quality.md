@@ -1,14 +1,33 @@
 # Graph Development Code Quality Review
 
-Current result: failed
+Current result: checked
 
 Initial reviewed range: `e8194a9..a68889b`
 
-Re-review repair range: `08e07de..4fa637c`
+Failed re-review range: `08e07de..4fa637c`
+
+Accepted re-review range: `8f7d41d..4f38d34`
 
 Spec gate: checked (`spec-review.md`)
 
-## Re-review Result
+## Accepted Re-review
+
+The focused repair is accepted. `matcher_fork` now rejects the subject-before-negation form `Both branches must never be dispatched; run them serially.`, and `matcher_failure` now rejects `The healthy sibling cannot continue; block merge then rerun only the failed branch.` Fresh isolated probes confirm both fail; existing positive fork and failure paraphrases still pass. Both regressions are now durable `ORACLE_SELF_TEST` cases.
+
+The earlier path-alias repair remains valid: the 27 validator tests include repeated-separator and leading-`./` rejections. The repair is limited to the behavioral matcher plus its oracle regressions; no new quality issue found.
+
+## Accepted Re-review Verification
+
+- Exact two false-positive probes — rejected; matching positive fork and failure probes — accepted.
+- `PYTHONDONTWRITEBYTECODE=1 python3 -m unittest tests/graph-development/test_validate_graph.py -v` — 27 passed.
+- `bash tests/claude-code/test-graph-development-static.sh` — passed all assertions.
+- `ORACLE_SELF_TEST=1 bash tests/claude-code/test-graph-development.sh` — passed, including both new regressions.
+- `bash tests/claude-code/run-skill-tests.sh` — 2 passed, 0 failed; 3 Claude-backed behavioral tests correctly skipped because Claude CLI is unavailable.
+- `bash tests/codex-plugin-sync/test-sync-to-codex-plugin.sh` — passed.
+- `python3 /home/goldeneye/.codex/skills/.system/skill-creator/scripts/quick_validate.py skills/graph-development` — skill valid.
+- `bash -n tests/claude-code/test-graph-development-static.sh tests/claude-code/test-graph-development.sh tests/claude-code/run-skill-tests.sh` and `git diff --check 4f38d34^..4f38d34` — passed.
+
+## Failed Re-review History
 
 ### Important — behavioral matcher still accepts wrong execution decisions
 
