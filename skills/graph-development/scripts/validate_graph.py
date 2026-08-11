@@ -330,7 +330,12 @@ def _valid_relative_path(value: object) -> bool:
     if not isinstance(value, str) or not value or "\\" in value:
         return False
     path = Path(value)
-    return not path.is_absolute() and ".." not in path.parts and "." not in path.parts
+    return (
+        not path.is_absolute()
+        and ".." not in path.parts
+        and "." not in path.parts
+        and path.as_posix() == value
+    )
 
 
 def _task_write_declarations(task_path: Path, node_id: str) -> tuple[set[str], list[str]]:

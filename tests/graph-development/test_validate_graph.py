@@ -173,6 +173,18 @@ class ValidateGraphContractTest(unittest.TestCase):
         graph["nodes"]["GD-3"]["writes"] = ["src/left.py"]
         self.assert_error(graph, "concurrent write overlap")
 
+    def test_rejects_repeated_separator_write_alias(self) -> None:
+        graph = copy.deepcopy(VALID_GRAPH)
+        graph["nodes"]["GD-2"]["writes"] = ["src/shared.py"]
+        graph["nodes"]["GD-3"]["writes"] = ["src//shared.py"]
+        self.assert_error(graph, "invalid write path: src//shared.py")
+
+    def test_rejects_leading_dot_write_alias(self) -> None:
+        graph = copy.deepcopy(VALID_GRAPH)
+        graph["nodes"]["GD-2"]["writes"] = ["src/shared.py"]
+        graph["nodes"]["GD-3"]["writes"] = ["./src/shared.py"]
+        self.assert_error(graph, "invalid write path: ./src/shared.py")
+
     def test_rejects_missing_task_file(self) -> None:
         directory = self.make_package(VALID_GRAPH, json_graph=VALID_GRAPH)
         (Path(directory.name) / "tasks/GD-2/task.md").unlink()
