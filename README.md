@@ -155,17 +155,15 @@ already use it in another harness.
 
 1. **brainstorming** - Activates before writing code. Refines rough ideas through questions, explores alternatives, presents design in sections for validation. Saves design document.
 
-2. **using-git-worktrees** - Activates after design approval. Creates isolated workspace on new branch, runs project setup, verifies clean test baseline.
+2. **writing-plans** - Activates with approved design. Breaks work into bite-sized tasks (2-5 minutes each). Every task has exact file paths, complete code, verification steps.
 
-3. **writing-plans** - Activates with approved design. Breaks work into bite-sized tasks (2-5 minutes each). Every task has exact file paths, complete code, verification steps.
+3. **goal-driven-development**, **subagent-driven-development**, or **executing-plans** - Activates with plan. Goal-Driven Bypass is recommended for elapsed time: implement all tasks, then two plan-wide review phases. Goal-Driven Gated and Subagent-Driven preserve per-task review feedback; Inline executes with checkpoints.
 
-4. **goal-driven-development**, **subagent-driven-development**, or **executing-plans** - Activates with plan. Goal-Driven Bypass is recommended for elapsed time: implement all tasks, then two plan-wide review phases. Goal-Driven Gated and Subagent-Driven preserve per-task review feedback; Inline executes with checkpoints.
+4. **test-driven-development** - Activates during implementation. Enforces RED-GREEN-REFACTOR: write failing test, watch it fail, write minimal code, watch it pass, commit. Deletes code written before tests.
 
-5. **test-driven-development** - Activates during implementation. Enforces RED-GREEN-REFACTOR: write failing test, watch it fail, write minimal code, watch it pass, commit. Deletes code written before tests.
+5. **requesting-code-review** - Activates at execution-mode review points: between tasks for gated workflows, plan-wide after implementation for Goal-Driven Bypass. Reports issues by severity; critical issues block progress.
 
-6. **requesting-code-review** - Activates between tasks. Reviews against plan, reports issues by severity. Critical issues block progress.
-
-7. **finishing-a-development-branch** - Activates when tasks complete. Verifies tests, presents options (merge/PR/keep/discard), cleans up worktree.
+6. **finishing-a-development-branch** - Activates when tasks complete. Verifies tests, presents options (merge/PR/keep/discard), and performs the selected cleanup.
 
 **The agent checks for relevant skills before any task.** Mandatory workflows, not suggestions.
 
@@ -188,7 +186,7 @@ already use it in another harness.
 - **dispatching-parallel-agents** - Concurrent subagent workflows
 - **requesting-code-review** - Pre-review checklist
 - **receiving-code-review** - Responding to feedback
-- **using-git-worktrees** - Parallel development branches
+- **using-git-worktrees** - Explicit opt-in worktree setup and safety
 - **finishing-a-development-branch** - Merge/PR decision workflow
 - **subagent-driven-development** - Fresh subagent with two-stage review per task (spec compliance, then code quality)
 

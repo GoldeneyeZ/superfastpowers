@@ -76,6 +76,7 @@ done
 tests=(
     "test-subagent-driven-development.sh"
     "test-goal-driven-development.sh"
+    "test-worktree-opt-in.sh"
 )
 
 # Integration tests (slow, full execution)

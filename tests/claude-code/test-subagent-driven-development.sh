@@ -136,12 +136,12 @@ fi
 
 echo ""
 
-# Test 8: Verify worktree requirement
-echo "Test 8: Worktree requirement..."
+# Test 8: Verify worktrees are not a prerequisite
+echo "Test 8: Worktrees are opt-in..."
 
 output=$(run_claude "What workflow skills are required before using subagent-driven-development? List any prerequisites or required skills." 30)
 
-if assert_contains "$output" "using-git-worktrees\|worktree" "Mentions worktree requirement"; then
+if assert_not_contains "$output" "using-git-worktrees\|worktree" "Doesn't require a worktree"; then
     : # pass
 else
     exit 1
@@ -149,12 +149,18 @@ fi
 
 echo ""
 
-# Test 9: Verify main branch warning
-echo "Test 9: Main branch red flag..."
+# Test 9: Verify explicit current-checkout choice is respected
+echo "Test 9: Current-checkout choice..."
 
-output=$(run_claude "In subagent-driven-development, is it okay to start implementation directly on the main branch?" 30)
+output=$(run_claude "The user explicitly chose to run subagent-driven-development in the current checkout. Must the workflow move the task to a worktree first?" 30)
 
-if assert_contains "$output" "worktree\|feature.*branch\|not.*main\|never.*main\|avoid.*main\|don't.*main\|consent\|permission" "Warns against main branch"; then
+if assert_contains "$output" "no\|not required\|doesn't require\|does not require\|current checkout" "Respects current checkout"; then
+    : # pass
+else
+    exit 1
+fi
+
+if assert_not_contains "$output" "must.*worktree\|required.*worktree\|using-git-worktrees" "Doesn't override current-checkout choice"; then
     : # pass
 else
     exit 1

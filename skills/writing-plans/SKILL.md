@@ -13,8 +13,6 @@ Assume skilled developer, but new to toolset/domain and weak test design.
 
 **Announce at start:** "I'm using the writing-plans skill to create the implementation plan."
 
-**Context:** If in isolated worktree, it should come from `superfastpowers:using-git-worktrees` skill at execution time.
-
 **Save plans to:** `docs/superfastpowers/plans/<PLAN-ACRONYM>/<YYYY-MM-DD-kebab-feature-name>.md`
 - `<PLAN-ACRONYM>` is the uppercase acronym from the plan header, matching task IDs.
 - Filename is dated + kebab-case so multiple plans under the same acronym do not collide.
@@ -110,7 +108,7 @@ Expected: PASS
 
 ```bash
 git add tests/path/test.py src/path/file.py
-git commit -m "feat: add specific feature"
+git commit --only -m "feat: add specific feature" -- tests/path/test.py src/path/file.py
 ```
 ````
 

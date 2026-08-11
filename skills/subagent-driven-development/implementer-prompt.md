@@ -38,6 +38,12 @@ Task tool (general-purpose):
 
     Work from: [directory]
 
+    Inspect `git status --short`, `git diff`, and `git diff --cached` before editing.
+    If any task-owned path already has changes not created by this task, stop and ask.
+    Commit only task-owned paths. Use a path-limited commit
+    (`git commit --only ... -- <task-owned paths>`) so pre-existing staged
+    changes stay out.
+
     ## Task Package Context
 
     Task package directory: [path/to/tasks/<TASK-ID>/, if present]
@@ -66,7 +72,7 @@ Task tool (general-purpose):
     description.
 
     Example: if the plan acronym is `UA` and this is Task 3, commit with:
-    `git commit -m "[UA-3] feat: add user audit trail"`
+    `git commit --only -m "[UA-3] feat: add user audit trail" -- <task-owned paths>`
 
     If the pasted task description includes a `<TASK-ID>...</TASK-ID>` tag, use
     that exact value inside brackets.

@@ -1,15 +1,15 @@
 ---
 name: using-git-worktrees
-description: Use when starting feature work that needs isolation from current workspace or before executing implementation plans - ensures an isolated workspace exists via native tools or git worktree fallback
+description: Use when the human explicitly requests a git worktree, asks for worktree-specific help, or an existing linked worktree needs setup
 ---
 
 # Using Git Worktrees
 
 ## Overview
 
-Keep work in isolated workspace. Prefer platform native worktree tools. Use manual git worktrees only when no native tool exists.
+Git worktrees are opt-in. Create one only after an explicit human request. Otherwise continue in the current checkout without suggesting or offering a worktree.
 
-**Core principle:** Detect existing isolation first. Then use native tools. Then fall back to git. Never fight harness.
+**Core principle:** Respect workspace choice. When a worktree is requested or already active, detect existing isolation first, use native tools next, then fall back to git. Never fight harness.
 
 **Announce at start:** "I'm using the using-git-worktrees skill to set up an isolated workspace."
 
@@ -36,13 +36,7 @@ Report branch state:
 - On branch: "Already in isolated workspace at `<path>` on branch `<name>`."
 - Detached HEAD: "Already in isolated workspace at `<path>` (detached HEAD, externally managed). Branch creation needed at finish time."
 
-**If `GIT_DIR == GIT_COMMON` (or in a submodule):** Normal repo checkout.
-
-If user has not already indicated worktree preference in instructions, ask consent before creating worktree:
-
-> "Would you like me to set up an isolated worktree? It protects your current branch from changes."
-
-Honor declared preference without asking. If user declines, work in place; skip to Step 3.
+**If `GIT_DIR == GIT_COMMON` (or in a submodule):** Normal repo checkout. Continue only when the human explicitly requested a worktree. Otherwise stop this skill and work in place. Do not suggest or offer one.
 
 ## Step 1: Create Isolated Workspace
 
@@ -50,7 +44,7 @@ Honor declared preference without asking. If user declines, work in place; skip 
 
 ### 1a. Native Worktree Tools (preferred)
 
-User asked for isolated workspace (Step 0 consent). If existing way to create worktree exists—tool named like `EnterWorktree`, `WorktreeCreate`, `/worktree` command, or `--worktree` flag—use it; skip to Step 3.
+The human explicitly requested a worktree. If an existing way to create one exists—tool named like `EnterWorktree`, `WorktreeCreate`, `/worktree` command, or `--worktree` flag—use it; skip to Step 3.
 
 Native tools handle directory placement, branch creation, cleanup. Using `git worktree add` when native tool exists creates phantom state harness cannot see/manage.
 
@@ -157,6 +151,7 @@ Ready to implement <feature-name>
 |-----------|--------|
 | Already in linked worktree | Skip creation (Step 0) |
 | In a submodule | Treat as normal repo (Step 0 guard) |
+| No explicit worktree request | Stop skill; work in current checkout |
 | Native worktree tool available | Use it (Step 1a) |
 | No native tool | Git worktree fallback (Step 1b) |
 | `.worktrees/` exists | Use it (verify ignored) |
@@ -175,6 +170,11 @@ Ready to implement <feature-name>
 
 - **Problem:** Using `git worktree add` when platform already provides isolation
 - **Fix:** Step 0 detects existing isolation. Step 1a defers to native tools.
+
+### Recommending worktrees by default
+
+- **Problem:** Interrupting normal work to propose an isolation mechanism the human did not request
+- **Fix:** Work in the current checkout unless the human explicitly requests a worktree
 
 ### Skipping detection
 
@@ -199,6 +199,7 @@ Ready to implement <feature-name>
 ## Red Flags
 
 **Never:**
+- Suggest, offer, or create a worktree without an explicit human request
 - Create worktree when Step 0 detects existing isolation
 - Use `git worktree add` when you have native worktree tool (e.g., `EnterWorktree`). This is #1 mistake — if you have it, use it.
 - Skip Step 1a by jumping straight to Step 1b's git commands

@@ -17,6 +17,10 @@ Main agent stays lightweight: validate policy, select next runnable target, disp
 
 **Continuous execution:** Do not pause between phases or tasks. Stop only for unresolved `BLOCKED`, ambiguity preventing progress, invalid policy, or completed goal.
 
+**Workspace choice:** Use the current checkout unless the human explicitly requests another workspace. Preserve unrelated user changes in place. Do not propose or ask about another workspace unless the human explicitly requests one; a dirty checkout or general isolation request does not count.
+
+**Git safety:** Before editing or committing in a Git checkout, inspect `git status --short`, `git diff`, and `git diff --cached`. Stage only task-owned paths; never include pre-existing staged or unrelated changes in task commits. If any task-owned path already has changes not created by the task, stop and ask before editing.
+
 ## When to Use
 
 Use when:
@@ -269,7 +273,6 @@ Never:
 
 **Required workflow skills:**
 
-- `using-git-worktrees` — isolated execution unless human explicitly approves current branch.
 - `writing-plans` — creates task packages and expanded policy.
 - `test-driven-development` — implementation phases.
 - `verification-before-completion` — final verification evidence.

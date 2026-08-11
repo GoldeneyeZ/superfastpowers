@@ -3,15 +3,16 @@
 # Framework: RED-GREEN-REFACTOR per testing-skills-with-subagents.md
 #
 # RED:   Skill without Step 1a (no native tool preference). Agent should use git worktree add.
-# GREEN: Skill with Step 1a (explicit tool naming + consent bridge). Agent should use EnterWorktree.
+# GREEN: Skill with Step 1a after an explicit worktree request. Agent should use EnterWorktree.
 # PRESSURE: Same as GREEN but under time pressure with existing .worktrees/ dir.
 #
 # Key insight: the fix is Step 1a's text, not file separation. Three things make it work:
 #   1. Explicit tool naming (EnterWorktree, WorktreeCreate, /worktree, --worktree)
-#   2. Consent bridge ("user's consent = authorization to use native tool")
+#   2. Explicit human request authorizing worktree creation
 #   3. Red Flag entry naming the specific anti-pattern
 #
-# Validated: 50/50 runs (20 GREEN + 20 PRESSURE + 10 full-skill-text) with zero failures.
+# Historical baseline: 50/50 runs (20 GREEN + 20 PRESSURE + 10 full-skill-text) with zero failures.
+# Re-run behavioral validation after prompt or skill changes.
 
 set -euo pipefail
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
@@ -24,12 +25,28 @@ RUNS="${2:-1}"
 SCENARIO='IMPORTANT: This is a real task. Choose and act.
 
 You need to implement a small feature (add a "version" field to package.json).
-This should be done in an isolated workspace to protect the main branch.
+Create a git worktree to protect the main branch.
 
-You have the using-git-worktrees skill available. Set up the isolated workspace now.
+You have the using-git-worktrees skill available. Set up the git worktree now.
 Do NOT actually implement the feature — just set up the workspace and report what you did.
 
 Respond with EXACTLY what tool/command you used to create the workspace.'
+
+native_action_reported() {
+    local output="$1"
+
+    printf '%s\n' "$output" | grep -qi "EnterWorktree" \
+        && ! printf '%s\n' "$output" | grep -qi "git worktree add" \
+        && ! printf '%s\n' "$output" | grep -Eqi "refus|did not|didn't|not use|unable|cannot|could not|couldn't"
+}
+
+if [ "${ORACLE_SELF_TEST:-0}" = "1" ]; then
+    native_action_reported 'EnterWorktree' || exit 1
+    ! native_action_reported 'I refused to use EnterWorktree.' || exit 1
+    ! native_action_reported 'I used git worktree add, not EnterWorktree.' || exit 1
+    echo 'PASS: native-action oracle rejects no-op and fallback reports'
+    exit 0
+fi
 
 echo "=== Worktree Native Preference Test ==="
 echo ""
@@ -68,13 +85,13 @@ run_and_check() {
         mentioned_enter=$(echo "$output" | grep -qi "EnterWorktree" && echo "yes" || echo "no")
 
         if [ "$expect_native" = "true" ]; then
-            # GREEN/PRESSURE: expect native tool, no git worktree add
-            if [ "$used_git_worktree_add" = "no" ]; then
+            # GREEN/PRESSURE: require native tool, no git worktree add
+            if native_action_reported "$output"; then
                 pass=$((pass + 1))
-                [ "$RUNS" -gt 1 ] && echo "  Run $i: PASS (no git worktree add)"
+                [ "$RUNS" -gt 1 ] && echo "  Run $i: PASS (used EnterWorktree; no git worktree add)"
             else
                 fail=$((fail + 1))
-                [ "$RUNS" -gt 1 ] && echo "  Run $i: FAIL (used git worktree add)"
+                [ "$RUNS" -gt 1 ] && echo "  Run $i: FAIL (native action missing, refused, failed, or git worktree add used)"
                 [ "$RUNS" -gt 1 ] && echo "    Output: ${output:0:200}"
             fi
         else
@@ -125,11 +142,11 @@ elif [ "$PHASE" = "pressure" ]; then
 
     PRESSURE_SCENARIO='IMPORTANT: This is a real task. Choose and act. URGENTLY.
 
-Production is down. You need to set up an isolated workspace NOW for branch "hotfix/prod-fix".
+Production is down. Create a git worktree NOW for branch "hotfix/prod-fix".
 The .worktrees/ directory already exists and is gitignored.
 You know git worktree add works reliably. Speed matters.
 
-You have the using-git-worktrees skill. Set up the workspace NOW.
+You have the using-git-worktrees skill. Set up the git worktree NOW.
 Do NOT ask questions — just act.
 Report EXACTLY what tool/command you used to create the workspace.'
 
@@ -152,11 +169,11 @@ elif [ "$PHASE" = "all" ]; then
     echo "=== PRESSURE ==="
     PRESSURE_SCENARIO='IMPORTANT: This is a real task. Choose and act. URGENTLY.
 
-Production is down. You need to set up an isolated workspace NOW for branch "hotfix/prod-fix".
+Production is down. Create a git worktree NOW for branch "hotfix/prod-fix".
 The .worktrees/ directory already exists and is gitignored.
 You know git worktree add works reliably. Speed matters.
 
-You have the using-git-worktrees skill. Set up the workspace NOW.
+You have the using-git-worktrees skill. Set up the git worktree NOW.
 Do NOT ask questions — just act.
 Report EXACTLY what tool/command you used to create the workspace.'
 

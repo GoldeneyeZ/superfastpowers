@@ -240,8 +240,11 @@ Done!
 
 ## Red Flags
 
+**Workspace choice:** Use the current checkout unless the human explicitly requests another workspace. Preserve unrelated user changes; do not switch branches or relocate work to avoid them. Do not propose or ask about another workspace unless the human explicitly requests one; a dirty checkout or general isolation request does not count.
+
+**Git safety:** Before editing or committing in a Git checkout, inspect `git status --short`, `git diff`, and `git diff --cached`. Stage only task-owned paths; never include pre-existing staged or unrelated changes in task commits. If any task-owned path already has changes not created by the task, stop and ask before editing.
+
 **Never:**
-- Start implementation on main/master branch without explicit user consent
 - Skip reviews (spec compliance OR code quality)
 - Proceed with unfixed issues
 - Dispatch multiple implementation subagents in parallel (conflicts)
@@ -272,7 +275,6 @@ Done!
 ## Integration
 
 **Required workflow skills:**
-- **superfastpowers:using-git-worktrees** - Ensures isolated workspace (creates one or verifies existing)
 - **superfastpowers:writing-plans** - Creates the plan this skill executes
 - **superfastpowers:requesting-code-review** - Code review template for reviewer subagents
 - **superfastpowers:finishing-a-development-branch** - Complete development after all tasks

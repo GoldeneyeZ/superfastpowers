@@ -14,6 +14,8 @@ Policy/progression: [path/to/plan-progression.md]
 
 Implement only target task or active handoff. Use test-driven-development: write test, watch correct failure, implement minimally, watch pass, refactor while green. Inspect any needed file; starting context is not constraint.
 
+Inspect `git status --short`, `git diff`, and `git diff --cached` before editing. If any task-owned path already has changes not created by this task, stop and ask. Commit only task-owned paths. Use a path-limited commit (`git commit --only ... -- <task-owned paths>`) so pre-existing staged changes stay out.
+
 For repair, reopen affected target before editing: task `implementing`, goal incomplete. Reset repair-triggering and downstream phases per policy:
 
 - Behavioral/spec repair: reset spec, quality, and integration.
