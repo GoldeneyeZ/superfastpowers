@@ -12,6 +12,7 @@ Task/context paths: [ordered task.md and context.md paths]
 Owned writes: [exact repository paths for every node in this branch]
 Graph review mode: [bypass | gated]
 Logical parent: [node ID | root]
+Review repair handoff: [tasks/<TASK-ID>/implementer-handoff.md | none]
 
 ## Contract
 
@@ -31,6 +32,8 @@ For each current node:
 8. At a nested fork, verify disjoint clean ownership, persist its join checkpoint, and recursively dispatch nested forks as capacity permits. Release a waiting logical parent's slot when needed; continuation must reconstruct from durable state.
 9. On failure, record exact blocker. Let an already-running healthy sibling finish; never run a partial join.
 10. You must stop before matching join. Do not implement it.
+
+If a node review fails, require its reviewer to write `tasks/<TASK-ID>/implementer-handoff.md` with finding evidence, exact repair scope, re-review acceptance criteria, invalidated state, and required gate reruns. Block successors and joins. Read that durable handoff before repair, change only its scope with TDD, update Graph State, reset the failed review to unchecked, then rerun the failed and invalidated gates. Conversation memory cannot replace the handoff; preserve it through accepted re-review.
 
 You must never stage or commit. Deadline pressure, apparently complete work, or a nested fork does not transfer Git ownership to this worker.
 

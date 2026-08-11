@@ -87,6 +87,33 @@ Read mode from `plan-progression.md`.
 
 Bypass defers reviews; it never removes them.
 
+### Review Failure Handoff
+
+Review failure must leave a durable repair brief before implementation resumes:
+
+- Node-scoped failure: `tasks/<TASK-ID>/implementer-handoff.md`.
+- Plan-scoped failure: `<package-root>/implementer-handoff.md`.
+
+The reviewer writes the failed review artifact and handoff first. The handoff records the source review and reviewed range, then these sections:
+
+```markdown
+## Findings
+[each finding, severity, evidence, and file:line when available]
+
+## Repair Scope
+[exact behavior and owned paths the implementer may change]
+
+## Re-review Acceptance
+[observable criteria and exact verification required]
+
+## Invalidation and Gate Reruns
+[statuses/evidence invalidated and ordered gates to rerun]
+```
+
+After writing the handoff, reopen the affected node or plan implementation and block every successor, join, and later review. Dispatch repair with the handoff path; conversation summaries never substitute for it. The repair worker changes only listed scope, uses TDD, updates context with paths plus commit/range, resets the failed review to unchecked, and reruns graph validation when ownership could change. Re-run the failed gate, then every invalidated downstream gate. Preserve the handoff and prior review history until re-review records acceptance.
+
+Behavioral/spec findings invalidate spec, quality, integration, and dependent downstream node evidence. Quality-only findings invalidate quality and integration. Uncertain scope uses behavioral/spec invalidation. A plan-scoped failure blocks later plan gates; a node-scoped failure blocks that node's successors and matching joins.
+
 ## Git Safety
 
 - Use the current checkout unless the human makes an explicit request for another workspace.

@@ -7,6 +7,7 @@ PLANS_SKILL="$ROOT_DIR/skills/writing-plans/SKILL.md"
 GRAPH_SKILL="$ROOT_DIR/skills/graph-development/SKILL.md"
 BRANCH_PROMPT="$ROOT_DIR/skills/graph-development/branch-worker-prompt.md"
 CONTINUATION_PROMPT="$ROOT_DIR/skills/graph-development/continuation-prompt.md"
+RUNNER="$ROOT_DIR/tests/claude-code/run-skill-tests.sh"
 
 failures=0
 
@@ -137,6 +138,14 @@ assert_file_contains "$CONTINUATION_PROMPT" 'plan-progression.md' 'continuation 
 assert_file_contains "$CONTINUATION_PROMPT" 'predecessor contexts' 'continuation reads predecessor evidence'
 assert_file_contains "$CONTINUATION_PROMPT" 'conversation memory' 'continuation rejects memory-only state'
 assert_file_contains "$CONTINUATION_PROMPT" 'path-limited aggregate commit' 'continuation owns safe aggregate commit'
+assert_file_contains "$RUNNER" 'Claude-backed behavioral test skipped: Claude Code CLI unavailable' 'runner explicitly skips unavailable behavioral harness'
+assert_file_contains "$RUNNER" 'test-graph-development-static.sh' 'runner keeps Graph Development static test mandatory'
+assert_file_contains "$GRAPH_SKILL" 'tasks/<TASK-ID>/implementer-handoff.md' 'node review failures have durable task handoff'
+assert_file_contains "$GRAPH_SKILL" '<package-root>/implementer-handoff.md' 'plan review failures have durable goal handoff'
+assert_file_contains "$GRAPH_SKILL" '## Re-review Acceptance' 'review handoff records acceptance criteria'
+assert_file_contains "$GRAPH_SKILL" '## Invalidation and Gate Reruns' 'review handoff records invalidated gates'
+assert_file_contains "$BRANCH_PROMPT" 'implementer-handoff.md' 'branch repair reads durable review handoff'
+assert_file_contains "$CONTINUATION_PROMPT" 'implementer-handoff.md' 'continuation repair reads durable review handoff'
 assert_file_max_lines "$GRAPH_SKILL" 500 'skill stays below 500 lines'
 
 if [[ "$failures" -ne 0 ]]; then

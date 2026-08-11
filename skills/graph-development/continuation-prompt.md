@@ -11,6 +11,7 @@ Join: [JOIN-ID and context.md]
 Predecessor contexts: [ordered context.md paths]
 Graph review mode: [bypass | gated]
 Aggregate commit message: [[TASK-ID] subject]
+Review repair handoff: [tasks/<TASK-ID>/implementer-handoff.md | <package-root>/implementer-handoff.md | none]
 
 ## Reconstruction gate
 
@@ -25,6 +26,8 @@ Verify before join work:
 5. Unrelated changes and staging are identified and excluded.
 
 If any predecessor failed, keep the join blocked and retry only failed branches. Preserve healthy sibling evidence. Do not rerun verified siblings unless their state was invalidated by the repair.
+
+If a node-, join-, or plan-scoped review failed, stop later reviews, successors, and joins. Require the reviewer to write the matching `tasks/<TASK-ID>/implementer-handoff.md` or `<package-root>/implementer-handoff.md` with finding evidence, repair scope, re-review acceptance criteria, invalidation, and ordered gate reruns. Reconstruct repair work from that file, not conversation memory. After scoped TDD repair and context update, reset the failed review to unchecked; rerun it plus every invalidated downstream gate. Preserve the handoff and review history through accepted re-review.
 
 ## Join execution
 

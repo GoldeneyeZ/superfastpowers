@@ -16,6 +16,10 @@ class GraphValidationError(ValueError):
 
 _NODE_ID = re.compile(r"^[A-Za-z0-9][A-Za-z0-9_.-]*$")
 _POLICY_VALUE = re.compile(r"^\s*Graph (?P<name>format|review mode):\s*(?P<value>\S+)\s*$", re.MULTILINE | re.IGNORECASE)
+_FILE_DECLARATION = re.compile(
+    r"^\s*-\s+(?:Create|Modify|Test):\s+`(?P<path>[^`]+)`\s*$"
+)
+_LINE_RANGE = re.compile(r":\d+(?:-\d+)?$")
 
 
 def load_policy(package_root: Path) -> tuple[str, str]:
@@ -155,6 +159,7 @@ def render_markdown(graph: dict) -> str:
         "# Task Graph",
         "",
         f"- Version: {graph.get('version', '') if isinstance(graph, dict) else ''}",
+        "- Format: markdown",
         "- Source: task-graph.json",
         "",
         "## Nodes",
@@ -231,13 +236,16 @@ def parse_markdown(path: Path) -> dict:
     except (OSError, UnicodeDecodeError) as error:
         raise GraphValidationError(f"malformed Markdown graph: {path}: {error}") from error
     version_match = re.search(r"^\s*- Version:\s*(.+?)\s*$", text, re.MULTILINE)
+    format_match = re.search(r"^\s*- Format:\s*(.+?)\s*$", text, re.MULTILINE)
     source_match = re.search(r"^\s*- Source:\s*(.+?)\s*$", text, re.MULTILINE)
-    if version_match is None or source_match is None:
+    if version_match is None or format_match is None or source_match is None:
         raise GraphValidationError("malformed Markdown metadata")
     try:
         version = int(version_match.group(1))
     except ValueError as error:
         raise GraphValidationError("malformed Markdown version") from error
+    if format_match.group(1) != "markdown":
+        raise GraphValidationError("unsupported Markdown format")
     if source_match.group(1) != "task-graph.json":
         raise GraphValidationError("unsupported Markdown source")
 
@@ -325,6 +333,40 @@ def _valid_relative_path(value: object) -> bool:
     return not path.is_absolute() and ".." not in path.parts and "." not in path.parts
 
 
+def _task_write_declarations(task_path: Path, node_id: str) -> tuple[set[str], list[str]]:
+    """Return normalized repository writes declared by a task package."""
+    try:
+        lines = task_path.read_text(encoding="utf-8").splitlines()
+    except (OSError, UnicodeDecodeError) as error:
+        return set(), [f"node {node_id} cannot read task declarations: {error}"]
+
+    headings = [index for index, line in enumerate(lines) if line.strip() == "**Files:**"]
+    if len(headings) != 1:
+        return set(), [f"node {node_id} missing repository write declarations"]
+
+    declarations: set[str] = set()
+    errors: list[str] = []
+    for line in lines[headings[0] + 1 :]:
+        if not line.strip():
+            break
+        match = _FILE_DECLARATION.fullmatch(line)
+        if match is None:
+            errors.append(
+                f"node {node_id} malformed repository write declaration: {line.strip()}"
+            )
+            continue
+        declared_path = _LINE_RANGE.sub("", match.group("path"))
+        if not _valid_relative_path(declared_path):
+            errors.append(
+                f"node {node_id} malformed repository write declaration: {line.strip()}"
+            )
+            continue
+        declarations.add(declared_path)
+    if not declarations and not errors:
+        errors.append(f"node {node_id} missing repository write declarations")
+    return declarations, errors
+
+
 def validate_graph(graph: dict, package_root: Path) -> list[str]:
     """Return deterministic schema, structure, package, and ownership errors."""
     errors: list[str] = []
@@ -368,6 +410,9 @@ def validate_graph(graph: dict, package_root: Path) -> list[str]:
                 f"{', '.join(unexpected_node_fields)}"
             )
         task = node.get("task")
+        task_path: Path | None = None
+        declared_writes: set[str] = set()
+        declaration_errors: list[str] = []
         if not _valid_relative_path(task):
             errors.append(f"node {node_id} has invalid task path")
         else:
@@ -377,6 +422,11 @@ def validate_graph(graph: dict, package_root: Path) -> list[str]:
             task_path = package_root / task
             if not task_path.is_file():
                 errors.append(f"node {node_id} missing task file: {task}")
+            else:
+                declared_writes, declaration_errors = _task_write_declarations(
+                    task_path, node_id
+                )
+                errors.extend(declaration_errors)
             context_path = task_path.parent / "context.md"
             if not context_path.is_file():
                 errors.append(f"node {node_id} missing context file: {context_path.relative_to(package_root)}")
@@ -394,6 +444,23 @@ def validate_graph(graph: dict, package_root: Path) -> list[str]:
                 errors.append(f"node {node_id} duplicates write path: {write}")
             valid_writes.add(write)
         writes_by_node[node_id] = valid_writes
+        if (
+            task_path is not None
+            and task_path.is_file()
+            and not declaration_errors
+            and valid_writes != declared_writes
+        ):
+            graph_only = sorted(valid_writes - declared_writes)
+            task_only = sorted(declared_writes - valid_writes)
+            details = []
+            if graph_only:
+                details.append(f"graph-only: {', '.join(graph_only)}")
+            if task_only:
+                details.append(f"task-only: {', '.join(task_only)}")
+            errors.append(
+                f"node {node_id} writes do not match task declarations: "
+                + "; ".join(details)
+            )
 
     seen: Counter[str] = Counter()
     declared_joins: set[str] = set()

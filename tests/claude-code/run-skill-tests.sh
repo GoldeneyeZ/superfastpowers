@@ -15,13 +15,6 @@ echo "Test time: $(date)"
 echo "Claude version: $(claude --version 2>/dev/null || echo 'not found')"
 echo ""
 
-# Check if Claude Code is available
-if ! command -v claude &> /dev/null; then
-    echo "ERROR: Claude Code CLI not found"
-    echo "Install Claude Code first: https://code.claude.com"
-    exit 1
-fi
-
 # Parse command line arguments
 VERBOSE=false
 SPECIFIC_TEST=""
@@ -74,6 +67,11 @@ while [[ $# -gt 0 ]]; do
     esac
 done
 
+CLAUDE_AVAILABLE=true
+if ! command -v claude &> /dev/null; then
+    CLAUDE_AVAILABLE=false
+fi
+
 # List of skill tests to run (fast unit tests)
 tests=(
     "test-subagent-driven-development.sh"
@@ -112,8 +110,22 @@ for test in "${tests[@]}"; do
 
     test_path="$SCRIPT_DIR/$test"
 
+    requires_claude=false
+    case "$test" in
+        test-subagent-driven-development.sh|test-goal-driven-development.sh|test-graph-development.sh|*-integration.sh|test-requesting-code-review.sh)
+            requires_claude=true
+            ;;
+    esac
+
+    if [ "$CLAUDE_AVAILABLE" = false ] && [ "$requires_claude" = true ]; then
+        echo "  [SKIP] Claude-backed behavioral test skipped: Claude Code CLI unavailable"
+        skipped=$((skipped + 1))
+        echo ""
+        continue
+    fi
+
     if [ ! -f "$test_path" ]; then
-        if [[ "$test" == *-static.sh ]]; then
+        if [ "$requires_claude" = false ]; then
             echo "  [FAIL] Required static test file not found: $test"
             failed=$((failed + 1))
         else

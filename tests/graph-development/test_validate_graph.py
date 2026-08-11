@@ -63,16 +63,25 @@ class ValidateGraphContractTest(unittest.TestCase):
         *,
         json_graph: dict | None = None,
         markdown: str | None = None,
+        task_declarations: dict[str, str] | None = None,
     ) -> tempfile.TemporaryDirectory[str]:
         directory = tempfile.TemporaryDirectory()
         root = Path(directory.name)
         (root / "plan-progression.md").write_text(
             f"Graph format: {graph_format}\n", encoding="utf-8"
         )
-        for node in graph.get("nodes", {}).values():
+        for node_id, node in graph.get("nodes", {}).items():
             task_file = root / node["task"]
             task_file.parent.mkdir(parents=True, exist_ok=True)
-            task_file.write_text("# Task\n", encoding="utf-8")
+            declarations = "\n".join(
+                f"- Modify: `{path}`" for path in node.get("writes", [])
+            )
+            if task_declarations and node_id in task_declarations:
+                declarations = task_declarations[node_id]
+            task_file.write_text(
+                f"# Task\n\n**Files:**\n{declarations}\n\n- [ ] Step\n",
+                encoding="utf-8",
+            )
             (task_file.parent / "context.md").write_text("# Context\n", encoding="utf-8")
         if json_graph is not None:
             (root / "task-graph.json").write_text(
@@ -106,6 +115,12 @@ class ValidateGraphContractTest(unittest.TestCase):
 
     def test_valid_both_graph_has_no_errors(self) -> None:
         self.assertEqual(validate_package(self.valid_package("both")), [])
+
+    def test_valid_markdown_graph_has_no_errors(self) -> None:
+        self.assertEqual(validate_package(self.valid_package("markdown")), [])
+
+    def test_rendered_markdown_declares_format(self) -> None:
+        self.assertIn("- Format: markdown", render_markdown(VALID_GRAPH))
 
     def test_rejects_duplicate_flow_node(self) -> None:
         graph = copy.deepcopy(VALID_GRAPH)
@@ -183,6 +198,45 @@ class ValidateGraphContractTest(unittest.TestCase):
         graph["nodes"]["GD-1"]["writes"] = []
         self.assert_error(graph, "must own at least one write path")
 
+    def test_rejects_missing_task_write_declarations(self) -> None:
+        directory = self.make_package(
+            VALID_GRAPH,
+            json_graph=VALID_GRAPH,
+            task_declarations={"GD-1": ""},
+        )
+        self.assertTrue(
+            any(
+                "missing repository write declarations" in error
+                for error in validate_package(Path(directory.name))
+            )
+        )
+
+    def test_rejects_malformed_task_write_declaration(self) -> None:
+        directory = self.make_package(
+            VALID_GRAPH,
+            json_graph=VALID_GRAPH,
+            task_declarations={"GD-1": "- Modify: src/base.py"},
+        )
+        self.assertTrue(
+            any(
+                "malformed repository write declaration" in error
+                for error in validate_package(Path(directory.name))
+            )
+        )
+
+    def test_rejects_task_and_graph_write_mismatch(self) -> None:
+        directory = self.make_package(
+            VALID_GRAPH,
+            json_graph=VALID_GRAPH,
+            task_declarations={"GD-1": "- Modify: `src/declared.py`"},
+        )
+        self.assertTrue(
+            any(
+                "writes do not match task declarations" in error
+                for error in validate_package(Path(directory.name))
+            )
+        )
+
     def test_rejects_unknown_node_field(self) -> None:
         graph = copy.deepcopy(VALID_GRAPH)
         graph["nodes"]["GD-1"]["owner"] = "unexpected"
@@ -216,6 +270,39 @@ class ValidateGraphContractTest(unittest.TestCase):
         (Path(directory.name) / "task-graph.json").write_text("{", encoding="utf-8")
         self.assertTrue(
             any("malformed JSON" in error for error in validate_package(Path(directory.name)))
+        )
+
+    def test_rejects_missing_markdown_format(self) -> None:
+        markdown = render_markdown(VALID_GRAPH).replace(
+            "- Format: markdown\n", ""
+        )
+        directory = self.make_package(
+            VALID_GRAPH,
+            "markdown",
+            markdown=markdown,
+        )
+        self.assertTrue(
+            any(
+                "malformed Markdown metadata" in error
+                for error in validate_package(Path(directory.name))
+            )
+        )
+
+    def test_rejects_invalid_markdown_format(self) -> None:
+        markdown = render_markdown(VALID_GRAPH).replace(
+            "- Format: markdown",
+            "- Format: free-form",
+        )
+        directory = self.make_package(
+            VALID_GRAPH,
+            "markdown",
+            markdown=markdown,
+        )
+        self.assertTrue(
+            any(
+                "unsupported Markdown format" in error
+                for error in validate_package(Path(directory.name))
+            )
         )
 
     def test_rejects_mismatched_markdown_mirror(self) -> None:
