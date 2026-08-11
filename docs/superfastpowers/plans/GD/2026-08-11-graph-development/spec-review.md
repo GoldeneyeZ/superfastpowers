@@ -1,5 +1,44 @@
 # Graph Development Spec Review
 
+Current result: checked
+
+Combined reviewed range: `e8194a9..b1e71f5`
+
+Re-review repair range: `84d0929..b1e71f5`
+
+## Re-review Result
+
+All prior specification findings are repaired and the complete Graph Development implementation remains within the approved design and plan scope.
+
+### Repaired Findings
+
+1. `tests/claude-code/run-skill-tests.sh` now classifies Claude-backed behavioral tests explicitly and skips only those when `claude` is unavailable. The required Graph Development static test remains in the fast test list and ran successfully in a fresh no-Claude suite execution.
+2. `validate_graph.py` reads exactly one `**Files:**` block from every task package, accepts only declared Create/Modify/Test repository paths, and rejects missing, malformed, or non-matching graph ownership. Fresh unit coverage verifies matching JSON, Markdown, and both-mode packages plus the missing/malformed/mismatched negatives.
+3. Generated Markdown now declares `- Format: markdown`; parsing requires that metadata and rejects a missing or unsupported value. Fresh tests cover Markdown-only validity and both negative format cases.
+4. The Graph Development skill and both worker templates now require a durable node- or plan-scoped `implementer-handoff.md` before repair. The handoff contract contains findings, repair scope, re-review acceptance, invalidation, and ordered gate reruns; successors, joins, and later reviews remain blocked until the rerun gates pass.
+5. GD-1, GD-2, and GD-4 context commit headers now match their recorded implementation commits.
+
+### Complete Coverage
+
+- Planning: `writing-plans` exposes explicit `both`, `markdown`, and `json` choices, default `both`, canonical authority rules, finer-node constraints, exact/disjoint ownership, structured fork/join flow, pre-handoff validation, Graph State, and the fifth execution option.
+- Validator: standard-library-only implementation validates package files, formats, JSON/Markdown mirror equality, declared ownership, nested structured topology, joins, reachability, duplicate references, and concurrent branch overlap.
+- Execution: the skill preserves linear agent continuity; forks checkpoint durable parent state, release capacity when needed, run healthy siblings after a failure, retry only failed branches, and prohibit early/partial joins and branch-worker staging/commits.
+- Review: bypass and gated ordering are documented; failed review recovery now creates the required durable handoff and invalidates dependent gates.
+- Discovery/testing: README keeps Graph Development optional and Goal-Driven Bypass recommended; the runner executes mandatory static coverage without Claude and explicitly skips unavailable behavioral coverage.
+- Evaluation: three isolated RED and three GREEN Codex sessions record raw behavior and accurately state that Claude CLI coverage was unavailable.
+
+### Fresh Verification
+
+- `PYTHONDONTWRITEBYTECODE=1 python3 -m unittest tests/graph-development/test_validate_graph.py -v` — 25 passed.
+- `bash tests/claude-code/test-graph-development-static.sh` — 57 assertions passed.
+- `ORACLE_SELF_TEST=1 bash tests/claude-code/test-graph-development.sh` — passed.
+- `bash -n tests/claude-code/run-skill-tests.sh tests/claude-code/test-graph-development-static.sh tests/claude-code/test-graph-development.sh` — passed.
+- `bash tests/codex-plugin-sync/test-sync-to-codex-plugin.sh` — passed.
+- `bash tests/claude-code/run-skill-tests.sh` — passed: 2 required static tests passed; 3 Claude-backed behavioral tests explicitly skipped because the CLI is unavailable.
+- `git diff --check` — passed.
+
+## Initial Review History
+
 Result: failed
 
 Reviewed range: `e8194a9..539f11a`
