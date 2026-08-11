@@ -19,6 +19,23 @@ python3 skills/graph-development/scripts/validate_graph.py <package-root>
 
 Invalid graph → stop and repair plan. Valid graph → execute.
 
+Before choosing Graph Development, confirm expected parallel savings exceed coordination cost. Otherwise execute the plan linearly.
+
+## Speed Contract
+
+Graph Development must never create more coordination steps than implementation nodes.
+
+Default path: validate once → execute graph → review once → verify once → commit once.
+
+- Default `coordination_budget_minutes`: 5. Exceeding it triggers simplification: merge bookkeeping, reuse agents, or continue linearly. It does not trigger more planning.
+- Schedule ready work on the critical path first; then fill remaining capacity with other ready branches.
+- Reuse same agent for linear successors.
+- Node workers run focused tests. Parent runs the full fast suite once after integration.
+- Review scope is locked to requested work and blocking in-scope defects. Record unrelated findings as notes; do not expand execution.
+- One repair pass is default. Another pass requires a failing test or explicit human approval.
+- Commit at joins only when a durable checkpoint is useful; otherwise commit once after final verification.
+- Track implementation time and coordination time. Warn and simplify when coordination time dominates.
+
 ## Execution
 
 1. Read canonical graph and task ownership.
@@ -27,7 +44,7 @@ Invalid graph → stop and repair plan. Valid graph → execute.
 4. Branch worker may continue through its linear chain and nested forks.
 5. Branch worker stops before matching join.
 6. Parent waits for all predecessors, verifies their focused tests, executes join.
-7. Failed branch blocks join; healthy siblings may finish. Retry failed branch only.
+7. Failed branch blocks join; healthy siblings may finish; retry failed branch only.
 8. Parent owns aggregate commit unless explicitly delegated.
 9. After graph completes, run one focused plan-wide review and final test batch.
 
@@ -42,7 +59,7 @@ Do not add per-node review agents, progression phases, review artifacts, multi-s
 
 ## Capacity
 
-When agent slots are full at nested fork, save minimal durable state, release parent capacity if supported, resume from graph plus task status. Conversation memory is optional context, never sole state.
+When agent slots are full at nested fork, save minimal durable state, release parent capacity if supported, resume from graph plus task status. Never keep an idle parent consuming the slot needed by its branch. Conversation memory is optional context, never sole state.
 
 ## Minimal State
 
@@ -54,6 +71,7 @@ Status: pending | running | complete | blocked
 Changed paths: ...
 Verification: command → result
 Blocker: none | ...
+Timing: implementation minutes | coordination minutes
 ```
 
 No separate review or handoff files required.

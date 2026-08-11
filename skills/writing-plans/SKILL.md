@@ -59,7 +59,10 @@ Minimal package config may use `plan-progression.md` solely for validator compat
 ```text
 Graph format: both
 Graph review mode: bypass
+coordination_budget_minutes: 5
 ```
+
+Use Graph Development only when expected parallel savings exceed coordination cost. Order ready branches by critical path. Keep graph nodes coherent; never create microtasks merely to expose more parallelism.
 
 Create `task-graph.json` and/or `task-graph.md`, then run:
 
