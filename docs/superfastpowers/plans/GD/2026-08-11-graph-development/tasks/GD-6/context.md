@@ -2,7 +2,7 @@
 
 **Plan:** `docs/superfastpowers/plans/GD/2026-08-11-graph-development.md`
 **Task:** `GD-6`
-**Commit SHA:** Pending until task completion. If review fixes add commits, update to latest task commit and note reviewed range below.
+**Commit SHA:** `a9e85b1` (implementation); context evidence follows in a separate commit.
 
 ## Starting Context
 
@@ -18,4 +18,15 @@ Files above are starting points only. Inspect any additional files needed to com
 
 ## Completion Updates
 
-Implementer updates this section before review with final task commit SHA, reviewed commit range if relevant, files created, files modified, additional relevant files, and verification commands/results.
+Implementation complete.
+
+- Files modified: `README.md`, `tests/claude-code/run-skill-tests.sh`.
+- Files created: none.
+- Additional relevant files: none.
+- Documentation records `graph-development` as an optional workflow, keeps Goal-Driven Bypass as the recommended default, and documents `json`, `markdown`, and `both` graph output modes with `both` as default.
+- Runner registers the static and behavioral graph tests. Missing static tests fail; missing optional behavioral tests skip.
+- Verification: `bash tests/claude-code/test-graph-development-static.sh` → pass.
+- Verification: `ORACLE_SELF_TEST=1 bash tests/claude-code/test-graph-development.sh` → pass.
+- Verification: `bash tests/codex-plugin-sync/test-sync-to-codex-plugin.sh` → pass.
+- Verification: `git diff --check` → pass.
+- Reviewed range: `a9e85b1`.
