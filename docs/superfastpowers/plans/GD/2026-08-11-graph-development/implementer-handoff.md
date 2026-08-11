@@ -1,20 +1,37 @@
-# Graph Development Specification Repair Handoff
+# Graph Development Code Quality Repair Handoff
 
-Source review: `spec-review.md`
+Source review: `code-quality.md`
 
-## Required Fixes
+Reviewed range: `e8194a9..a68889b`
 
-1. Make `tests/claude-code/run-skill-tests.sh` run mandatory static tests when Claude is unavailable. Optional Claude-backed behavior may skip explicitly; missing or failing static tests must still fail the suite.
-2. Extend the validator and unit fixtures to compare each node's graph `writes` with the task package's declared repository writes. Reject missing, malformed, or inconsistent declarations with stable errors while retaining standard-library-only implementation.
-3. Add required Format metadata to rendered Markdown and require/validate it when parsing. Add positive Markdown-only/both coverage and a negative missing/invalid-format case.
-4. Define durable implementation-handoff behavior for failed node- and plan-scoped Graph Development reviews, including finding details, repair scope, re-review acceptance criteria, invalidation, and required gate reruns. Add static regression coverage.
-5. Replace stale pending commit headers in GD-1, GD-2, and GD-4 contexts with their recorded implementation SHAs/ranges.
+## Findings
+
+1. Important — non-canonical aliases such as `src/shared.py` and `src//shared.py` bypass concurrent write-overlap detection in `skills/graph-development/scripts/validate_graph.py:329`-`333`, `438`-`446`, and `527`-`531`.
+2. Important — all five behavioral matchers in `tests/claude-code/test-graph-development.sh:9`-`38` accept confirmed wrong or contradictory answers, while the scenarios at lines 77-91 disclose expected behavior.
+
+## Repair Scope
+
+- `skills/graph-development/scripts/validate_graph.py`
+- `tests/graph-development/test_validate_graph.py`
+- `tests/claude-code/test-graph-development.sh`
+- Task context/eval evidence only where required to record the repair and fresh results
+
+Normalize repository write paths before equality/overlap checks or reject non-canonical aliases. Strengthen behavioral scenarios and matchers without weakening positive paraphrase support. Do not change Graph Development topology, review policy, Git ownership, or unrelated skills.
 
 ## Re-review Acceptance
 
-- Default test runner reaches and passes the Graph Development static test without Claude; Claude-backed tests report explicit skips rather than aborting the suite.
-- An ownership mismatch between `task.md` and graph `writes` fails validation; matching declarations pass in JSON, Markdown, and both modes.
-- Rendered Markdown contains Version, Format, and Source; parser rejects missing or invalid Format metadata.
-- Graph review failure contract creates an actionable durable handoff and does not allow successors/joins until repair plus invalidated gates pass.
-- Task contexts contain consistent commit/range maps.
-- Validator unit, static, oracle, shell syntax, plugin sync, and whitespace checks all pass freshly.
+- Parallel branches owning `src/shared.py` and `src//shared.py` fail validation with a stable ownership/path error.
+- Equivalent leading-`./` alias fails validation.
+- Existing valid JSON, Markdown, and mirrored packages remain valid.
+- Each confirmed wrong/contradictory matcher probe from `code-quality.md` fails.
+- Positive matcher fixtures covering normal paraphrases pass.
+- Behavioral prompts describe situations without instructing the expected execution decision.
+- Validator unit tests, static contract, oracle self-test, shell syntax, plugin sync, and whitespace checks pass freshly.
+
+## Invalidation and Gate Reruns
+
+- Keep implementation incomplete at plan level while repair runs.
+- Code quality: failed; rerun after repair.
+- Integration review: unchecked and blocked.
+- Spec review remains checked because findings do not change specified behavior.
+- Preserve this handoff and `code-quality.md` failure history through accepted re-review.
