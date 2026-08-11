@@ -9,6 +9,10 @@ Reviewed range: `e8194a9..a68889b`
 1. Important — non-canonical aliases such as `src/shared.py` and `src//shared.py` bypass concurrent write-overlap detection in `skills/graph-development/scripts/validate_graph.py:329`-`333`, `438`-`446`, and `527`-`531`.
 2. Important — all five behavioral matchers in `tests/claude-code/test-graph-development.sh:9`-`38` accept confirmed wrong or contradictory answers, while the scenarios at lines 77-91 disclose expected behavior.
 
+## Re-review Addendum
+
+The write-path alias finding is repaired. The behavioral repair remains incomplete: `matcher_fork` accepts `Both branches must never be dispatched; run them serially.`, and `matcher_failure` accepts `The healthy sibling cannot continue; block merge then rerun only the failed branch.` Both are wrong decisions and both return success in fresh isolated matcher probes.
+
 ## Repair Scope
 
 - `skills/graph-development/scripts/validate_graph.py`
@@ -16,7 +20,7 @@ Reviewed range: `e8194a9..a68889b`
 - `tests/claude-code/test-graph-development.sh`
 - Task context/eval evidence only where required to record the repair and fresh results
 
-Normalize repository write paths before equality/overlap checks or reject non-canonical aliases. Strengthen behavioral scenarios and matchers without weakening positive paraphrase support. Do not change Graph Development topology, review policy, Git ownership, or unrelated skills.
+The path repair is accepted. Strengthen behavioral scenarios and matchers without weakening positive paraphrase support. Do not change Graph Development topology, review policy, Git ownership, or unrelated skills.
 
 ## Re-review Acceptance
 
@@ -24,6 +28,8 @@ Normalize repository write paths before equality/overlap checks or reject non-ca
 - Equivalent leading-`./` alias fails validation.
 - Existing valid JSON, Markdown, and mirrored packages remain valid.
 - Each confirmed wrong/contradictory matcher probe from `code-quality.md` fails.
+- `Both branches must never be dispatched; run them serially.` fails `matcher_fork`.
+- `The healthy sibling cannot continue; block merge then rerun only the failed branch.` fails `matcher_failure`.
 - Positive matcher fixtures covering normal paraphrases pass.
 - Behavioral prompts describe situations without instructing the expected execution decision.
 - Validator unit tests, static contract, oracle self-test, shell syntax, plugin sync, and whitespace checks pass freshly.

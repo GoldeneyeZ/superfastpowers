@@ -1,5 +1,34 @@
 # Graph Development Code Quality Review
 
+Current result: failed
+
+Initial reviewed range: `e8194a9..a68889b`
+
+Re-review repair range: `08e07de..4fa637c`
+
+Spec gate: checked (`spec-review.md`)
+
+## Re-review Result
+
+### Important — behavioral matcher still accepts wrong execution decisions
+
+The repair covers the five originally observed phrases, but its keyword-proximity matchers still accept contradictions when negation or prohibition follows the subject rather than precedes the action. `tests/claude-code/test-graph-development.sh:18`-`20` accepts `Both branches must never be dispatched; run them serially.`: the positive `both branches ... dispatch` branch matches, while the negative expression only recognizes negation before `dispatch` or `spawn`. `tests/claude-code/test-graph-development.sh:34`-`37` likewise accepts `The healthy sibling cannot continue; block merge then rerun only the failed branch.` because its rejection cases omit `cannot`.
+
+Fresh isolated matcher probes returned exit 0 for both wrong outputs. Neither is represented in the `ORACLE_SELF_TEST` cases at lines 52-67. This leaves the behavioral pressure test capable of reporting a pass for the opposite of two required Graph Development decisions.
+
+Fix: make each matcher reject prohibited decisions regardless of subject/negation order, including `never` and `cannot`, then add these two probes to `ORACLE_SELF_TEST`. Retain the existing positive paraphrases and the five repaired negative probes.
+
+## Re-review Verification Evidence
+
+- `PYTHONDONTWRITEBYTECODE=1 python3 -m unittest tests/graph-development/test_validate_graph.py -v` — 27 passed, including repeated-separator and leading-`./` alias rejection.
+- `bash tests/claude-code/test-graph-development-static.sh` — passed all assertions.
+- `ORACLE_SELF_TEST=1 bash tests/claude-code/test-graph-development.sh` — passed its current fixtures, but does not cover the two false positives above.
+- `bash tests/claude-code/run-skill-tests.sh --test test-graph-development-static.sh` — 1 passed, 0 failed with Claude unavailable; static coverage remains mandatory.
+- `bash -n tests/claude-code/test-graph-development-static.sh tests/claude-code/test-graph-development.sh tests/claude-code/run-skill-tests.sh` — passed.
+- `git diff --check 4fa637c^..4fa637c` — passed.
+
+## Initial Review History
+
 Result: failed
 
 Reviewed range: `e8194a9..a68889b`
