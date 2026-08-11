@@ -183,6 +183,16 @@ class ValidateGraphContractTest(unittest.TestCase):
         graph["nodes"]["GD-1"]["writes"] = []
         self.assert_error(graph, "must own at least one write path")
 
+    def test_rejects_unknown_node_field(self) -> None:
+        graph = copy.deepcopy(VALID_GRAPH)
+        graph["nodes"]["GD-1"]["owner"] = "unexpected"
+        self.assert_error(graph, "unsupported fields")
+
+    def test_rejects_unknown_flow_field(self) -> None:
+        graph = copy.deepcopy(VALID_GRAPH)
+        graph["flow"]["edge"] = "unexpected"
+        self.assert_error(graph, "unsupported fields")
+
     def test_rejects_missing_json_graph(self) -> None:
         directory = self.make_package(VALID_GRAPH)
         self.assertTrue(
