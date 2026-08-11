@@ -36,11 +36,25 @@ Default path: validate once → execute graph → review once → verify once �
 - Commit at joins only when a durable checkpoint is useful; otherwise commit once after final verification.
 - Track implementation time and coordination time. Warn and simplify when coordination time dominates.
 
+## Model Routing
+
+Every spawned branch worker uses `reasoning_effort: medium`. Select cheapest model that reliably fits whole branch:
+
+| Model | Use for |
+|---|---|
+| `gpt-5.6-sol` | Ambiguous architecture, security/high-risk work, hard debugging, complex integration or synthesis |
+| `gpt-5.6-terra` | Default normal implementation, cross-file work, exploration, review, moderate edge cases |
+| `gpt-5.6-luna` | Narrow deterministic, read-heavy, repetitive, documentation, or mechanical work |
+| `gpt-5.3-codex-spark` | Well-defined small/medium coding with clear acceptance criteria and bounded files |
+
+Explicit human model choice wins. Select once per branch, not once per node; preserve model across linear successors and continuation. If selected model is unavailable, use `gpt-5.6-terra` at medium and report fallback. Escalate only after evidence current model cannot finish reliably: Luna/Spark → Terra → Sol.
+
 ## Execution
 
 1. Read canonical graph and task ownership.
 2. Keep a linear one-successor chain with same agent.
 3. At fork, dispatch independent branches concurrently.
+   - Select each branch model from Model Routing using whole-branch complexity.
 4. Branch worker may continue through its linear chain and nested forks.
 5. Branch worker stops before matching join.
 6. Parent waits for all predecessors, verifies their focused tests, executes join.

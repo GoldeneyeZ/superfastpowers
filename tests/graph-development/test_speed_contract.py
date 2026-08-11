@@ -51,6 +51,23 @@ class GraphDevelopmentSpeedContractTest(unittest.TestCase):
     def test_planning_emits_default_coordination_budget(self):
         self.assertIn("coordination_budget_minutes: 5", self.planning)
 
+    def test_skill_routes_supported_models_at_medium_effort(self):
+        for model in (
+            "gpt-5.6-sol",
+            "gpt-5.6-terra",
+            "gpt-5.6-luna",
+            "gpt-5.3-codex-spark",
+        ):
+            self.assertIn(model, self.skill)
+        self.assertIn("reasoning_effort: medium", self.skill)
+        self.assertIn("Explicit human model choice wins", self.skill)
+        self.assertIn("Select once per branch", self.skill)
+
+    def test_prompts_carry_selected_model_and_medium_effort(self):
+        for prompt in (self.branch_prompt, self.continuation_prompt):
+            self.assertIn("Selected model", prompt)
+            self.assertIn("Reasoning effort: medium", prompt)
+
 
 if __name__ == "__main__":
     unittest.main()
