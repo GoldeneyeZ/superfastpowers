@@ -68,6 +68,25 @@ assert_file_contains() {
     fi
 }
 
+assert_file_max_lines() {
+    local file="$1"
+    local maximum="$2"
+    local name="$3"
+
+    if [[ ! -f "$file" ]]; then
+        echo "FAIL: $name"
+        echo "  Missing file: $file"
+        failures=$((failures + 1))
+    elif [[ "$(wc -l < "$file")" -le "$maximum" ]]; then
+        echo "PASS: $name"
+    else
+        echo "FAIL: $name"
+        echo "  Maximum lines: $maximum"
+        echo "  File: $file"
+        failures=$((failures + 1))
+    fi
+}
+
 assert_contains 'Graph Development' 'plans expose Graph Development'
 assert_contains 'Graph format: both | markdown | json' 'plans declare graph format choices'
 assert_contains 'Graph review mode: bypass | gated' 'plans declare graph review choices'
@@ -93,6 +112,32 @@ assert_file_contains "$CONTINUATION_PROMPT" 'every predecessor has verified requ
 assert_file_contains "$CONTINUATION_PROMPT" 'only failed branches' 'failed join retries only failed branch'
 assert_file_contains "$GRAPH_SKILL" 'healthy sibling' 'failed branch does not stop healthy sibling'
 assert_file_contains "$GRAPH_SKILL" 'explicit request' 'worktrees need explicit request'
+assert_file_contains "$GRAPH_SKILL" 'Use when executing packaged implementation plans containing validated structured task graphs with independent parallel branches.' 'skill trigger is graph-specific'
+assert_file_contains "$GRAPH_SKILL" '## Entry Gate' 'skill has deterministic entry gate'
+assert_file_contains "$GRAPH_SKILL" '## Graph/Context Contracts' 'skill documents durable contracts'
+assert_file_contains "$GRAPH_SKILL" '## Recursive Algorithm' 'skill documents recursive execution'
+assert_file_contains "$GRAPH_SKILL" '## Capacity/Continuation' 'skill documents capacity recovery'
+assert_file_contains "$GRAPH_SKILL" '## Review Modes' 'skill documents review policies'
+assert_file_contains "$GRAPH_SKILL" '## Git Safety' 'skill documents Git ownership'
+assert_file_contains "$GRAPH_SKILL" '## Failure Recovery' 'skill documents failure recovery'
+assert_file_contains "$GRAPH_SKILL" '## Prompt Templates' 'skill links prompt templates'
+assert_file_contains "$GRAPH_SKILL" '## Quick Reference' 'skill provides quick reference'
+assert_file_contains "$GRAPH_SKILL" '## Common Mistakes' 'skill calls out mistakes'
+assert_file_contains "$GRAPH_SKILL" '## Red Flags' 'skill calls out stop conditions'
+assert_file_contains "$GRAPH_SKILL" '## Integration' 'skill names required integrations'
+assert_file_contains "$GRAPH_SKILL" 'superfastpowers:test-driven-development' 'skill requires TDD'
+assert_file_contains "$GRAPH_SKILL" 'superfastpowers:requesting-code-review' 'skill requires code review'
+assert_file_contains "$GRAPH_SKILL" 'superfastpowers:verification-before-completion' 'skill requires completion verification'
+assert_file_contains "$BRANCH_PROMPT" 'inspect `git status --short`, `git diff`, and `git diff --cached`' 'branch prompt checks all Git views'
+assert_file_contains "$BRANCH_PROMPT" 'dirty owned path' 'branch prompt blocks dirty ownership'
+assert_file_contains "$BRANCH_PROMPT" 'recursively dispatch nested forks' 'branch prompt handles nested forks'
+assert_file_contains "$BRANCH_PROMPT" 'Graph State' 'branch prompt records durable evidence'
+assert_file_contains "$BRANCH_PROMPT" 'Completed nodes' 'branch prompt has exact return contract'
+assert_file_contains "$CONTINUATION_PROMPT" 'plan-progression.md' 'continuation reads progression state'
+assert_file_contains "$CONTINUATION_PROMPT" 'predecessor contexts' 'continuation reads predecessor evidence'
+assert_file_contains "$CONTINUATION_PROMPT" 'conversation memory' 'continuation rejects memory-only state'
+assert_file_contains "$CONTINUATION_PROMPT" 'path-limited aggregate commit' 'continuation owns safe aggregate commit'
+assert_file_max_lines "$GRAPH_SKILL" 500 'skill stays below 500 lines'
 
 if [[ "$failures" -ne 0 ]]; then
     echo "FAIL: $failures Graph Development planning assertion(s) failed"
