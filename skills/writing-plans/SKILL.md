@@ -237,6 +237,28 @@ For Goal-Driven Gated, emit this policy instead:
 
 Do not include review findings, implementation notes, or detailed handoffs in `plan-progression.md`. Task-scoped details belong in task directory; plan-scoped details live beside progression file.
 
+## Graph Development
+
+When the human selects Graph Development, make the graph mode an explicit execution choice in `plan-progression.md`:
+
+```text
+Graph format: both | markdown | json
+Graph review mode: bypass | gated
+```
+
+The default artifact format is `both`. When present, JSON is canonical; Markdown tables are canonical only in Markdown-only mode. Mermaid is derived for human inspection and is never authoritative. Emit `task-graph.json` and/or `task-graph.md` according to the selected format.
+
+Planning rules:
+
+- Use one graph node per task package.
+- Split tasks into finer nodes only when that creates real parallelism, improves write ownership, or isolates verification value; keep tiny sequential steps together.
+- Give each node exact repository write paths. Concurrent branches must have disjoint write ownership; cross-branch write ownership must be disjoint.
+- Represent flow with nested `sequence` and `parallel` elements, with an explicit join for each fork.
+- Run `skills/graph-development/scripts/validate_graph.py` before handing off Graph Development execution.
+- Include a Graph State section in every generated `context.md` with status, logical parent, changed paths, verification, checkpoint, failure, and commit/range.
+
+Each validated package preserves the existing `tasks/<TASK-ID>/` layout and includes its graph artifacts alongside the task packages.
+
 ## Execution Handoff
 
 After saving the plan and creating validated task packages, offer execution choice:
@@ -250,6 +272,8 @@ After saving the plan and creating validated task packages, offer execution choi
 **3. Subagent-Driven** - Fresh subagent plus two reviews per task
 
 **4. Inline Execution** - Execute tasks using executing-plans checkpoints
+
+**5. Graph Development** — Structured parallel branches with linear agent continuity and parent-owned joins
 
 **Which approach?"**
 
