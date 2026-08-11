@@ -6,6 +6,7 @@ from __future__ import annotations
 import argparse
 import json
 import re
+import subprocess
 from collections import Counter
 from pathlib import Path
 
@@ -554,6 +555,237 @@ def validate_graph(graph: dict, package_root: Path) -> list[str]:
     return errors
 
 
+def _graph_topology(graph: dict) -> dict:
+    """Return only execution topology, excluding task metadata and ownership."""
+    nodes = graph.get("nodes", {})
+    return {
+        "nodes": sorted(nodes) if isinstance(nodes, dict) else [],
+        "flow": graph.get("flow"),
+    }
+
+
+def _topology_predecessors(topology: dict) -> tuple[set[str], dict[str, set[str]]]:
+    """Return topology nodes and direct predecessor sets."""
+    raw_nodes = topology.get("nodes", []) if isinstance(topology, dict) else []
+    nodes = set(raw_nodes) if isinstance(raw_nodes, list) else set()
+    predecessors = {node_id: set() for node_id in nodes if isinstance(node_id, str)}
+    flow = topology.get("flow", {}) if isinstance(topology, dict) else {}
+
+    def walk(sequence: object, incoming: set[str]) -> set[str]:
+        current = set(incoming)
+        if not isinstance(sequence, list):
+            return current
+        for element in sequence:
+            if isinstance(element, str):
+                predecessors.setdefault(element, set()).update(current)
+                current = {element}
+                continue
+            if not isinstance(element, dict) or set(element) != {"parallel"}:
+                continue
+            parallel = element["parallel"]
+            if not isinstance(parallel, dict):
+                continue
+            tails: set[str] = set()
+            branches = parallel.get("branches", [])
+            if isinstance(branches, list):
+                for branch in branches:
+                    if isinstance(branch, dict):
+                        tails.update(walk(branch.get("sequence"), current))
+            join = parallel.get("join")
+            if isinstance(join, str):
+                predecessors.setdefault(join, set()).update(tails)
+                current = {join}
+        return current
+
+    if isinstance(flow, dict):
+        walk(flow.get("sequence"), set())
+    return nodes, predecessors
+
+
+def _affected_downstream(previous: dict, current: dict) -> set[str]:
+    """Return current nodes whose predecessors changed, plus their descendants."""
+    old_nodes, old_predecessors = _topology_predecessors(previous)
+    new_nodes, new_predecessors = _topology_predecessors(current)
+    affected = old_nodes - new_nodes
+    affected.update(
+        node_id
+        for node_id in new_nodes
+        if node_id not in old_nodes
+        or old_predecessors.get(node_id, set()) != new_predecessors.get(node_id, set())
+    )
+    successors: dict[str, set[str]] = {}
+    for predecessors in (old_predecessors, new_predecessors):
+        for node_id, direct_predecessors in predecessors.items():
+            for predecessor in direct_predecessors:
+                successors.setdefault(predecessor, set()).add(node_id)
+    queue = list(affected)
+    while queue:
+        node_id = queue.pop()
+        for successor in successors.get(node_id, set()):
+            if successor not in affected:
+                affected.add(successor)
+                queue.append(successor)
+    return affected
+
+
+def _load_graph_state(package_root: Path) -> tuple[dict | None, list[str]]:
+    path = package_root / "graph-state.json"
+    if not path.exists():
+        return None, []
+    try:
+        state = json.loads(
+            path.read_text(encoding="utf-8"), object_pairs_hook=_reject_duplicate_keys
+        )
+    except GraphValidationError as error:
+        return None, [f"malformed graph state: {error}"]
+    except (OSError, UnicodeDecodeError, json.JSONDecodeError) as error:
+        return None, [f"malformed graph state: {path}: {error}"]
+    if not isinstance(state, dict):
+        return None, ["graph state must be an object"]
+    errors = []
+    unexpected = sorted(set(state) - {"version", "started", "topology", "invalidated"})
+    if unexpected:
+        errors.append(f"graph state has unsupported fields: {', '.join(unexpected)}")
+    if state.get("version") != 1 or isinstance(state.get("version"), bool):
+        errors.append("unsupported graph state version; expected 1")
+    if not isinstance(state.get("started"), bool):
+        errors.append("graph state started must be boolean")
+    topology = state.get("topology")
+    if not isinstance(topology, dict) or set(topology) != {"nodes", "flow"}:
+        errors.append("graph state topology must contain nodes and flow")
+    elif (
+        not isinstance(topology["nodes"], list)
+        or not topology["nodes"]
+        or any(
+            not isinstance(node_id, str) or not _NODE_ID.fullmatch(node_id)
+            for node_id in topology["nodes"]
+        )
+        or len(set(topology["nodes"])) != len(topology["nodes"])
+    ):
+        errors.append("graph state topology nodes must be unique node IDs")
+    elif (
+        not isinstance(topology["flow"], dict)
+        or set(topology["flow"]) != {"sequence"}
+        or not isinstance(topology["flow"]["sequence"], list)
+    ):
+        errors.append("graph state topology flow must contain a sequence")
+    invalidated = state.get("invalidated")
+    if (
+        not isinstance(invalidated, list)
+        or any(not isinstance(node_id, str) for node_id in invalidated)
+        or len(set(invalidated)) != len(invalidated)
+    ):
+        errors.append("graph state invalidated must be a list of unique node IDs")
+    return (state if not errors else None), errors
+
+
+def _context_graph_status(package_root: Path, graph: dict, node_id: str) -> str | None:
+    node = graph["nodes"].get(node_id)
+    context_path = (
+        package_root / Path(node["task"]).parent / "context.md"
+        if node is not None
+        else package_root / "tasks" / node_id / "context.md"
+    )
+    match = re.search(
+        r"^Graph status:\s*(pending|running|implemented|blocked|reviewed|complete)\s*$",
+        context_path.read_text(encoding="utf-8"),
+        re.MULTILINE,
+    )
+    return match.group(1) if match is not None else None
+
+
+def _execution_started(package_root: Path, graph: dict) -> bool:
+    for node_id in sorted(graph["nodes"]):
+        try:
+            status = _context_graph_status(package_root, graph, node_id)
+        except (OSError, UnicodeDecodeError):
+            continue
+        if status is not None and status != "pending":
+            return True
+    return False
+
+
+def _validate_topology_state(graph: dict, package_root: Path) -> list[str]:
+    state, errors = _load_graph_state(package_root)
+    if errors:
+        return errors
+    execution_started = _execution_started(package_root, graph)
+    if state is None:
+        return ["execution started but graph-state.json is missing"] if execution_started else []
+    if execution_started and not state["started"]:
+        return ["execution started but graph state is not started"]
+    if not state["started"]:
+        return []
+    current = _graph_topology(graph)
+    if state["topology"] == current:
+        return []
+    affected = _affected_downstream(state["topology"], current)
+    current_nodes = set(graph["nodes"])
+    previous_nodes = set(state["topology"]["nodes"])
+    invalidated = set(state["invalidated"])
+    unknown = sorted(invalidated - current_nodes - previous_nodes)
+    if unknown:
+        errors.append(f"graph state invalidates unknown nodes: {', '.join(unknown)}")
+    missing = sorted(affected - invalidated)
+    if missing:
+        errors.append(
+            "topology changed after execution started; downstream state not invalidated: "
+            + ", ".join(missing)
+        )
+    for node_id in sorted(affected & invalidated):
+        try:
+            status = _context_graph_status(package_root, graph, node_id)
+        except (OSError, UnicodeDecodeError):
+            status = None
+        if status != "pending":
+            errors.append(
+                f"topology-invalidated node {node_id} must have Graph status pending"
+            )
+    return errors
+
+
+def _validate_clean_owned_paths(graph: dict, package_root: Path) -> list[str]:
+    """Reject tracked or untracked changes under graph-owned repository paths."""
+    result = subprocess.run(
+        ["git", "-C", str(package_root), "rev-parse", "--show-toplevel"],
+        check=False,
+        text=True,
+        capture_output=True,
+    )
+    if result.returncode != 0:
+        return []
+    repository_root = Path(result.stdout.strip())
+    owned_paths = sorted(
+        {
+            write
+            for node in graph["nodes"].values()
+            for write in node["writes"]
+        }
+    )
+    errors = []
+    for owned_path in owned_paths:
+        status = subprocess.run(
+            [
+                "git",
+                "-C",
+                str(repository_root),
+                "status",
+                "--porcelain=v1",
+                "--untracked-files=all",
+                "--",
+                owned_path,
+            ],
+            check=False,
+            text=True,
+            capture_output=True,
+        )
+        if status.returncode != 0:
+            errors.append(f"cannot inspect graph-owned path: {owned_path}")
+        elif status.stdout:
+            errors.append(f"dirty graph-owned path: {owned_path}")
+    return errors
+
+
 def validate_package(package_root: Path) -> list[str]:
     """Load selected artifacts, compare mirrors, and validate package."""
     try:
@@ -585,7 +817,14 @@ def validate_package(package_root: Path) -> list[str]:
     if graph_format == "both" and json_graph != markdown_graph:
         errors.append("mismatched Markdown mirror")
     graph = json_graph if json_graph is not None else markdown_graph
-    return errors + validate_graph(graph, package_root) if graph is not None else errors
+    if graph is None:
+        return errors
+    errors.extend(validate_graph(graph, package_root))
+    if errors:
+        return errors
+    errors.extend(_validate_clean_owned_paths(graph, package_root))
+    errors.extend(_validate_topology_state(graph, package_root))
+    return errors
 
 
 def main() -> int:

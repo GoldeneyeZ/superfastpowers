@@ -36,6 +36,13 @@ Never infer or repair invalid graph topology during execution. Return to `writin
 - Concurrent branch write sets are exact, non-empty, and disjoint.
 - Topology is immutable during a run.
 
+Before first dispatch, root writes package-level `graph-state.json` with exactly
+`version: 1`, `started: true`, the validator's current `topology` snapshot, and
+an empty `invalidated` node-ID list. Root alone updates this preflight file. If
+topology changes, list every affected node in `invalidated`, then reset every affected downstream context to `pending` before validation. After the
+changed graph is accepted, replace the snapshot and clear `invalidated` before
+dispatch. Node runtime evidence remains distributed across contexts.
+
 Each node context carries durable Graph State:
 
 ```text

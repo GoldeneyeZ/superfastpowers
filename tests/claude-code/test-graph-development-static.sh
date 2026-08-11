@@ -103,6 +103,13 @@ assert_file_exists "$GRAPH_SKILL" 'Graph Development skill exists'
 assert_file_exists "$BRANCH_PROMPT" 'branch worker prompt exists'
 assert_file_exists "$CONTINUATION_PROMPT" 'continuation prompt exists'
 
+if [[ -x "$SCRIPT_DIR/test-graph-development-static.sh" ]]; then
+    echo 'PASS: registered Graph Development static test is executable'
+else
+    echo 'FAIL: registered Graph Development static test must be executable'
+    failures=$((failures + 1))
+fi
+
 assert_file_contains "$BRANCH_PROMPT" 'single-successor/one-predecessor' 'linear chain stays with branch worker'
 assert_file_contains "$BRANCH_PROMPT" 'stop before matching join' 'branch worker stops before join'
 assert_file_contains "$BRANCH_PROMPT" 'never stage or commit' 'branch worker never owns commits'
@@ -116,6 +123,8 @@ assert_file_contains "$GRAPH_SKILL" 'explicit request' 'worktrees need explicit 
 assert_file_contains "$GRAPH_SKILL" 'Use when executing packaged implementation plans containing validated structured task graphs with independent parallel branches.' 'skill trigger is graph-specific'
 assert_file_contains "$GRAPH_SKILL" '## Entry Gate' 'skill has deterministic entry gate'
 assert_file_contains "$GRAPH_SKILL" '## Graph/Context Contracts' 'skill documents durable contracts'
+assert_file_contains "$GRAPH_SKILL" '`graph-state.json`' 'skill names topology preflight state'
+assert_file_contains "$GRAPH_SKILL" 'reset every affected downstream context to `pending`' 'skill requires explicit topology invalidation'
 assert_file_contains "$GRAPH_SKILL" '## Recursive Algorithm' 'skill documents recursive execution'
 assert_file_contains "$GRAPH_SKILL" '## Capacity/Continuation' 'skill documents capacity recovery'
 assert_file_contains "$GRAPH_SKILL" '## Review Modes' 'skill documents review policies'
