@@ -25,9 +25,7 @@ When skill names agent type, use `@generalist` with full prompt from skill promp
 | Skill instruction | Gemini CLI equivalent |
 |-------------------|----------------------|
 | `Task tool (superfastpowers:implementer)` | `@generalist` with the filled `implementer-prompt.md` template |
-| `Task tool (superfastpowers:spec-reviewer)` | `@generalist` with the filled `spec-reviewer-prompt.md` template |
 | `Task tool (superfastpowers:code-reviewer)` | `@code-reviewer` (bundled agent) or `@generalist` with the filled review prompt |
-| `Task tool (superfastpowers:code-quality-reviewer)` | `@generalist` with the filled `code-quality-reviewer-prompt.md` template |
 | `Task tool (general-purpose)` with inline prompt | `@generalist` with your inline prompt |
 
 ### Prompt filling

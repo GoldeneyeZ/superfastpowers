@@ -1,103 +1,36 @@
 ---
 name: requesting-code-review
-description: Use when completing tasks, implementing major features, or before merging to verify work meets requirements
+description: Use when a completed change needs an independent or focused review before integration.
 ---
 
 # Requesting Code Review
 
-Dispatch code reviewer subagent before issues cascade. Reviewer gets exact context for evaluation — never session history. Keeps reviewer focused on work product, not thought process; preserves own context.
+## Default
 
-**Core principle:** Review early, often.
+Review combined completed diff once. Self-review is enough for small low-risk changes; independent reviewer helps for security, concurrency, public APIs, migrations, or large changes.
 
-## When to Request Review
+Do not require review after every task, separate spec and quality reviewers, review artifacts, or full workflow restarts.
 
-**Mandatory:**
-- After each subagent-driven development task
-- After major feature
-- Before merge to main
+## Review Input
 
-**Optional but valuable:**
-- When stuck (fresh view)
-- Before refactor (baseline)
-- After complex bug fix
+- concise requirements;
+- base and head range or current diff;
+- changed paths;
+- focused test results;
+- known risks.
 
-## How to Request
+Use `code-reviewer.md` when delegating.
 
-**1. Get git SHAs:**
-```bash
-BASE_SHA=$(git rev-parse HEAD~1)  # or origin/main
-HEAD_SHA=$(git rev-parse HEAD)
-```
+## Review Focus
 
-**2. Dispatch code reviewer subagent:**
+- requirements and correctness;
+- security or data-loss risks;
+- regressions/integration;
+- maintainability proportional to scope;
+- test gaps.
 
-Use Task tool with `general-purpose` type; fill template at `code-reviewer.md`
+Classify findings: blocking, important, minor. Fix blocking/important findings in scope. Incorrect finding → reject with evidence. Focused fix → rerun affected checks; no mandatory re-review unless risk remains.
 
-**Placeholders:**
-- `{DESCRIPTION}` - Short summary of what built
-- `{PLAN_OR_REQUIREMENTS}` - Expected behavior
-- `{BASE_SHA}` - Start commit
-- `{HEAD_SHA}` - End commit
+## Completion
 
-**3. Act on feedback:**
-- Fix Critical now
-- Fix Important before proceeding
-- Note Minor for later
-- Push back if reviewer wrong (with reasoning)
-
-## Example
-
-```
-[Just completed Task 2: Add verification function]
-
-You: Let me request code review before proceeding.
-
-BASE_SHA=$(git log --oneline | grep "Task 1" | head -1 | awk '{print $1}')
-HEAD_SHA=$(git rev-parse HEAD)
-
-[Dispatch code reviewer subagent]
-  DESCRIPTION: Added verifyIndex() and repairIndex() with 4 issue types
-  PLAN_OR_REQUIREMENTS: Task 2 from docs/superfastpowers/plans/deployment-plan.md
-  BASE_SHA: a7981ec
-  HEAD_SHA: 3df7661
-
-[Subagent returns]:
-  Strengths: Clean architecture, real tests
-  Issues:
-    Important: Missing progress indicators
-    Minor: Magic number (100) for reporting interval
-  Assessment: Ready to proceed
-
-You: [Fix progress indicators]
-[Continue to Task 3]
-```
-
-## Integration with Workflows
-
-**Subagent-Driven Development:**
-- Review after EACH task
-- Catch issues before compound
-- Fix before next task
-
-**Executing Plans:**
-- Review after each task or natural checkpoint
-- Get feedback, apply, continue
-
-**Ad-Hoc Development:**
-- Review before merge
-- Review when stuck
-
-## Red Flags
-
-**Never:**
-- Skip review because "simple"
-- Ignore Critical issues
-- Proceed with unfixed Important issues
-- Argue with valid technical feedback
-
-**If reviewer wrong:**
-- Push back with technical reasoning
-- Show code/tests proving it works
-- Request clarification
-
-See template at: requesting-code-review/code-reviewer.md
+One accepted review plus green relevant tests. More review only by evidence or explicit request.

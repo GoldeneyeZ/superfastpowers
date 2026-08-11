@@ -14,7 +14,7 @@ Once it's teased a spec out of the conversation, it shows it to you in chunks sh
 
 After you've signed off on the design, your agent puts together an implementation plan that's clear enough for an enthusiastic junior engineer with poor taste, no judgement, no project context, and an aversion to testing to follow. It emphasizes true red/green TDD, YAGNI (You Aren't Gonna Need It), and DRY. 
 
-Next up, once you say "go", it recommends *Goal-Driven Bypass*: agents implement every task, then run one plan-wide spec review and one plan-wide code-quality review before final integration. This reduces repeated review overhead while preserving completion gates. You can choose gated per-task feedback instead.
+Next up, once you say "go", agents implement ready tasks, integrate results, run one focused review, then one final verification batch.
 
 There's a bunch more to it, but that's the core of the system. And because the skills trigger automatically, you don't need to do anything special. Your coding agent just has Superfastpowers.
 
@@ -127,17 +127,17 @@ already use it in another harness.
 
 1. **brainstorming** - Activates before writing code. Refines rough ideas through questions, explores alternatives, presents design in sections for validation. Saves design document.
 
-2. **writing-plans** - Activates with approved design. Breaks work into bite-sized tasks (2-5 minutes each). Every task has exact file paths, complete code, verification steps.
+2. **writing-plans** - Activates with approved design. Creates coherent tasks with exact file paths, dependencies, and focused verification.
 
-3. **goal-driven-development**, **subagent-driven-development**, or **executing-plans** - Activates with plan. Goal-Driven Bypass is recommended for elapsed time: implement all tasks, then two plan-wide review phases. Goal-Driven Gated and Subagent-Driven preserve per-task review feedback; Inline executes with checkpoints.
+3. **goal-driven-development**, **subagent-driven-development**, or **executing-plans** - Activates with plan. Choose simplest mode matching actual dependencies. Default: implement, one focused review, one final verification batch.
 
-4. **graph-development** — Executes validated structured task graphs: linear agent continuity, parallel branches, durable parent continuations, parent-owned joins and commits. It is an optional execution workflow for plans that include graph artifacts; Goal-Driven Bypass remains the recommended default.
+4. **graph-development** — Executes validated structured task graphs: linear agent continuity, parallel branches, durable continuations, parent-owned joins and commits. Optional for plans with useful parallel branches.
 
 When `writing-plans` creates graph artifacts, choose `json`, `markdown`, or `both`; the default is `both`. Graph Development reads the validated graph artifacts when that workflow is selected.
 
 5. **test-driven-development** - Activates during implementation. Enforces RED-GREEN-REFACTOR: write failing test, watch it fail, write minimal code, watch it pass, commit. Deletes code written before tests.
 
-6. **requesting-code-review** - Activates at execution-mode review points: between tasks for gated workflows, plan-wide after implementation for Goal-Driven Bypass. Reports issues by severity; critical issues block progress.
+6. **requesting-code-review** - Runs one focused review after implementation, or earlier only when risk warrants it.
 
 7. **finishing-a-development-branch** - Activates when tasks complete. Verifies tests, presents options (merge/PR/keep/discard), and performs the selected cleanup.
 
@@ -158,14 +158,14 @@ When `writing-plans` creates graph artifacts, choose `json`, `markdown`, or `bot
 - **brainstorming** - Socratic design refinement
 - **writing-plans** - Detailed implementation plans
 - **graph-development** - Executes validated structured task graphs
-- **goal-driven-development** - Policy-driven execution. Bypass (recommended for speed) performs two plan-wide review phases instead of two per task; Gated preserves early per-task feedback.
+- **goal-driven-development** - Fast plan execution with optional parallel workers, one focused review, and final verification.
 - **executing-plans** - Batch execution with checkpoints
 - **dispatching-parallel-agents** - Concurrent subagent workflows
 - **requesting-code-review** - Pre-review checklist
 - **receiving-code-review** - Responding to feedback
 - **using-git-worktrees** - Explicit opt-in worktree setup and safety
 - **finishing-a-development-branch** - Merge/PR decision workflow
-- **subagent-driven-development** - Fresh subagent with two-stage review per task (spec compliance, then code quality)
+- **subagent-driven-development** - Fresh worker per independent task when isolation is worth coordination cost
 
 **Meta**
 - **writing-skills** - Create new skills following best practices (includes testing methodology)
