@@ -131,7 +131,7 @@ already use it in another harness.
 
 3. **goal-driven-development**, **subagent-driven-development**, or **executing-plans** - Activates with plan. Choose simplest mode matching actual dependencies. Default: implement, one focused review, one final verification batch.
 
-4. **graph-development** — Executes validated structured task graphs: linear agent continuity, parallel branches, durable continuations, parent-owned joins and commits. Optional for plans with useful parallel branches.
+4. **graph-development** — Executes validated structured task graphs in full phases: implement all, verify plan/spec compliance, apply relevant clean-code skills, then ask whether to add new tests. Existing tests affected by code changes stay updated. Optional for plans with useful parallel branches.
 
 When `writing-plans` creates graph artifacts, choose `json`, `markdown`, or `both`; the default is `both`. Graph Development reads the validated graph artifacts when that workflow is selected.
 
@@ -157,7 +157,7 @@ When `writing-plans` creates graph artifacts, choose `json`, `markdown`, or `bot
 **Collaboration** 
 - **brainstorming** - Socratic design refinement
 - **writing-plans** - Detailed implementation plans
-- **graph-development** - Executes validated structured task graphs
+- **graph-development** - Parallel implementation, full spec verification, clean-code pass, optional new tests
 - **goal-driven-development** - Fast plan execution with optional parallel workers, one focused review, and final verification.
 - **executing-plans** - Batch execution with checkpoints
 - **dispatching-parallel-agents** - Concurrent subagent workflows

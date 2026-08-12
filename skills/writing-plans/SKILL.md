@@ -24,7 +24,8 @@ Write one Markdown file under `docs/plans/` or project-native location:
 - Depends on: none | task IDs
 - Files: exact paths
 - Change: concise behavior
-- Verify: exact command or observable result
+- Acceptance: exact behavior/spec outcome
+- Existing tests affected: paths or none
 ```
 
 Prefer tasks sized for coherent ownership, usually 15–60 minutes. Do not split work into artificial microtasks merely to increase task count.
@@ -34,7 +35,7 @@ Prefer tasks sized for coherent ownership, usually 15–60 minutes. Do not split
 1. Read approved requirements and relevant existing code.
 2. Identify minimal coherent tasks and dependencies.
 3. Assign exact paths; parallel tasks must have disjoint writes.
-4. Add focused verification per task.
+4. Add acceptance outcomes per task. Collect verification commands for one full post-development verification phase.
 5. Review plan once against requirements; fix gaps inline.
 6. Offer execution.
 

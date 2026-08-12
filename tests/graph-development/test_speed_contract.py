@@ -15,7 +15,7 @@ class GraphDevelopmentSpeedContractTest(unittest.TestCase):
 
     def test_skill_caps_coordination_and_defines_fast_path(self):
         self.assertIn("coordination steps than implementation nodes", self.skill)
-        self.assertIn("validate once → execute graph → review once → verify once → commit once", self.skill)
+        self.assertIn("implement all → verify all → clean code → optional tests → commit once", self.skill)
         self.assertIn("coordination_budget_minutes", self.skill)
 
     def test_skill_schedules_for_speed_without_restarting_work(self):
@@ -32,14 +32,35 @@ class GraphDevelopmentSpeedContractTest(unittest.TestCase):
 
     def test_skill_budgets_tests_reviews_commits_and_metrics(self):
         for phrase in (
-            "focused tests",
-            "full fast suite once",
-            "Review scope is locked",
+            "Do not add new tests during implementation",
+            "Existing tests affected by code changes are the exception",
+            "run existing affected tests",
+            "Verify scope is locked",
             "Commit at joins",
             "implementation time",
             "coordination time",
         ):
             self.assertIn(phrase, self.skill)
+
+    def test_skill_defines_sequential_development_verification_quality_and_test_phases(self):
+        phases = (
+            "## Phase 1: Full Development",
+            "## Phase 2: Full Verification",
+            "## Phase 3: Clean-Code Quality",
+            "## Phase 4: Optional New Tests",
+        )
+        positions = [self.skill.index(phase) for phase in phases]
+        self.assertEqual(positions, sorted(positions))
+        self.assertIn("compare every delivered behavior with the plan and specs", self.skill.lower())
+        self.assertIn("available clean-code skills", self.skill)
+        self.assertIn("Ask the human whether to add new tests", self.skill)
+
+    def test_prompts_do_not_require_per_node_tests(self):
+        self.assertNotIn("focused tests", self.branch_prompt)
+        self.assertNotIn("focused integration tests", self.continuation_prompt)
+        self.assertIn("existing affected tests", self.branch_prompt.lower())
+        self.assertIn("spec verification happens after full implementation", self.branch_prompt)
+        self.assertIn("full verification phase", self.continuation_prompt)
 
     def test_prompts_propagate_budget_and_timing(self):
         self.assertIn("Coordination budget", self.branch_prompt)
